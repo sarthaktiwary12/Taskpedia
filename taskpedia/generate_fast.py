@@ -3,14 +3,15 @@ Fast generation pipeline for VLA/VLN training data.
 
 Continuous flow architecture with Textual TUI for monitoring.
 - ThreadPoolExecutor for concurrent API calls
-- Main thread processes results
-- Atomic file saves only on completion
-- Live flow visualization with Textual
+- Improved prompts for true atomic actions
+- Validation to reject generic/template outputs
+- Coverage for VLN, perception, manipulation, social
 """
 
 from __future__ import annotations
 
 import json
+import re
 import time
 import threading
 from dataclasses import dataclass
@@ -20,6 +21,1893 @@ from concurrent.futures import ThreadPoolExecutor, as_completed, Future
 
 from taskpedia.hierarchy import NodeType, SeedSource, TaskGraph, TaskNode
 from taskpedia.llm import LLMClient, LLMConfig, MockLLMClient
+
+
+# ============================================================================
+# VALIDATION: Reject low-quality outputs
+# ============================================================================
+
+# Generic nouns that indicate template outputs
+GENERIC_NOUNS = {
+    "target",
+    "source",
+    "materials",
+    "equipment",
+    "tools",
+    "surface",
+    "container",
+    "workspace",
+    "components",
+    "area",
+    "items",
+    "objects",
+    "things",
+    "stuff",
+    "resources",
+    "supplies",
+    "elements",
+}
+
+# Generic verbs that are too vague
+GENERIC_VERBS = {
+    "check",
+    "verify",
+    "inspect",
+    "prepare",
+    "gather",
+    "secure",
+    "adjust",
+    "position",
+    "clean",
+    "move",
+    "handle",
+    "process",
+}
+
+# Valid atomic action verbs (robot primitives) - Comprehensive taxonomy
+ATOMIC_VERBS = {
+    # =========================================================================
+    # MANIPULATION (arm/hand control)
+    # =========================================================================
+    # Grasping & Releasing
+    "grasp",
+    "grip",
+    "hold",
+    "clutch",
+    "clamp",
+    "pinch",
+    "squeeze",
+    "release",
+    "let_go",
+    "drop",
+    "unclamp",
+    "loosen",
+    # Pick & Place
+    "pick_up",
+    "put_down",
+    "place",
+    "set_down",
+    "lay_down",
+    "deposit",
+    "retrieve",
+    "fetch",
+    "gather",
+    "collect",
+    # Push/Pull/Slide
+    "push",
+    "pull",
+    "drag",
+    "slide",
+    "glide",
+    "shove",
+    "nudge",
+    "tap",
+    # Rotation/Orientation
+    "rotate",
+    "twist",
+    "turn",
+    "spin",
+    "flip",
+    "invert",
+    "tilt",
+    "pivot",
+    "orient",
+    "align",
+    "angle",
+    "swivel",
+    # Lifting/Lowering
+    "lift",
+    "raise",
+    "elevate",
+    "hoist",
+    "lower",
+    "drop_slowly",
+    # Carrying/Moving
+    "carry",
+    "transport",
+    "move",
+    "transfer",
+    "shift",
+    "reposition",
+    "relocate",
+    "hand_over",
+    "pass",
+    # Insertion/Removal
+    "insert",
+    "remove",
+    "extract",
+    "withdraw",
+    "pull_out",
+    "push_in",
+    "slot_in",
+    "eject",
+    "pop_out",
+    # Open/Close
+    "open",
+    "close",
+    "shut",
+    "seal",
+    "unseal",
+    "unlock",
+    "lock",
+    "latch",
+    "unlatch",
+    "fasten",
+    "unfasten",
+    # Pouring/Dispensing
+    "pour",
+    "fill",
+    "empty",
+    "drain",
+    "dispense",
+    "drip",
+    "drizzle",
+    "stream",
+    "spray",
+    "squirt",
+    "pump",
+    "siphon",
+    # Cutting/Separating
+    "cut",
+    "slice",
+    "chop",
+    "dice",
+    "mince",
+    "trim",
+    "snip",
+    "shear",
+    "sever",
+    "split",
+    "halve",
+    "quarter",
+    "carve",
+    "fillet",
+    "tear",
+    "rip",
+    "break",
+    "snap",
+    "crack",
+    "shatter",
+    "crush",
+    # Folding/Wrapping
+    "fold",
+    "unfold",
+    "crease",
+    "pleat",
+    "wrap",
+    "unwrap",
+    "roll_up",
+    "unroll",
+    "bundle",
+    "unbundle",
+    "coil",
+    "uncoil",
+    # Tying/Fastening
+    "tie",
+    "untie",
+    "knot",
+    "unknot",
+    "loop",
+    "bind",
+    "unbind",
+    "strap",
+    "unstrap",
+    "buckle",
+    "unbuckle",
+    "zip",
+    "unzip",
+    "button",
+    "unbutton",
+    "snap",
+    "unsnap",
+    "velcro",
+    "unvelcro",
+    "lace",
+    "unlace",
+    "thread",
+    "unthread",
+    # Mixing/Stirring
+    "stir",
+    "mix",
+    "blend",
+    "whisk",
+    "beat",
+    "fold_in",
+    "knead",
+    "mash",
+    "puree",
+    "whip",
+    "cream",
+    "emulsify",
+    "shake",
+    "swirl",
+    "agitate",
+    "toss",
+    # Cleaning/Surface Treatment
+    "wipe",
+    "scrub",
+    "brush",
+    "polish",
+    "buff",
+    "sand",
+    "scrape",
+    "sweep",
+    "dust",
+    "mop",
+    "sponge",
+    "squeegee",
+    "rinse",
+    "wash",
+    "dry",
+    "towel",
+    "blot",
+    "dab",
+    # Assembly/Disassembly
+    "screw",
+    "unscrew",
+    "bolt",
+    "unbolt",
+    "nail",
+    "hammer",
+    "plug",
+    "unplug",
+    "socket",
+    "connect",
+    "disconnect",
+    "attach",
+    "detach",
+    "mount",
+    "unmount",
+    "install",
+    "uninstall",
+    "assemble",
+    "disassemble",
+    "fit",
+    "unfit",
+    "snap_on",
+    "snap_off",
+    "clip",
+    "unclip",
+    "hook",
+    "unhook",
+    "link",
+    "unlink",
+    # Pressing/Activating
+    "press",
+    "depress",
+    "push_button",
+    "click",
+    "tap_button",
+    "toggle",
+    "switch",
+    "flip_switch",
+    "dial",
+    "adjust_dial",
+    "slide_control",
+    "touch",
+    "swipe",
+    # Writing/Drawing/Marking
+    "write",
+    "draw",
+    "sketch",
+    "trace",
+    "mark",
+    "label",
+    "stamp",
+    "sign",
+    "print",
+    "type",
+    "erase",
+    "cross_out",
+    "underline",
+    "highlight",
+    "circle",
+    # =========================================================================
+    # TOOL OPERATION
+    # =========================================================================
+    # Hand Tools
+    "hammer",
+    "chisel",
+    "file",
+    "rasp",
+    "plane",
+    "saw",
+    "drill",
+    "bore",
+    "punch",
+    "awl",
+    "clamp",
+    "vise",
+    "wrench",
+    "tighten",
+    "loosen",
+    "torque",
+    "plier",
+    "crimp",
+    "strip",
+    "cut_wire",
+    "screwdriver",
+    "pry",
+    "lever",
+    "wedge",
+    # Power Tools
+    "power_drill",
+    "power_saw",
+    "grind",
+    "sand_machine",
+    "route",
+    "lathe",
+    "mill",
+    "weld",
+    "solder",
+    "braze",
+    # Kitchen Tools
+    "peel",
+    "core",
+    "pit",
+    "zest",
+    "grate",
+    "shred",
+    "julienne",
+    "mandoline",
+    "food_process",
+    "blend_food",
+    "measure_ingredient",
+    "sift",
+    "strain",
+    "colander",
+    "baste",
+    "glaze",
+    "season",
+    "marinate",
+    # Garden Tools
+    "dig",
+    "shovel",
+    "rake",
+    "hoe",
+    "till",
+    "cultivate",
+    "prune",
+    "trim_plant",
+    "shear_hedge",
+    "mow",
+    "edge",
+    "water",
+    "spray_water",
+    "fertilize",
+    "mulch",
+    "plant",
+    "transplant",
+    "uproot",
+    "weed",
+    # Cleaning Tools
+    "vacuum",
+    "steam_clean",
+    "pressure_wash",
+    "hose",
+    "plunge",
+    "snake",
+    "unclog",
+    # Sewing/Textile Tools
+    "sew",
+    "stitch",
+    "hem",
+    "seam",
+    "darn",
+    "patch",
+    "pin",
+    "unpin",
+    "baste_stitch",
+    "backstitch",
+    "embroider",
+    "knit",
+    "purl",
+    "crochet",
+    "weave",
+    "iron",
+    "press_fabric",
+    "steam",
+    "crease_fabric",
+    # Medical/Care Tools
+    "bandage",
+    "wrap_wound",
+    "apply_bandage",
+    "tape",
+    "inject",
+    "draw_blood",
+    "take_pulse",
+    "take_temperature",
+    "apply_ointment",
+    "apply_cream",
+    "massage",
+    "compress",
+    # =========================================================================
+    # COOKING/FOOD PREPARATION
+    # =========================================================================
+    # Heat Application
+    "heat",
+    "warm",
+    "boil",
+    "simmer",
+    "poach",
+    "blanch",
+    "fry",
+    "saute",
+    "pan_fry",
+    "deep_fry",
+    "stir_fry",
+    "bake",
+    "roast",
+    "broil",
+    "grill",
+    "char",
+    "sear",
+    "toast",
+    "brown",
+    "caramelize",
+    "steam",
+    "pressure_cook",
+    "slow_cook",
+    "microwave",
+    "reheat",
+    # Cooling
+    "cool",
+    "chill",
+    "refrigerate",
+    "freeze",
+    "ice",
+    "defrost",
+    "thaw",
+    # Food Prep
+    "rinse_food",
+    "wash_produce",
+    "dry_food",
+    "crack_egg",
+    "separate_egg",
+    "beat_egg",
+    "tenderize",
+    "pound",
+    "flatten",
+    "stuff",
+    "fill_food",
+    "layer",
+    "stack_food",
+    "garnish",
+    "plate",
+    "arrange_food",
+    "drizzle_sauce",
+    # =========================================================================
+    # LOCOMOTION / NAVIGATION (VLN - whole body)
+    # =========================================================================
+    # Basic Movement
+    "walk",
+    "walk_to",
+    "run",
+    "run_to",
+    "jog",
+    "sprint",
+    "move_to",
+    "go_to",
+    "travel_to",
+    "head_to",
+    "approach",
+    "advance",
+    "proceed",
+    # Directional Movement
+    "turn_left",
+    "turn_right",
+    "turn_around",
+    "face",
+    "face_toward",
+    "step_forward",
+    "step_back",
+    "step_left",
+    "step_right",
+    "sidestep",
+    "backstep",
+    "shuffle",
+    # Entry/Exit
+    "enter",
+    "exit",
+    "pass_through",
+    "go_through",
+    "come_in",
+    "go_out",
+    "leave",
+    "depart",
+    "arrive",
+    # Vertical Movement
+    "climb",
+    "climb_up",
+    "climb_down",
+    "ascend",
+    "descend",
+    "go_up",
+    "go_down",
+    "scale",
+    "clamber",
+    "step_up",
+    "step_down",
+    "hop_up",
+    "hop_down",
+    # Following/Leading
+    "follow",
+    "trail",
+    "shadow",
+    "pursue",
+    "lead",
+    "guide",
+    "escort",
+    "accompany",
+    # Avoidance/Navigation
+    "avoid",
+    "dodge",
+    "evade",
+    "maneuver_around",
+    "navigate_around",
+    "circumvent",
+    "detour",
+    "navigate_to",
+    "path_find",
+    "explore",
+    "search_area",
+    "patrol",
+    # Stopping/Waiting
+    "stop",
+    "halt",
+    "freeze",
+    "wait",
+    "pause",
+    "stand_still",
+    # Body Position Changes
+    "sit",
+    "sit_down",
+    "stand",
+    "stand_up",
+    "rise",
+    "kneel",
+    "kneel_down",
+    "crouch",
+    "squat",
+    "lie_down",
+    "recline",
+    "lean",
+    "bend",
+    "bow",
+    "straighten",
+    "stretch",
+    # Balance/Stability
+    "balance",
+    "balance_on",
+    "steady",
+    "stabilize_body",
+    # Jumping/Hopping
+    "jump",
+    "hop",
+    "leap",
+    "bound",
+    "skip",
+    "vault",
+    # Crawling/Low Movement
+    "crawl",
+    "creep",
+    "inch",
+    "slither",
+    "slide_under",
+    # Swimming
+    "swim",
+    "paddle",
+    "float",
+    "dive",
+    "surface",
+    "tread_water",
+    # =========================================================================
+    # PERCEPTION / ACTIVE SENSING
+    # =========================================================================
+    # Visual Perception
+    "look_at",
+    "gaze_at",
+    "focus_on",
+    "stare_at",
+    "glance_at",
+    "track_visually",
+    "follow_visually",
+    "watch",
+    "scan",
+    "survey",
+    "observe",
+    "view",
+    "examine",
+    "inspect",
+    "search_for",
+    "look_for",
+    "seek",
+    "hunt_for",
+    "locate",
+    "find",
+    "spot",
+    "notice",
+    "detect",
+    "recognize",
+    "identify",
+    "distinguish",
+    "differentiate",
+    "compare_visually",
+    "match",
+    # Reading/Text Perception
+    "read",
+    "read_text",
+    "read_label",
+    "read_display",
+    "read_sign",
+    "interpret",
+    "decode",
+    "parse",
+    # Measurement Perception
+    "measure",
+    "gauge",
+    "assess",
+    "evaluate",
+    "estimate",
+    "weigh",
+    "scale",
+    "count",
+    "tally",
+    "quantify",
+    "time",
+    "clock",
+    "check_time",
+    "check_temperature",
+    # Auditory Perception
+    "listen",
+    "listen_for",
+    "hear",
+    "detect_sound",
+    "localize_sound",
+    "recognize_voice",
+    "distinguish_sound",
+    # Tactile Perception
+    "feel",
+    "touch_sense",
+    "sense_contact",
+    "sense_pressure",
+    "sense_force",
+    "sense_texture",
+    "sense_temperature",
+    "probe",
+    "palpate",
+    # Olfactory Perception
+    "smell",
+    "sniff",
+    "detect_odor",
+    # Taste Perception
+    "taste",
+    "sample",
+    # =========================================================================
+    # COMMUNICATION / SOCIAL INTERACTION
+    # =========================================================================
+    # Speech/Verbal
+    "say",
+    "speak",
+    "talk",
+    "tell",
+    "announce",
+    "call_out",
+    "shout",
+    "whisper",
+    "murmur",
+    "mumble",
+    "ask",
+    "question",
+    "inquire",
+    "query",
+    "answer",
+    "respond",
+    "reply",
+    "explain",
+    "describe",
+    "confirm",
+    "acknowledge",
+    "agree",
+    "disagree",
+    "greet",
+    "welcome",
+    "introduce",
+    "farewell",
+    "thank",
+    "apologize",
+    "excuse",
+    "request",
+    "order",
+    "command",
+    "instruct",
+    "direct",
+    "warn",
+    "alert",
+    "notify",
+    "inform",
+    "report",
+    "suggest",
+    "recommend",
+    "advise",
+    # Non-verbal Communication
+    "gesture",
+    "gesticulate",
+    "motion",
+    "point_at",
+    "point_to",
+    "indicate",
+    "show_direction",
+    "wave",
+    "wave_hello",
+    "wave_goodbye",
+    "beckon",
+    "nod",
+    "nod_yes",
+    "shake_head",
+    "shake_no",
+    "shrug",
+    "bow",
+    "curtsy",
+    "smile",
+    "frown",
+    "wince",
+    "grimace",
+    "make_eye_contact",
+    "avert_gaze",
+    # Demonstration
+    "show",
+    "demonstrate",
+    "display",
+    "present",
+    "exhibit",
+    "model",
+    "mime",
+    "act_out",
+    "role_play",
+    "signal",
+    "sign",
+    "sign_language",
+    # =========================================================================
+    # HUMAN CARE / MEDICAL
+    # =========================================================================
+    # Physical Care
+    "wash_hands",
+    "wash_face",
+    "bathe",
+    "shower",
+    "brush_teeth",
+    "floss",
+    "rinse_mouth",
+    "brush_hair",
+    "comb_hair",
+    "style_hair",
+    "shave",
+    "trim_beard",
+    "trim_nails",
+    "file_nails",
+    "apply_makeup",
+    "remove_makeup",
+    "apply_lotion",
+    "apply_sunscreen",
+    # Dressing
+    "dress",
+    "undress",
+    "put_on",
+    "take_off",
+    "wear",
+    "don",
+    "doff",
+    "tuck_in",
+    "roll_up_sleeves",
+    "adjust_clothing",
+    # Medical Care
+    "administer",
+    "give_medication",
+    "apply_medicine",
+    "check_vitals",
+    "monitor",
+    "clean_wound",
+    "disinfect",
+    "sterilize",
+    "suture",
+    "stitch_wound",
+    "splint",
+    "immobilize",
+    "brace",
+    "perform_cpr",
+    "rescue_breathe",
+    # Assistance
+    "assist",
+    "help",
+    "support",
+    "steady_person",
+    "lift_person",
+    "transfer_person",
+    "feed",
+    "spoon_feed",
+    "give_water",
+    # =========================================================================
+    # SAFETY / EMERGENCY
+    # =========================================================================
+    "evacuate",
+    "escape",
+    "flee",
+    "extinguish",
+    "smother",
+    "douse",
+    "block",
+    "barricade",
+    "seal_off",
+    "protect",
+    "shield",
+    "cover",
+    "rescue",
+    "save",
+    "retrieve_person",
+    "call_emergency",
+    "dial_911",
+    "alert_authorities",
+    "administer_first_aid",
+    # =========================================================================
+    # FINANCIAL / TRANSACTION
+    # =========================================================================
+    "pay",
+    "hand_payment",
+    "insert_card",
+    "swipe_card",
+    "tap_card",
+    "enter_pin",
+    "sign_receipt",
+    "receive_change",
+    "receive_receipt",
+    "scan_item",
+    "scan_barcode",
+    "bag_item",
+    "count_money",
+    "make_change",
+    # =========================================================================
+    # VEHICLE / EQUIPMENT OPERATION
+    # =========================================================================
+    # Vehicle Control
+    "steer",
+    "turn_wheel",
+    "accelerate",
+    "brake",
+    "decelerate",
+    "shift_gear",
+    "clutch",
+    "park",
+    "reverse",
+    "start_engine",
+    "stop_engine",
+    "ignite",
+    "signal_turn",
+    "honk",
+    "flash_lights",
+    # Equipment Operation
+    "operate",
+    "control",
+    "pilot",
+    "drive",
+    "start_machine",
+    "stop_machine",
+    "power_on",
+    "power_off",
+    "set_controls",
+    "adjust_settings",
+    "load_machine",
+    "unload_machine",
+    "refuel",
+    "recharge",
+    # =========================================================================
+    # AGRICULTURE / GARDENING
+    # =========================================================================
+    "sow",
+    "seed",
+    "germinate",
+    "irrigate",
+    "drip_water",
+    "harvest",
+    "pick_fruit",
+    "gather_crop",
+    "thresh",
+    "winnow",
+    "husk",
+    "compost",
+    "turn_soil",
+    "aerate",
+    "graft",
+    "propagate",
+    "pollinate",
+    # =========================================================================
+    # TEXTILE / FABRIC
+    # =========================================================================
+    "cut_fabric",
+    "measure_fabric",
+    "mark_fabric",
+    "pin_fabric",
+    "baste",
+    "tack",
+    "sew_seam",
+    "overlock",
+    "serge",
+    "gather_fabric",
+    "ruffle",
+    "pleat_fabric",
+    "applique",
+    "quilt",
+    "felt",
+    "dye",
+    "bleach",
+    "starch",
+    # =========================================================================
+    # CONSTRUCTION / BUILDING
+    # =========================================================================
+    "measure_dimension",
+    "mark_line",
+    "level",
+    "cut_material",
+    "saw_wood",
+    "miter",
+    "nail_in",
+    "screw_in",
+    "glue",
+    "adhesive",
+    "sand_surface",
+    "prime",
+    "paint",
+    "coat",
+    "tile",
+    "grout",
+    "caulk",
+    "seal",
+    "wire",
+    "splice",
+    "terminate",
+    "pipe",
+    "solder_pipe",
+    "braze_pipe",
+    "insulate",
+    "wrap_insulation",
+    # =========================================================================
+    # SPORTS / EXERCISE
+    # =========================================================================
+    "throw",
+    "catch",
+    "kick",
+    "hit",
+    "strike",
+    "swing",
+    "dribble",
+    "pass_ball",
+    "shoot",
+    "block_ball",
+    "serve",
+    "volley",
+    "rally",
+    "punch",
+    "jab",
+    "hook",
+    "tackle",
+    "grapple",
+    "pin",
+    "lift_weight",
+    "curl",
+    "press_weight",
+    "squat_weight",
+    "row",
+    "paddle_boat",
+    "cycle",
+    "pedal",
+    # =========================================================================
+    # MUSIC / PERFORMANCE
+    # =========================================================================
+    "play",
+    "strum",
+    "pluck",
+    "pick_string",
+    "bow",
+    "finger",
+    "fret",
+    "press_key",
+    "strike_key",
+    "blow",
+    "embouchure",
+    "beat_drum",
+    "strike_percussion",
+    "conduct",
+    "cue",
+    "sing",
+    "vocalize",
+    "hum",
+    "dance",
+    "choreograph",
+    # =========================================================================
+    # WHOLE-BODY CONTROL / DYNAMIC MOTION
+    # =========================================================================
+    # Dynamic Full-Body
+    "lunge",
+    "pivot_body",
+    "twist_body",
+    "rotate_body",
+    "shift_weight",
+    "transfer_weight",
+    "lean_forward",
+    "lean_back",
+    "duck",
+    "dodge_body",
+    "weave",
+    "sway",
+    "roll_body",
+    "tumble",
+    "somersault",
+    "cartwheel",
+    "spin_body",
+    "pirouette",
+    "twirl",
+    # Contact/Support
+    "brace_against",
+    "lean_on",
+    "lean_against",
+    "rest_on",
+    "push_off",
+    "push_off_from",
+    "spring_from",
+    "support_on",
+    "prop_against",
+    # Reaching/Extending
+    "reach",
+    "reach_for",
+    "reach_toward",
+    "extend_arm",
+    "stretch_toward",
+    "overreach",
+    "reach_across",
+    "reach_behind",
+    "reach_overhead",
+    "reach_under",
+    "reach_around",
+    # Ground Interaction
+    "kneel_on",
+    "sit_on",
+    "lie_on",
+    "stand_on",
+    "step_on",
+    "step_over",
+    "step_around",
+    "straddle",
+    "span",
+    "bridge",
+    # Posture Transitions
+    "rise_from",
+    "lower_to",
+    "transition_to",
+    "get_up_from",
+    "get_down_to",
+    "roll_over",
+    "turn_over",
+    "flip_over",
+    # =========================================================================
+    # FORCE / COMPLIANCE CONTROL
+    # =========================================================================
+    # Force Application
+    "apply_force",
+    "exert_force",
+    "press_firmly",
+    "press_gently",
+    "push_hard",
+    "push_softly",
+    "apply_pressure",
+    "release_pressure",
+    # Force Modulation
+    "increase_force",
+    "decrease_force",
+    "modulate_force",
+    "maintain_force",
+    "sustain_pressure",
+    # Resistance/Compliance
+    "resist",
+    "oppose",
+    "counter",
+    "withstand",
+    "yield",
+    "give_way",
+    "comply",
+    "accommodate",
+    "dampen",
+    "absorb",
+    "cushion",
+    "buffer",
+    "absorb_impact",
+    "soften_landing",
+    # Tension Control
+    "tension",
+    "tighten_grip",
+    "loosen_grip",
+    "pull_taut",
+    "slacken",
+    "release_tension",
+    # =========================================================================
+    # BIMANUAL COORDINATION
+    # =========================================================================
+    # Simultaneous Actions
+    "hold_with_left",
+    "hold_with_right",
+    "grasp_with_both",
+    "release_both",
+    "coordinate_hands",
+    "synchronize_hands",
+    # Asymmetric Bimanual
+    "hold_while",
+    "stabilize_while",
+    "support_while",
+    "hold_and_manipulate",
+    "steady_and_cut",
+    "anchor_and_pull",
+    "brace_and_twist",
+    # Hand-to-Hand Transfer
+    "handoff_between_hands",
+    "transfer_hand_to_hand",
+    "pass_left_to_right",
+    "pass_right_to_left",
+    "regrasp",
+    "adjust_grip",
+    # Cooperative Manipulation
+    "pull_apart",
+    "push_together",
+    "spread_open",
+    "compress_between_hands",
+    "stretch_between_hands",
+    "tear_with_both",
+    "fold_with_both",
+    # =========================================================================
+    # SPATIAL / RELATIONAL POSITIONING
+    # =========================================================================
+    # Relative Positioning
+    "position_relative_to",
+    "place_relative_to",
+    "align_with",
+    "align_to",
+    "align_parallel",
+    "align_perpendicular",
+    "orient_toward",
+    "orient_away",
+    "face_toward",
+    "center_on",
+    "center_over",
+    "center_in",
+    # Spatial Relations
+    "place_next_to",
+    "place_beside",
+    "place_behind",
+    "place_in_front",
+    "place_above",
+    "place_below",
+    "place_between",
+    "place_inside",
+    "place_outside",
+    "place_around",
+    "stack_on",
+    "stack_under",
+    "nest_in",
+    "nest_within",
+    # Distance/Proximity
+    "move_closer",
+    "move_away",
+    "move_toward",
+    "move_from",
+    "bring_together",
+    "separate",
+    "space_apart",
+    "spread_out",
+    "close_gap",
+    "widen_gap",
+    "maintain_distance",
+    # Geometric Operations
+    "rotate_around",
+    "orbit",
+    "revolve_around",
+    "mirror",
+    "reflect",
+    "symmetrize",
+    "offset",
+    "displace",
+    "translate",
+    # =========================================================================
+    # TEMPORAL / SEQUENTIAL CONTROL
+    # =========================================================================
+    # Duration Control
+    "hold_for",
+    "maintain_for",
+    "sustain_for",
+    "wait_for",
+    "pause_for",
+    "delay_for",
+    "continue_for",
+    "persist_for",
+    # Conditional Actions
+    "wait_until",
+    "hold_until",
+    "continue_until",
+    "repeat_until",
+    "retry_until",
+    "stop_when",
+    "pause_when",
+    "resume_when",
+    # Repetition
+    "repeat",
+    "iterate",
+    "cycle",
+    "loop",
+    "alternate",
+    "oscillate",
+    "reciprocate",
+    # Timing/Synchronization
+    "synchronize_with",
+    "coordinate_with",
+    "time_with",
+    "trigger_on",
+    "respond_to",
+    "react_to",
+    # Sequential Flow
+    "start",
+    "begin",
+    "initiate",
+    "finish",
+    "complete",
+    "finalize",
+    "end",
+    "proceed_to",
+    "advance_to",
+    "transition_to",
+    # =========================================================================
+    # STATE VERIFICATION / OBSERVABLE REASONING
+    # =========================================================================
+    # Visual Verification
+    "verify",
+    "verify_that",
+    "check_if",
+    "check_whether",
+    "confirm",
+    "confirm_that",
+    "ensure",
+    "ensure_that",
+    "validate",
+    "validate_that",
+    # State Checking
+    "check_state",
+    "check_position",
+    "check_alignment",
+    "check_level",
+    "check_temperature",
+    "check_pressure",
+    "is_open",
+    "is_closed",
+    "is_locked",
+    "is_unlocked",
+    "is_on",
+    "is_off",
+    "is_full",
+    "is_empty",
+    # Comparison
+    "compare",
+    "compare_to",
+    "compare_with",
+    "match_to",
+    "match_with",
+    "matches",
+    "differs_from",
+    "equals",
+    # Condition Assessment
+    "assess",
+    "evaluate",
+    "judge",
+    "determine",
+    "test",
+    "test_if",
+    "probe_for",
+    "sense_if",
+    "detect_if",
+    "detect_whether",
+    # Error Detection
+    "check_for_error",
+    "detect_fault",
+    "identify_problem",
+    "notice_discrepancy",
+    "spot_issue",
+    # Success Criteria
+    "confirm_complete",
+    "verify_success",
+    "check_result",
+    "validate_outcome",
+    "ensure_correct",
+    # =========================================================================
+    # COLLABORATIVE / SOCIAL MANIPULATION
+    # =========================================================================
+    # Joint Manipulation
+    "hand_to",
+    "receive_from",
+    "accept_from",
+    "give_to",
+    "offer_to",
+    "present_to",
+    "pass_to",
+    "take_from",
+    # Coordinated Actions
+    "lift_together",
+    "carry_together",
+    "move_together",
+    "hold_together",
+    "support_together",
+    "push_together_with",
+    "pull_together_with",
+    # Turn-Taking
+    "wait_for_turn",
+    "take_turn",
+    "yield_turn",
+    "signal_ready",
+    "signal_done",
+    "signal_wait",
+    # Attention Direction
+    "direct_attention",
+    "redirect_attention",
+    "call_attention_to",
+    "draw_attention_to",
+    # =========================================================================
+    # FINE MOTOR / DEXTEROUS MANIPULATION
+    # =========================================================================
+    # Finger Control
+    "pinch_grip",
+    "precision_grip",
+    "power_grip",
+    "fingertip_grasp",
+    "palmar_grasp",
+    "lateral_pinch",
+    "index_point",
+    "thumb_press",
+    "finger_tap",
+    # Dexterous Actions
+    "roll_between_fingers",
+    "spin_between_fingers",
+    "flip_with_fingers",
+    "flick",
+    "snap_fingers",
+    "rub",
+    "stroke",
+    "caress",
+    # Small Object Manipulation
+    "pick_up_small",
+    "place_precisely",
+    "position_finely",
+    "insert_precisely",
+    "thread_needle",
+    "lace_through",
+    # Texture Interaction
+    "feel_texture",
+    "sense_surface",
+    "detect_edge",
+    "trace_edge",
+    "trace_contour",
+    "follow_edge",
+    # =========================================================================
+    # SAFETY / PROTECTIVE ACTIONS
+    # =========================================================================
+    # Hazard Avoidance
+    "avoid_hazard",
+    "steer_clear_of",
+    "keep_away_from",
+    "maintain_safe_distance",
+    "watch_out_for",
+    "be_aware_of",
+    "anticipate_danger",
+    # Protective Actions
+    "shield_from",
+    "protect_from",
+    "guard_against",
+    "cover_from",
+    "block_hazard",
+    "deflect",
+    "intercept_danger",
+    "wear_protection",
+    "don_ppe",
+    "put_on_gloves",
+    "put_on_goggles",
+    # Safe Handling
+    "handle_carefully",
+    "handle_gently",
+    "handle_with_care",
+    "move_slowly",
+    "move_cautiously",
+    "proceed_carefully",
+    "lift_safely",
+    "carry_safely",
+    "set_down_gently",
+    # Boundary Respect
+    "stay_within_bounds",
+    "respect_boundary",
+    "maintain_clearance",
+    "keep_clear_of",
+    "stay_behind",
+    "stay_back",
+    # Stabilization/Securing
+    "stabilize_load",
+    "secure_object",
+    "anchor_safely",
+    "lock_in_place",
+    "immobilize_safely",
+    "prevent_movement",
+    # Emergency Stop
+    "emergency_stop",
+    "halt_immediately",
+    "freeze_motion",
+    "kill_power",
+    "cut_power",
+    "disengage",
+    # Warning Actions
+    "warn_others",
+    "signal_danger",
+    "alert_nearby",
+    "sound_alarm",
+    "flash_warning",
+    "display_caution",
+    # =========================================================================
+    # FAILURE DETECTION / ERROR HANDLING
+    # =========================================================================
+    # Failure Detection
+    "detect_failure",
+    "detect_error",
+    "detect_anomaly",
+    "notice_problem",
+    "spot_malfunction",
+    "identify_fault",
+    "sense_slip",
+    "sense_drop",
+    "detect_jam",
+    "detect_stuck",
+    "detect_collision",
+    "sense_impact",
+    "feel_resistance",
+    # Error Classification
+    "classify_error",
+    "diagnose_problem",
+    "identify_cause",
+    "determine_failure_type",
+    "assess_damage",
+    "evaluate_severity",
+    # Failure Acknowledgment
+    "acknowledge_error",
+    "register_failure",
+    "log_incident",
+    "report_malfunction",
+    "flag_issue",
+    "mark_as_failed",
+    # =========================================================================
+    # FAILURE RECOVERY / RETRY
+    # =========================================================================
+    # Basic Recovery
+    "recover",
+    "recover_from",
+    "recover_from_failure",
+    "retry",
+    "retry_action",
+    "try_again",
+    "reattempt",
+    "redo",
+    "redo_step",
+    "restart_action",
+    # State Recovery
+    "reset",
+    "reset_to_initial",
+    "return_to_start",
+    "restore_state",
+    "revert_to",
+    "rollback",
+    "clear_error",
+    "clear_fault",
+    "reset_system",
+    # Object Recovery
+    "retrieve_dropped",
+    "pick_up_fallen",
+    "recover_object",
+    "catch_falling",
+    "intercept_drop",
+    "save_from_falling",
+    "regrasp_slipped",
+    "re_acquire",
+    "regain_hold",
+    # Position Recovery
+    "reposition",
+    "realign",
+    "recenter",
+    "readjust",
+    "correct_position",
+    "fix_alignment",
+    "straighten",
+    # Unjamming/Unsticking
+    "unjam",
+    "unstick",
+    "free_stuck",
+    "clear_obstruction",
+    "dislodge",
+    "wiggle_free",
+    "work_loose",
+    "unclog",
+    "unblock",
+    "clear_blockage",
+    # Untangling
+    "untangle",
+    "unravel",
+    "unknot",
+    "unsnarl",
+    "separate_tangled",
+    "free_from_tangle",
+    # =========================================================================
+    # ADAPTIVE / JUGAAD STRATEGIES
+    # =========================================================================
+    # Alternative Approaches
+    "try_alternative",
+    "use_workaround",
+    "find_another_way",
+    "improvise",
+    "adapt_approach",
+    "modify_strategy",
+    "use_different_method",
+    "switch_technique",
+    # Substitution
+    "substitute",
+    "use_substitute",
+    "replace_with",
+    "use_instead",
+    "swap_for",
+    "interchange",
+    "make_do_with",
+    "use_available",
+    # Repurposing
+    "repurpose",
+    "use_as",
+    "convert_to",
+    "adapt_for",
+    "use_creatively",
+    "find_alternative_use",
+    # Makeshift Solutions
+    "improvise_tool",
+    "create_makeshift",
+    "fashion_temporary",
+    "rig_up",
+    "jury_rig",
+    "cobble_together",
+    "use_as_lever",
+    "use_as_wedge",
+    "use_as_support",
+    # Force Alternatives
+    "apply_more_force",
+    "apply_less_force",
+    "try_different_angle",
+    "approach_from_different_side",
+    "change_grip",
+    "use_leverage",
+    "use_momentum",
+    "use_gravity",
+    # Multi-Attempt Strategies
+    "try_multiple_times",
+    "persist",
+    "keep_trying",
+    "attempt_variations",
+    "cycle_through_options",
+    # =========================================================================
+    # CONSTRAINT HANDLING / PROBLEM SOLVING
+    # =========================================================================
+    # Constraint Detection
+    "detect_constraint",
+    "identify_limitation",
+    "find_obstacle",
+    "recognize_restriction",
+    "notice_blockage",
+    "assess_constraint",
+    "evaluate_limitation",
+    # Constraint Navigation
+    "work_around",
+    "navigate_constraint",
+    "bypass_obstacle",
+    "avoid_restriction",
+    "circumvent_limitation",
+    "find_path_around",
+    "route_around",
+    # Space Constraints
+    "fit_into",
+    "squeeze_into",
+    "maneuver_through",
+    "navigate_tight_space",
+    "work_in_confined_area",
+    "reach_into",
+    "extend_into",
+    "access_restricted",
+    # Force/Resistance Constraints
+    "overcome_resistance",
+    "push_through",
+    "break_through",
+    "force_past",
+    "power_through",
+    "work_against",
+    "counter_resistance",
+    # Sequence Constraints
+    "reorder",
+    "change_sequence",
+    "skip_step",
+    "combine_steps",
+    "parallelize",
+    "serialize",
+    "do_first",
+    "do_after",
+    "do_before",
+    # Resource Constraints
+    "conserve",
+    "minimize_use",
+    "optimize_usage",
+    "ration",
+    "allocate_efficiently",
+    "prioritize",
+    # =========================================================================
+    # GRACEFUL DEGRADATION / PARTIAL SUCCESS
+    # =========================================================================
+    # Partial Completion
+    "complete_partially",
+    "do_partial",
+    "achieve_partial",
+    "accomplish_minimum",
+    "meet_minimum_requirement",
+    "do_best_effort",
+    "do_what_possible",
+    # Fallback Actions
+    "fall_back_to",
+    "use_fallback",
+    "resort_to",
+    "default_to",
+    "switch_to_backup",
+    "use_simpler_method",
+    "use_basic_approach",
+    # Graceful Stop
+    "stop_gracefully",
+    "halt_safely",
+    "pause_safely",
+    "leave_in_safe_state",
+    "secure_before_stopping",
+    "complete_current_step",
+    "finish_safely",
+    # Handoff
+    "hand_off_to_human",
+    "request_assistance",
+    "call_for_help",
+    "escalate",
+    "defer_to",
+    "ask_for_help",
+    "signal_need_help",
+    "indicate_stuck",
+    # =========================================================================
+    # PREVENTIVE / PROACTIVE ACTIONS
+    # =========================================================================
+    # Prevention
+    "prevent",
+    "prevent_from",
+    "stop_before",
+    "preempt",
+    "head_off",
+    "forestall",
+    "avoid_beforehand",
+    "anticipate_and_prevent",
+    # Pre-checking
+    "pre_check",
+    "verify_before",
+    "confirm_before",
+    "test_before",
+    "validate_before",
+    "ensure_before",
+    "check_prerequisites",
+    "verify_conditions",
+    # Preparation for Failure
+    "prepare_for_failure",
+    "set_up_fallback",
+    "create_backup",
+    "establish_recovery_point",
+    "save_state",
+    "position_for_recovery",
+    "enable_undo",
+    # Monitoring
+    "monitor_continuously",
+    "watch_for_problems",
+    "track_progress",
+    "observe_for_anomaly",
+    "check_periodically",
+    "sense_continuously",
+    "maintain_awareness",
+}
+
+
+def is_generic_template(name: str, description: str) -> bool:
+    """Check if this looks like a generic template output."""
+    name_lower = name.lower().strip()
+    desc_lower = description.lower().strip()
+
+    # Reject "Step N:" descriptions
+    if re.match(r"^step\s+\d+\s*:", desc_lower):
+        return True
+
+    # Reject {generic_verb} {generic_noun} patterns
+    words = name_lower.replace("_", " ").split()
+    if len(words) == 2:
+        verb, noun = words
+        if verb in GENERIC_VERBS and noun in GENERIC_NOUNS:
+            return True
+
+    # Reject very short descriptions that just repeat the name
+    if desc_lower and len(desc_lower) < 20:
+        if name_lower in desc_lower or desc_lower in name_lower:
+            return True
+
+    return False
+
+
+def is_valid_atomic(name: str) -> bool:
+    """Check if this is a valid atomic action."""
+    name_lower = name.lower().replace("_", " ").replace("-", " ")
+
+    # Check if starts with a valid atomic verb
+    for verb in ATOMIC_VERBS:
+        verb_pattern = verb.replace("_", " ")
+        if name_lower.startswith(verb_pattern + " ") or name_lower == verb_pattern:
+            return True
+
+    return False
+
+
+# ============================================================================
+# SYSTEM PROMPT - Optimized for VLA/VLN/WBC Training
+# ============================================================================
+
+SYSTEM_PROMPT = """You are decomposing human tasks into training data for humanoid robots (VLA/VLN/Whole-Body Control).
+
+## GOAL
+Break tasks into ATOMIC ACTIONS that a robot can learn from demonstrations or execute via learned policies.
+
+## WHAT MAKES A GOOD ATOMIC ACTION (for robot training)
+1. **Observable**: Can be demonstrated and recorded (video/mocap)
+2. **Executable**: Single motor primitive with clear start/end states
+3. **Groundable**: References SPECIFIC objects/locations, not abstractions
+4. **Repeatable**: Same action structure applies across contexts
+
+## ATOMIC ACTION CATEGORIES
+
+**Manipulation (arm/hand control):**
+- grasp <specific_object> - close gripper/hand on object
+- release <object> - open gripper, let go
+- pick_up <object> from <surface/container>
+- place <object> on/in <target_location>
+- push/pull <object> <direction/distance>
+- rotate/twist <object> <angle/direction>
+- insert <object> into <receptacle>
+- pour <substance> from <source> into <target>
+- open/close <door/drawer/lid/container>
+- press/push <button/switch/key>
+- turn <knob/dial/handle> <direction>
+- slide <object> <direction>
+- flip/toss <object>
+- catch <object>
+- hold <object> while <other_action> (bimanual)
+- stabilize <object> with <hand>
+
+**Locomotion/Navigation (VLN - whole body):**
+- walk_to <specific_location/object>
+- approach <target> until <distance>
+- navigate_around <obstacle>
+- enter/exit <room/door/area>
+- climb/descend <stairs/ladder/step>
+- turn_to_face <direction/object>
+- step <direction> <distance>
+- crouch/stand/kneel
+- lean <direction> to <reach/see>
+- balance_on <surface>
+
+**Active Perception (head/gaze/sensors):**
+- look_at <target_object/location>
+- scan <area> for <object_type>
+- track <moving_object> visually
+- read <text/display/label>
+- inspect <object> for <property>
+- listen_for <sound_type>
+- feel/probe <surface> for <property>
+- measure <dimension> of <object>
+
+**Communication/Social (for HRI):**
+- say "<utterance>"
+- gesture <type> toward <target>
+- point_at <object/direction>
+- nod/shake_head
+- make_eye_contact with <person>
+- hand_over <object> to <person>
+- receive <object> from <person>
+
+## OUTPUT FORMAT
+```json
+{
+    "is_atomic": boolean,
+    "subtasks": [
+        {
+            "name": "<verb> <specific_object/location>",
+            "description": "Physical execution: <how body moves>. Sensing: <what to perceive>. Success: <end state>.",
+            "is_atomic": boolean,
+            "category": "manipulation|locomotion|perception|communication"
+        }
+    ]
+}
+```
+
+## RULES FOR VLA/VLN TRAINING UTILITY
+1. **Specific objects**: "grasp the red mug" not "grasp object" - robots need grounded references
+2. **Physical descriptions**: Include body parts, forces, directions - "extend right arm forward, close fingers around handle"
+3. **Clear success criteria**: "until fingers contact surface" or "until object is 10cm above table"
+4. **Sensing modalities**: Specify visual/tactile/proprioceptive feedback needed
+5. **No abstractions**: Decompose cognitive tasks (decide, plan, think) into observable actions
+6. **Reusable primitives**: "pick_up mug from table" is reusable; "do the mug thing" is not
+7. **3-8 subtasks**: Enough granularity without over-fragmentation
+
+## ANTI-PATTERNS (reject these)
+- "Step 1: prepare materials" - generic, not trainable
+- "check equipment" - what sensing? what equipment?
+- "handle the situation" - not executable
+- "process the items" - not physical"""
+
+
+def make_prompt(node: TaskNode) -> str:
+    """Create the decomposition prompt for VLA/VLN training."""
+    context_parts = []
+    if node.description:
+        context_parts.append(f"Description: {node.description}")
+    if node.parent_id:
+        parent_parts = node.parent_id.split("/")
+        if len(parent_parts) >= 2:
+            context_parts.append(f"Domain: {parent_parts[0].replace('_', ' ')}")
+        if len(parent_parts) >= 3:
+            context_parts.append(f"Parent task: {parent_parts[-1].replace('_', ' ')}")
+
+    context = "\n".join(context_parts) if context_parts else ""
+
+    return f"""Decompose into atomic actions for humanoid robot training:
+
+**Task:** {node.name}
+{context}
+
+For each subtask, specify:
+- The PHYSICAL motion (which body parts, what trajectory)
+- The SENSING required (visual, tactile, proprioceptive)
+- The SUCCESS condition (how robot knows it's done)
+
+Output JSON with specific, trainable actions."""
+
+
+# ============================================================================
+# CORE GENERATOR
+# ============================================================================
 
 
 class AtomicCounter:
@@ -55,6 +1943,7 @@ class FastGenConfig:
     mock: bool = False
     save_interval: int = 200
     tui: bool = True
+    validate: bool = True  # Enable validation
 
 
 class GeneratorCore:
@@ -72,6 +1961,7 @@ class GeneratorCore:
         self.api_calls = AtomicCounter(0)
         self.in_flight = AtomicCounter(0)
         self.work_queued = AtomicCounter(0)
+        self.rejected = AtomicCounter(0)  # Validation rejections
 
         # Track processed
         self._processed_ids: set[str] = set()
@@ -144,40 +2034,8 @@ class GeneratorCore:
         self.in_flight.increment()
 
         try:
-            system_prompt = """You are an expert at decomposing human tasks into atomic subtasks for robot learning.
-
-GOAL: Break down tasks until you reach ATOMIC actions that a robot can execute directly.
-
-ATOMIC actions are single, indivisible motor primitives like:
-- grasp [object]
-- release [object]
-- move_to [location]
-- push/pull [object]
-- rotate [object]
-- press [button/switch]
-- pour [substance]
-- insert [object] into [container]
-
-Return JSON:
-{
-    "is_atomic": true/false,
-    "subtasks": [
-        {"name": "action name", "description": "what this does", "is_atomic": true/false}
-    ]
-}
-
-If the task IS atomic, return {"is_atomic": true, "subtasks": []}
-Otherwise, decompose into 3-8 subtasks, going as fine-grained as possible."""
-
-            prompt = f"""Decompose this task for robot execution:
-
-Task: {node.name}
-{f'Description: {node.description}' if node.description else ''}
-{f'Context: {node.parent_id}' if node.parent_id else ''}
-
-Break it down into the smallest possible subtasks."""
-
-            response = self._client.generate(prompt, system_prompt, use_thinking=False)
+            prompt = make_prompt(node)
+            response = self._client.generate(prompt, SYSTEM_PROMPT, use_thinking=False)
 
             # Parse JSON
             json_text = response.strip()
@@ -209,7 +2067,7 @@ Break it down into the smallest possible subtasks."""
             self.in_flight.increment(-1)
 
     def _process_result(self, result: dict) -> int:
-        """Process a decomposition result. Returns count of new nodes."""
+        """Process a decomposition result with validation."""
         if not result.get("success"):
             return 0
 
@@ -221,6 +2079,13 @@ Break it down into the smallest possible subtasks."""
         self.mark_processed(node_id)
 
         if is_atomic or not subtasks:
+            # Validate atomic
+            if self.config.validate and not is_valid_atomic(node.name):
+                # Don't mark as atomic if it doesn't look like one
+                # Just skip - it will be reprocessed or stay as subtask
+                self.rejected.increment()
+                return 0
+
             node.node_type = NodeType.ATOMIC
             with self._pending_lock:
                 self._pending_nodes.append(node)
@@ -235,16 +2100,34 @@ Break it down into the smallest possible subtasks."""
                 if not name:
                     continue
 
+                description = subtask.get("description", "")
+
+                # Validate: reject generic templates
+                if self.config.validate and is_generic_template(name, description):
+                    self.rejected.increment()
+                    continue
+
                 child_type = NodeType.ATOMIC if subtask.get("is_atomic") else NodeType.SUBTASK
+
+                # Extra validation for atomic claims
+                if child_type == NodeType.ATOMIC and self.config.validate:
+                    if not is_valid_atomic(name):
+                        child_type = NodeType.SUBTASK  # Downgrade to subtask
 
                 child = TaskNode(
                     id=TaskNode.make_id(name, node.id),
                     name=name,
                     node_type=child_type,
                     parent_id=node.id,
-                    description=subtask.get("description", ""),
+                    description=description,
                     sources=[SeedSource.LLM_GENERATED],
                 )
+
+                # Add category as tag if provided
+                category = subtask.get("category", "")
+                if category:
+                    child.tags = [category]
+
                 try:
                     self.graph.add_node(child, save=False)
                     self._pending_nodes.append(child)
@@ -293,6 +2176,11 @@ Break it down into the smallest possible subtasks."""
         self._shutdown.set()
 
 
+# ============================================================================
+# RUNNERS
+# ============================================================================
+
+
 def run_without_tui(config: FastGenConfig) -> dict:
     """Run generation without TUI - simple progress output."""
     from tqdm import tqdm
@@ -301,11 +2189,12 @@ def run_without_tui(config: FastGenConfig) -> dict:
     initial_count = len(list(core.graph.iter_nodes()))
 
     print(f"\n{'='*60}")
-    print(f"  Task Mining (no TUI)")
+    print(f"  Task Mining (improved prompts + validation)")
     print(f"{'='*60}")
-    print(f"  Output:    {config.output_dir}")
-    print(f"  Workers:   {config.max_workers}")
-    print(f"  Initial:   {initial_count:,} nodes")
+    print(f"  Output:     {config.output_dir}")
+    print(f"  Workers:    {config.max_workers}")
+    print(f"  Validate:   {config.validate}")
+    print(f"  Initial:    {initial_count:,} nodes")
     print(f"{'='*60}\n")
 
     pbar = tqdm(total=config.max_tasks, desc="Mining", unit="tasks")
@@ -337,6 +2226,7 @@ def run_without_tui(config: FastGenConfig) -> dict:
                         {
                             "rpm": f"{core.get_rpm():.0f}",
                             "atomic": core.atomic_found.value,
+                            "rej": core.rejected.value,
                             "err": core.errors.value,
                         }
                     )
@@ -358,6 +2248,7 @@ def run_without_tui(config: FastGenConfig) -> dict:
     print(f"{'='*60}")
     print(f"  Generated: {core.generated.value:,}")
     print(f"  Atomic:    {core.atomic_found.value:,}")
+    print(f"  Rejected:  {core.rejected.value:,}")
     print(f"  Errors:    {core.errors.value}")
     print(f"  Time:      {elapsed:.0f}s")
     print(f"  Avg RPM:   {core.get_rpm():.0f}")
@@ -367,6 +2258,7 @@ def run_without_tui(config: FastGenConfig) -> dict:
     return {
         "generated": core.generated.value,
         "atomic_found": core.atomic_found.value,
+        "rejected": core.rejected.value,
         "errors": core.errors.value,
         "api_calls": core.api_calls.value,
     }
@@ -375,7 +2267,7 @@ def run_without_tui(config: FastGenConfig) -> dict:
 def run_with_tui(config: FastGenConfig) -> dict:
     """Run generation with Textual TUI."""
     from textual.app import App, ComposeResult
-    from textual.widgets import Header, Footer, Static, ProgressBar, Label, RichLog
+    from textual.widgets import Header, Footer, Static, ProgressBar, Label
     from textual.containers import Container
 
     # Create core outside the app
@@ -412,7 +2304,7 @@ def run_with_tui(config: FastGenConfig) -> dict:
         }
 
         #stats-section {
-            height: 12;
+            height: 14;
             padding: 1 2;
             border: solid $secondary;
             margin: 1;
@@ -442,7 +2334,7 @@ def run_with_tui(config: FastGenConfig) -> dict:
 
         def compose(self) -> ComposeResult:
             yield Header()
-            yield Static("🚀 CONTINUOUS FLOW TASK MINING", id="title")
+            yield Static("TASK MINING (improved prompts + validation)", id="title")
 
             with Container(id="progress-section"):
                 yield Label(f"Progress: 0 / {config.max_tasks:,}", id="progress-label")
@@ -504,6 +2396,7 @@ def run_with_tui(config: FastGenConfig) -> dict:
   Generated:  {core.generated.value:>10,}     ETA: {eta}
   Atomic:     {core.atomic_found.value:>10,}
   Decomposed: {core.decomposed.value:>10,}
+  Rejected:   {core.rejected.value:>10,}     (validation)
   Errors:     {core.errors.value:>10,}
   API Calls:  {core.api_calls.value:>10,}
   ─────────────────
@@ -560,7 +2453,7 @@ def run_with_tui(config: FastGenConfig) -> dict:
                             nodes = list(core.iter_decomposable(limit=200))
                             core.work_queued.set(len(nodes))
                             if not nodes:
-                                core.set_status("✅ Hierarchy fully mined! Press Q to exit.")
+                                core.set_status("Hierarchy fully mined! Press Q to exit.")
                                 core._done = True
                                 break
 
@@ -579,7 +2472,7 @@ def run_with_tui(config: FastGenConfig) -> dict:
                                 core.errors.increment()
 
                         if save_counter >= config.save_interval:
-                            core.set_status("💾 Saving...")
+                            core.set_status("Saving...")
                             core.save_pending()
                             save_counter = 0
 
@@ -590,15 +2483,16 @@ def run_with_tui(config: FastGenConfig) -> dict:
                     "generated": core.generated.value,
                     "atomic_found": core.atomic_found.value,
                     "decomposed": core.decomposed.value,
+                    "rejected": core.rejected.value,
                     "errors": core.errors.value,
                     "api_calls": core.api_calls.value,
                 }
 
                 if core.generated.value >= config.max_tasks:
-                    core.set_status(f"✅ Reached {config.max_tasks:,} tasks! Press Q to exit.")
+                    core.set_status(f"Reached {config.max_tasks:,} tasks! Press Q to exit.")
 
             except Exception as e:
-                core.set_status(f"❌ Error: {e}")
+                core.set_status(f"Error: {e}")
 
         def action_quit(self) -> None:
             self._running = False
@@ -608,7 +2502,7 @@ def run_with_tui(config: FastGenConfig) -> dict:
 
         def action_save(self) -> None:
             core.save_pending()
-            core.set_status("💾 Saved!")
+            core.set_status("Saved!")
 
     # Run the app
     app = GeneratorApp()
@@ -623,6 +2517,7 @@ def run_with_tui(config: FastGenConfig) -> dict:
     print(f"{'='*60}")
     print(f"  Generated: {core.generated.value:,}")
     print(f"  Atomic:    {core.atomic_found.value:,}")
+    print(f"  Rejected:  {core.rejected.value:,}")
     print(f"  Errors:    {core.errors.value}")
     print(f"  Time:      {elapsed:.0f}s")
     print(f"  Avg RPM:   {core.get_rpm():.0f}")
@@ -666,6 +2561,7 @@ def main():
     parser.add_argument("--rpm", type=int, default=1000, help="Rate limit (RPM)")
     parser.add_argument("--mock", action="store_true", help="Use mock LLM")
     parser.add_argument("--no-tui", action="store_true", help="Disable TUI")
+    parser.add_argument("--no-validate", action="store_true", help="Disable output validation")
     args = parser.parse_args()
 
     config = FastGenConfig(
@@ -676,6 +2572,7 @@ def main():
         rpm_limit=args.rpm,
         mock=args.mock,
         tui=not args.no_tui,
+        validate=not args.no_validate,
     )
 
     run(config)

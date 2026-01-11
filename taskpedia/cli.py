@@ -329,6 +329,107 @@ atomic = ds["full"].filter(lambda x: x["is_atomic"])
     print(f"\nUploaded to: https://huggingface.co/datasets/{repo_id}")
 
 
+def cmd_qa_analyze(args):
+    """Analyze data quality."""
+    from taskpedia.postprocess import analyze_quality
+
+    task_dir = Path(args.output)
+    if not task_dir.exists():
+        print(f"Error: {task_dir} not found")
+        sys.exit(1)
+
+    print(f"Analyzing {task_dir}...\n")
+    result = analyze_quality(task_dir)
+    stats = result["stats"]
+
+    print("Quality Analysis")
+    print("=" * 50)
+    print(f"  Total nodes:           {stats['total']:>10,}")
+    print(f"  LLM-generated:         {stats['llm_generated']:>10,}")
+    print()
+    print("Issues found:")
+    print(f"  Generic 'Step N' desc: {stats['generic_step_desc']:>10,}")
+    print(f"  Generic template:      {stats['generic_template']:>10,}")
+    print(f"  Invalid atomic:        {stats['invalid_atomic']:>10,}")
+    print(f"  Empty description:     {stats['empty_description']:>10,}")
+    print()
+    print(f"  Good quality:          {stats['good_quality']:>10,}")
+    print(f"  Valid atomic:          {stats['valid_atomic']:>10,}")
+
+    if result["bad_examples"]:
+        print("\nBad examples:")
+        for ex in result["bad_examples"][:10]:
+            print(f"  [{ex['type']}] {ex['name']}")
+            print(f"       {ex['desc']}")
+
+    if result["good_examples"]:
+        print("\nGood examples:")
+        for ex in result["good_examples"][:5]:
+            print(f"  [{ex['type']}] {ex['name']}")
+            if ex["desc"]:
+                print(f"       {ex['desc']}")
+
+
+def cmd_qa_clean(args):
+    """Remove bad nodes."""
+    from taskpedia.postprocess import (
+        find_bad_nodes,
+        remove_nodes,
+        reset_parent_children,
+        rebuild_manifest,
+    )
+    import yaml
+
+    task_dir = Path(args.output)
+    if not task_dir.exists():
+        print(f"Error: {task_dir} not found")
+        sys.exit(1)
+
+    print(f"Finding bad nodes in {task_dir}...")
+    bad_paths = find_bad_nodes(task_dir)
+    print(f"Found {len(bad_paths):,} bad nodes")
+
+    if not bad_paths:
+        print("Nothing to clean!")
+        return
+
+    if args.dry_run:
+        print("\n[DRY RUN] Would remove:")
+        for p in bad_paths[:20]:
+            print(f"  {p}")
+        if len(bad_paths) > 20:
+            print(f"  ... and {len(bad_paths) - 20} more")
+        print(f"\nRun without --dry-run to actually remove")
+    else:
+        print(f"\nRemoving {len(bad_paths):,} bad nodes...")
+
+        # Collect IDs for parent update
+        removed_ids = set()
+        for p in bad_paths:
+            try:
+                with open(p) as f:
+                    data = yaml.safe_load(f)
+                if data and "id" in data:
+                    removed_ids.add(data["id"])
+            except:
+                pass
+
+        # Remove files
+        count = remove_nodes(bad_paths, dry_run=False)
+        print(f"Removed {count:,} files")
+
+        # Update parents
+        print("Updating parent references...")
+        reset_parent_children(task_dir, removed_ids)
+
+        # Rebuild manifest
+        print("Rebuilding manifest...")
+        node_count = rebuild_manifest(task_dir)
+        print(f"Manifest rebuilt with {node_count:,} nodes")
+
+        print("\nDone!")
+
+
 def cmd_cache_stats(args):
     """Show cache statistics."""
     try:
@@ -521,6 +622,22 @@ Examples:
     cache_clear = cache_sub.add_parser("clear", help="Clear cache")
     cache_clear.set_defaults(func=cmd_cache_clear)
 
+    # ─── QA (subcommands) ───────────────────────────────────
+    qa_parser = subparsers.add_parser(
+        "qa",
+        help="Quality assurance (analyze, clean)",
+    )
+    qa_sub = qa_parser.add_subparsers(dest="qa_cmd", metavar="action")
+
+    # qa analyze
+    qa_analyze = qa_sub.add_parser("analyze", help="Analyze data quality")
+    qa_analyze.set_defaults(func=cmd_qa_analyze)
+
+    # qa clean
+    qa_clean = qa_sub.add_parser("clean", help="Remove bad nodes")
+    qa_clean.add_argument("--dry-run", action="store_true", help="Preview without removing")
+    qa_clean.set_defaults(func=cmd_qa_clean)
+
     # ─── PARSE & RUN ────────────────────────────────────────
     args = parser.parse_args()
 
@@ -536,6 +653,10 @@ Examples:
     elif args.command == "cache":
         if not args.cache_cmd:
             cache_parser.print_help()
+            sys.exit(0)
+    elif args.command == "qa":
+        if not args.qa_cmd:
+            qa_parser.print_help()
             sys.exit(0)
 
     if hasattr(args, "func"):
