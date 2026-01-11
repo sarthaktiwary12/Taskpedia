@@ -3927,6 +3927,176 @@ ATOMIC_VERBS = {
     "kitchener_stitch",
 }
 
+# ============================================================================
+# ACTION VERB CATEGORIES - Derived from ATOMIC_VERBS comments
+# The categories are extracted from the section headers in ATOMIC_VERBS above.
+# This ensures a single source of truth - no duplication.
+# ============================================================================
+
+# Mapping of consolidated category names for the summary
+# (maps parsed header names to cleaner display names)
+_CATEGORY_DISPLAY_NAMES = {
+    "MANIPULATION": "MANIPULATION",
+    "TOOL_OPERATION": "TOOL_USE",
+    "COOKING_FOOD_PREPARATION": "COOKING",
+    "LOCOMOTION": "LOCOMOTION",  # extracted from longer headers
+    "PERCEPTION_ACTIVE_SENSING": "PERCEPTION",
+    "COMMUNICATION_SOCIAL_INTERACTION": "COMMUNICATION",
+    "HUMAN_CARE_MEDICAL": "CAREGIVING",
+    "SAFETY_EMERGENCY": "SAFETY",
+    "SAFETY_PROTECTIVE_ACTIONS": "SAFETY",
+    "VEHICLE_EQUIPMENT_OPERATION": "VEHICLE",
+    "SPORTS_EXERCISE": "SPORTS",
+    "WHOLE-BODY_CONTROL_DYNAMIC_MOTION": "WHOLE_BODY",
+    "BIMANUAL_COORDINATION": "BIMANUAL",
+    "FORCE_COMPLIANCE_CONTROL": "FORCE_CONTROL",
+    "FAILURE_RECOVERY_RETRY": "FAILURE_RECOVERY",
+    "DIGITAL_COMPUTER_INTERACTION": "DIGITAL_INTERACTION",
+    "CLEANING_DETAILED": "CLEANING",
+    "LAUNDRY_FABRIC_CARE": "LAUNDRY",
+    "PERSONAL_GROOMING_EXTENDED": "PERSONAL_CARE",
+    "CHILD_CARE_INFANT_CARE": "CHILDCARE",
+    "ANIMAL_HANDLING_PET_CARE": "PET_CARE",
+    "OUTDOOR_NATURE_RECREATION": "OUTDOOR",
+    "ART_CRAFT_CREATIVE": "CREATIVE",
+    "CONSTRUCTION_BUILDING": "CONSTRUCTION",
+    "AGRICULTURE_GARDENING": "GARDENING",
+    "DEFORMABLE_OBJECT_MANIPULATION": "DEFORMABLES",
+    "LIQUID_HANDLING": "LIQUIDS",
+    "GRANULAR_POWDER_HANDLING": "GRANULAR",
+}
+
+# Key categories to show in summary (most important for task coverage)
+_SUMMARY_CATEGORIES = [
+    "MANIPULATION",
+    "TOOL_OPERATION",
+    "COOKING_FOOD_PREPARATION",
+    "PERCEPTION_ACTIVE_SENSING",
+    "COMMUNICATION_SOCIAL_INTERACTION",
+    "HUMAN_CARE_MEDICAL",
+    "SAFETY_EMERGENCY",
+    "VEHICLE_EQUIPMENT_OPERATION",
+    "SPORTS_EXERCISE",
+    "WHOLE-BODY_CONTROL_DYNAMIC_MOTION",
+    "BIMANUAL_COORDINATION",
+    "FORCE_COMPLIANCE_CONTROL",
+    "FAILURE_RECOVERY_RETRY",
+    "DIGITAL_COMPUTER_INTERACTION",
+    "CLEANING_DETAILED",
+    "OUTDOOR_NATURE_RECREATION",
+    "CHILD_CARE_INFANT_CARE",
+    "CONSTRUCTION_BUILDING",
+]
+
+
+def _parse_atomic_verb_categories() -> dict[str, list[str]]:
+    """
+    Parse ATOMIC_VERBS categories from the source file comments.
+
+    This parses the section headers (# ==== CATEGORY_NAME ====) to extract
+    category->verbs mapping without duplication.
+    """
+    import inspect
+    import os
+
+    # Get the source file path
+    source_file = inspect.getfile(inspect.currentframe())
+
+    with open(source_file, "r") as f:
+        content = f.read()
+
+    # Find the ATOMIC_VERBS section
+    match = re.search(r"ATOMIC_VERBS = \{(.+?)\n\}", content, re.DOTALL)
+    if not match:
+        return {}
+
+    block = match.group(1)
+    categories = {}
+    current_category = None
+    pending_category = None
+
+    for line in block.split("\n"):
+        line = line.strip()
+        if not line:
+            continue
+
+        # Skip separator lines
+        if line.startswith("# ====="):
+            continue
+
+        # Category name line (uppercase with possible special chars)
+        cat_match = re.match(r"^#\s+([A-Z][A-Z0-9_ /()-]+)\s*$", line)
+        if cat_match:
+            pending_category = cat_match.group(1).strip()
+            # Normalize category name
+            pending_category = pending_category.replace("(", "").replace(")", "")
+            pending_category = pending_category.replace("/", "_").replace(" ", "_")
+            pending_category = re.sub(r"_+", "_", pending_category).strip("_").upper()
+            continue
+
+        # Subcategory comment - use pending if available
+        if line.startswith("# ") and "=" not in line:
+            if pending_category:
+                current_category = pending_category
+                pending_category = None
+            continue
+
+        # Verb line
+        verb_match = re.match(r'^"([a-z_]+)"', line)
+        if verb_match:
+            if pending_category:
+                current_category = pending_category
+                pending_category = None
+            if current_category is None:
+                current_category = "MANIPULATION"
+
+            verb = verb_match.group(1)
+            if current_category not in categories:
+                categories[current_category] = []
+            categories[current_category].append(verb)
+
+    return categories
+
+
+# Cache the parsed categories (computed once at module load)
+_ATOMIC_VERB_CATEGORIES_CACHE: dict[str, list[str]] | None = None
+
+
+def get_atomic_verb_categories() -> dict[str, list[str]]:
+    """Get all verb categories (cached)."""
+    global _ATOMIC_VERB_CATEGORIES_CACHE
+    if _ATOMIC_VERB_CATEGORIES_CACHE is None:
+        _ATOMIC_VERB_CATEGORIES_CACHE = _parse_atomic_verb_categories()
+    return _ATOMIC_VERB_CATEGORIES_CACHE
+
+
+def get_action_categories_summary() -> str:
+    """Get a formatted summary of action verb categories for prompts."""
+    categories = get_atomic_verb_categories()
+    lines = []
+
+    # Show key categories first, then others
+    shown = set()
+    for cat_name in _SUMMARY_CATEGORIES:
+        if cat_name in categories:
+            verbs = categories[cat_name]
+            display_name = _CATEGORY_DISPLAY_NAMES.get(cat_name, cat_name)
+            examples = ", ".join(verbs[:8])
+            if len(verbs) > 8:
+                examples += f"... ({len(verbs)} total)"
+            lines.append(f"  {display_name}: {examples}")
+            shown.add(cat_name)
+
+    # Add remaining categories (abbreviated)
+    remaining = [c for c in categories if c not in shown]
+    if remaining:
+        remaining_counts = [
+            f"{_CATEGORY_DISPLAY_NAMES.get(c, c)}({len(categories[c])})" for c in remaining[:10]
+        ]
+        lines.append(f"  + {len(remaining)} more categories: {', '.join(remaining_counts)}...")
+
+    return "\n".join(lines)
+
 
 def is_generic_template(name: str, description: str) -> bool:
     """Check if this looks like a generic template output."""
@@ -4118,9 +4288,15 @@ class AtomicCounter:
 
 @dataclass
 class FastGenConfig:
+    """Configuration for fast generation.
+
+    Note: max_tasks refers to TARGET number of top-level tasks (NodeType.TASK).
+    The system auto-counts existing tasks and generates more to reach the target.
+    """
+
     output_dir: Path
     model: str = "models/gemini-2.5-flash"
-    max_tasks: int = 100000
+    max_tasks: int = 100000  # Target top-level TASK count
     max_workers: int = 128
     queue_size: int = 1000
     rpm_limit: int = 1000
@@ -4137,8 +4313,15 @@ class GeneratorCore:
         self.config = config
         self.graph = TaskGraph(config.output_dir)
 
+        # Count existing top-level tasks
+        self.initial_task_count = sum(
+            1 for n in self.graph.iter_nodes() if n.node_type == NodeType.TASK
+        )
+        self.tasks_to_generate = max(0, config.max_tasks - self.initial_task_count)
+
         # Stats
-        self.generated = AtomicCounter(0)
+        self.generated = AtomicCounter(0)  # All nodes generated this session
+        self.tasks_generated = AtomicCounter(0)  # Top-level TASKs generated this session
         self.decomposed = AtomicCounter(0)
         self.atomic_found = AtomicCounter(0)
         self.errors = AtomicCounter(0)
@@ -4173,7 +4356,28 @@ class GeneratorCore:
         else:
             self._client = LLMClient(config=llm_config)
 
+        # Pre-build decomposable queue (avoid O(N) scans)
+        self._decomposable_queue: list[TaskNode] = []
+        self._queue_lock = threading.Lock()
+        self._rebuild_queue()
+
         self.set_status("Ready")
+
+    def _rebuild_queue(self):
+        """Rebuild the decomposable node queue. Called once at start and when queue empties."""
+        with self._queue_lock:
+            self._decomposable_queue = []
+            for node in self.graph._nodes.values():
+                if node.id in self._processed_ids:
+                    continue
+                if node.children_ids:
+                    continue
+                if node.node_type == NodeType.DOMAIN:
+                    continue
+                if node.node_type == NodeType.ATOMIC:
+                    continue
+                self._decomposable_queue.append(node)
+            self.set_status(f"Queue rebuilt: {len(self._decomposable_queue):,} nodes")
 
     def set_status(self, msg: str):
         with self._status_lock:
@@ -4291,7 +4495,14 @@ class GeneratorCore:
                     self.rejected.increment()
                     continue
 
-                child_type = NodeType.ATOMIC if subtask.get("is_atomic") else NodeType.SUBTASK
+                # Determine child type based on parent
+                if node.node_type == NodeType.DOMAIN:
+                    # Children of domains are TASKs
+                    child_type = NodeType.TASK
+                elif subtask.get("is_atomic"):
+                    child_type = NodeType.ATOMIC
+                else:
+                    child_type = NodeType.SUBTASK
 
                 # Extra validation for atomic claims
                 if child_type == NodeType.ATOMIC and self.config.validate:
@@ -4316,8 +4527,14 @@ class GeneratorCore:
                     self.graph.add_node(child, save=False)
                     self._pending_nodes.append(child)
                     count += 1
-                    if child_type == NodeType.ATOMIC:
+                    if child_type == NodeType.TASK:
+                        self.tasks_generated.increment()
+                    elif child_type == NodeType.ATOMIC:
                         self.atomic_found.increment()
+                    else:
+                        # Add subtasks to decomposable queue for further processing
+                        with self._queue_lock:
+                            self._decomposable_queue.append(child)
                 except ValueError:
                     pass  # Duplicate
 
@@ -4336,25 +4553,23 @@ class GeneratorCore:
         self.graph._save_manifest()
 
     def iter_decomposable(self, limit: int = 500):
-        """Yield nodes that need decomposition."""
-        count = 0
-        for node in self.graph.get_leaves():
-            if count >= limit:
-                break
-            if self.is_processed(node.id):
-                continue
-            if node.children_ids:
-                self.mark_processed(node.id)
-                continue
-            if node.node_type == NodeType.DOMAIN:
-                continue
-            if node.node_type == NodeType.ATOMIC:
-                continue
-            yield node
-            count += 1
+        """Yield nodes that need decomposition. Uses pre-built queue for O(1) access."""
+        with self._queue_lock:
+            # Pop from queue (fast)
+            result = []
+            while self._decomposable_queue and len(result) < limit:
+                node = self._decomposable_queue.pop()
+                if node.id in self._processed_ids:
+                    continue
+                if node.children_ids:
+                    continue
+                result.append(node)
+            return result
 
     def should_stop(self) -> bool:
-        return self._shutdown.is_set() or self.generated.value >= self.config.max_tasks
+        """Stop when we've generated enough top-level tasks or shutdown requested."""
+        current_tasks = self.initial_task_count + self.tasks_generated.value
+        return self._shutdown.is_set() or current_tasks >= self.config.max_tasks
 
     def stop(self):
         self._shutdown.set()
@@ -4375,22 +4590,25 @@ def run_without_tui(config: FastGenConfig) -> dict:
     print(f"\n{'='*60}")
     print(f"  Task Mining (improved prompts + validation)")
     print(f"{'='*60}")
-    print(f"  Output:     {config.output_dir}")
-    print(f"  Workers:    {config.max_workers}")
-    print(f"  Validate:   {config.validate}")
-    print(f"  Initial:    {initial_count:,} nodes")
+    print(f"  Output:       {config.output_dir}")
+    print(f"  Workers:      {config.max_workers}")
+    print(f"  Validate:     {config.validate}")
+    print(f"  Total nodes:  {initial_count:,}")
+    print(f"  Top-level:    {core.initial_task_count:,} / {config.max_tasks:,} tasks")
+    print(f"  To generate:  {core.tasks_to_generate:,} more tasks")
     print(f"{'='*60}\n")
 
-    pbar = tqdm(total=config.max_tasks, desc="Mining", unit="tasks")
+    pbar = tqdm(total=core.tasks_to_generate, desc="Tasks", unit="tasks")
     save_counter = 0
 
     with ThreadPoolExecutor(max_workers=config.max_workers) as executor:
         while not core.should_stop():
-            nodes = list(core.iter_decomposable(limit=config.queue_size))
+            nodes = core.iter_decomposable(limit=config.queue_size)
 
             if not nodes:
                 core.save_pending()
-                nodes = list(core.iter_decomposable(limit=config.queue_size))
+                core._rebuild_queue()  # Rebuild queue from graph
+                nodes = core.iter_decomposable(limit=config.queue_size)
                 if not nodes:
                     print("\n[INFO] No more nodes to decompose")
                     break
@@ -4403,15 +4621,18 @@ def run_without_tui(config: FastGenConfig) -> dict:
                 try:
                     result = future.result(timeout=60)
                     count = core._process_result(result)
-                    pbar.update(count)
                     save_counter += count
+
+                    # Update progress bar to show tasks generated
+                    pbar.n = core.tasks_generated.value
+                    pbar.refresh()
 
                     pbar.set_postfix(
                         {
                             "rpm": f"{core.get_rpm():.0f}",
+                            "nodes": core.generated.value,
                             "atomic": core.atomic_found.value,
                             "rej": core.rejected.value,
-                            "err": core.errors.value,
                         }
                     )
                 except Exception:
@@ -4427,11 +4648,16 @@ def run_without_tui(config: FastGenConfig) -> dict:
     elapsed = core.get_elapsed()
     final_count = len(list(core.graph.iter_nodes()))
 
+    final_tasks = core.initial_task_count + core.tasks_generated.value
+
     print(f"\n{'='*60}")
     print(f"  COMPLETE")
     print(f"{'='*60}")
-    print(f"  Generated: {core.generated.value:,}")
-    print(f"  Atomic:    {core.atomic_found.value:,}")
+    print(
+        f"  Top-level tasks: {final_tasks:,} (was {core.initial_task_count:,}, +{core.tasks_generated.value:,})"
+    )
+    print(f"  All nodes:       {core.generated.value:,} generated")
+    print(f"  Atomic:          {core.atomic_found.value:,}")
     print(f"  Rejected:  {core.rejected.value:,}")
     print(f"  Errors:    {core.errors.value}")
     print(f"  Time:      {elapsed:.0f}s")
@@ -4515,14 +4741,18 @@ def run_with_tui(config: FastGenConfig) -> dict:
             self._executor: ThreadPoolExecutor | None = None
             self._worker_thread: threading.Thread | None = None
             self._running = True
+            self._graceful_shutdown = False
 
         def compose(self) -> ComposeResult:
             yield Header()
             yield Static("TASK MINING (improved prompts + validation)", id="title")
 
             with Container(id="progress-section"):
-                yield Label(f"Progress: 0 / {config.max_tasks:,}", id="progress-label")
-                yield ProgressBar(total=config.max_tasks, show_eta=True, id="progress-bar")
+                yield Label(
+                    f"Tasks: {core.initial_task_count:,} / {config.max_tasks:,} (need +{core.tasks_to_generate:,})",
+                    id="progress-label",
+                )
+                yield ProgressBar(total=core.tasks_to_generate, show_eta=True, id="progress-bar")
 
             with Container(id="flow-section"):
                 yield Static("─── FLOW ───", id="flow-title")
@@ -4561,12 +4791,13 @@ def run_with_tui(config: FastGenConfig) -> dict:
         def _render_stats(self) -> str:
             elapsed = core.get_elapsed()
             rpm = core.get_rpm()
-            rate = core.generated.value / elapsed if elapsed > 0 else 0
+            current_tasks = core.initial_task_count + core.tasks_generated.value
+            task_rate = core.tasks_generated.value / elapsed if elapsed > 0 else 0
 
-            # ETA
-            if rate > 0:
-                remaining = config.max_tasks - core.generated.value
-                eta_sec = remaining / rate
+            # ETA based on task generation rate
+            if task_rate > 0:
+                remaining = core.tasks_to_generate - core.tasks_generated.value
+                eta_sec = remaining / task_rate
                 if eta_sec > 3600:
                     eta = f"{eta_sec/3600:.1f}h"
                 elif eta_sec > 60:
@@ -4577,30 +4808,45 @@ def run_with_tui(config: FastGenConfig) -> dict:
                 eta = "..."
 
             return f"""─── STATISTICS ───
-  Generated:  {core.generated.value:>10,}     ETA: {eta}
+  Tasks:      {current_tasks:>10,} / {config.max_tasks:,}
+  +Generated: {core.tasks_generated.value:>10,}     ETA: {eta}
+  All Nodes:  {core.generated.value:>10,}
   Atomic:     {core.atomic_found.value:>10,}
   Decomposed: {core.decomposed.value:>10,}
   Rejected:   {core.rejected.value:>10,}     (validation)
   Errors:     {core.errors.value:>10,}
-  API Calls:  {core.api_calls.value:>10,}
   ─────────────────
   RPM:        {rpm:>10.0f}
-  Rate:       {rate:>10.1f} tasks/s
   Elapsed:    {elapsed:>10.0f}s"""
 
         def on_mount(self) -> None:
-            # Start worker thread
-            self._worker_thread = threading.Thread(target=self._run_generation, daemon=True)
+            # Start worker thread (NOT daemon - we need graceful shutdown)
+            self._worker_thread = threading.Thread(target=self._run_generation, daemon=False)
             self._worker_thread.start()
 
             # Update UI periodically
             self.set_interval(0.2, self._update_ui)
 
+            # Register signal handlers for graceful shutdown
+            import signal
+            import atexit
+
+            def graceful_exit(*args):
+                if not self._graceful_shutdown:
+                    self._graceful_shutdown = True
+                    self._running = False
+                    core.stop()
+                    core.save_pending()
+
+            atexit.register(graceful_exit)
+            # Note: signal handlers may not work in all contexts with Textual
+
         def _update_ui(self) -> None:
-            # Progress
-            self.query_one("#progress-bar", ProgressBar).update(progress=core.generated.value)
+            # Progress - track top-level tasks
+            current_tasks = core.initial_task_count + core.tasks_generated.value
+            self.query_one("#progress-bar", ProgressBar).update(progress=core.tasks_generated.value)
             self.query_one("#progress-label", Label).update(
-                f"Progress: {core.generated.value:,} / {config.max_tasks:,}"
+                f"Tasks: {current_tasks:,} / {config.max_tasks:,} (+{core.tasks_generated.value:,} this session)"
             )
 
             # Flow bars
@@ -4623,18 +4869,19 @@ def run_with_tui(config: FastGenConfig) -> dict:
         def _run_generation(self) -> None:
             """Run generation in background thread."""
             save_counter = 0
+            batch_size = min(config.queue_size, 500)  # Use config, cap at 500 for responsiveness
 
             try:
                 with ThreadPoolExecutor(max_workers=config.max_workers) as executor:
                     while self._running and not core.should_stop():
-                        nodes = list(core.iter_decomposable(limit=200))
+                        nodes = core.iter_decomposable(limit=batch_size)
                         core.work_queued.set(len(nodes))
 
                         if not nodes:
                             core.save_pending()
                             save_counter = 0
-                            time.sleep(0.1)
-                            nodes = list(core.iter_decomposable(limit=200))
+                            core._rebuild_queue()  # Rebuild queue from graph
+                            nodes = core.iter_decomposable(limit=batch_size)
                             core.work_queued.set(len(nodes))
                             if not nodes:
                                 core.set_status("Hierarchy fully mined! Press Q to exit.")
@@ -4679,8 +4926,15 @@ def run_with_tui(config: FastGenConfig) -> dict:
                 core.set_status(f"Error: {e}")
 
         def action_quit(self) -> None:
+            if self._graceful_shutdown:
+                return  # Already shutting down
+            self._graceful_shutdown = True
             self._running = False
             core.stop()
+            core.set_status("Saving and shutting down...")
+            # Wait for worker thread to finish current batch (max 5 seconds)
+            if self._worker_thread and self._worker_thread.is_alive():
+                self._worker_thread.join(timeout=5.0)
             core.save_pending()
             self.exit()
 
@@ -4739,7 +4993,13 @@ def main():
 
     parser = argparse.ArgumentParser(description="Fast VLA/VLN task mining")
     parser.add_argument("-o", "--output", default="./task_hierarchy", help="Output directory")
-    parser.add_argument("--max-tasks", type=int, default=100000, help="Max tasks to generate")
+    parser.add_argument(
+        "--max-tasks",
+        "-n",
+        type=int,
+        default=100000,
+        help="Target number of top-level tasks (auto-counts existing)",
+    )
     parser.add_argument("--workers", type=int, default=128, help="Concurrent workers")
     parser.add_argument("--queue-size", type=int, default=1000, help="Work queue size")
     parser.add_argument("--rpm", type=int, default=1000, help="Rate limit (RPM)")
