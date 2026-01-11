@@ -775,10 +775,12 @@ def get_tree_text(task_dir: Path, max_depth: int = 5) -> str:
 def cmd_diversify(args):
     """Analyze tree for gaps and generate new tasks to fill them."""
     import json
+    import threading
     from concurrent.futures import ThreadPoolExecutor, as_completed
     from taskpedia.hierarchy import TaskGraph, TaskNode, NodeType, SeedSource
     from taskpedia.llm import LLMClient, LLMConfig, MockLLMClient
     from taskpedia.generate_fast import get_action_categories_summary
+    from taskpedia.utils import RateLimiter, ProgressTracker
 
     task_dir = Path(args.output)
     if not task_dir.exists():
@@ -795,7 +797,7 @@ def cmd_diversify(args):
     # Step 1: Analyze current structure
     print("\n[1] Analyzing current tree structure...")
     structure = analyze_tree_structure(task_dir)
-    tree_text = get_tree_text(task_dir, max_depth=5)
+    tree_text = get_tree_text(task_dir, max_depth=2)  # L2 tree for context
 
     print(f"    Domains:  {structure['stats']['domains']}")
     print(f"    Tasks:    {structure['stats']['tasks']:,}")
@@ -806,17 +808,51 @@ def cmd_diversify(args):
     # Step 2: Identify gaps using LLM
     print("\n[2] Identifying gaps in coverage...")
 
+    # Concurrency settings
+    max_workers = getattr(args, "workers", 32)
+    rpm_limit = getattr(args, "rpm", 800)
+
+    # Initialize rate limiter from shared utilities
+    rate_limiter = RateLimiter(rpm=rpm_limit)
+
     if args.mock:
         client = MockLLMClient(delay=0.1)
     else:
         llm_config = LLMConfig(model=args.model, thinking_budget=0)
         client = LLMClient(config=llm_config)
 
+    # Show cache status
+    if hasattr(client, "_cache") and client._cache:
+        stats = client.cache_stats
+        print(f"    Cache: {stats.get('hits', 0)} hits, {stats.get('misses', 0)} misses")
+
+    print(f"    Rate limit: {rpm_limit} RPM | Workers: {max_workers}")
+
     graph = TaskGraph(task_dir)
 
-    # Analyze each domain for gaps
+    # Thread-safe counters
+    nodes_created = [0]
     gaps_found = []
-    nodes_created = 0
+    print_lock = threading.Lock()
+
+    def rate_limited_generate(prompt, system_prompt, max_retries=5):
+        """Generate with rate limiting and retries using tenacity-style logic."""
+        last_exception = None
+        for attempt in range(max_retries):
+            rate_limiter.acquire()
+            try:
+                return client.generate(prompt, system_prompt, use_thinking=False)
+            except Exception as e:
+                last_exception = e
+                if attempt < max_retries - 1:
+                    import time
+
+                    wait_time = min(1.0 * (2.0**attempt), 60.0)
+                    time.sleep(wait_time)
+                continue
+        if last_exception:
+            raise last_exception
+        return None
 
     # Get domains to analyze
     domains = [n for n in graph.iter_nodes() if n.node_type == NodeType.DOMAIN]
@@ -825,17 +861,23 @@ def cmd_diversify(args):
         # Filter to specific domain
         domains = [d for d in domains if args.domain.lower() in d.name.lower()]
 
-    print(f"    Analyzing {len(domains)} domains...")
+    print(f"    Analyzing {len(domains)} domains with {max_workers} workers...")
+    print(f"    (Ctrl-C is safe - LLM responses are cached)\n")
 
-    for domain in domains:
-        if args.verbose:
-            print(f"\n    Analyzing: {domain.name}")
+    def parse_json_response(response: str) -> dict:
+        """Parse JSON from LLM response."""
+        json_text = response.strip()
+        if "```json" in json_text:
+            json_text = json_text.split("```json")[1].split("```")[0]
+        elif "```" in json_text:
+            json_text = json_text.split("```")[1].split("```")[0]
+        return json.loads(json_text.strip())
 
-        # Get current tasks under this domain
+    def analyze_domain(domain):
+        """Analyze a single domain for gaps (runs in thread)."""
         domain_tasks = graph.get_children(domain.id)
         task_names = [t.name for t in domain_tasks]
 
-        # Build prompt for gap analysis
         prompt = f"""Analyze this domain for MISSING tasks that humans commonly do:
 
 DOMAIN: {domain.name}
@@ -843,10 +885,15 @@ EXISTING TASKS ({len(task_names)}):
 {chr(10).join(f'  - {name}' for name in task_names[:50])}
 {'  ... and more' if len(task_names) > 50 else ''}
 
+CURRENT TREE STRUCTURE (L2 depth - to avoid overlaps with other domains):
+{tree_text}
+
 ACTION VERB CATEGORIES (use these to inspire task ideas):
 {action_categories}
 
 What important human activities are MISSING from this domain?
+IMPORTANT: Check the tree structure above to avoid suggesting tasks that belong to OTHER domains.
+
 Consider activities involving:
 - Different action types from the categories above
 - Everyday activities most people do
@@ -872,81 +919,31 @@ Return JSON:
 Return 5-15 missing tasks that would significantly improve coverage."""
 
         try:
-            response = client.generate(prompt, DIVERSIFY_SYSTEM_PROMPT, use_thinking=False)
-
-            # Parse JSON
-            json_text = response.strip()
-            if "```json" in json_text:
-                json_text = json_text.split("```json")[1].split("```")[0]
-            elif "```" in json_text:
-                json_text = json_text.split("```")[1].split("```")[0]
-
-            result = json.loads(json_text.strip())
+            response = rate_limited_generate(prompt, DIVERSIFY_SYSTEM_PROMPT)
+            result = parse_json_response(response)
             missing = result.get("missing_tasks", [])
-
-            if args.verbose:
-                print(f"      Found {len(missing)} gaps")
-
-            # Create new task nodes if not dry-run
-            if not args.dry_run and missing:
-                for task_info in missing[: args.max_per_domain]:
-                    task_name = task_info.get("name", "").strip()
-                    if not task_name:
-                        continue
-
-                    # Normalize name
-                    task_name = task_name.lower().replace(" ", "_").replace("-", "_")
-
-                    # Check if already exists
-                    existing = [t.name for t in domain_tasks]
-                    if task_name in existing:
-                        continue
-
-                    # Create new task node
-                    new_task = TaskNode(
-                        id=TaskNode.make_id(task_name, domain.id),
-                        name=task_name,
-                        node_type=NodeType.TASK,
-                        parent_id=domain.id,
-                        description=task_info.get("description", ""),
-                        sources=[SeedSource.LLM_GENERATED],
-                        tags=["gap_filled", "diversification"],
-                    )
-
-                    try:
-                        graph.add_node(new_task)
-                        nodes_created += 1
-                        gaps_found.append(
-                            {
-                                "domain": domain.name,
-                                "task": task_name,
-                                "description": task_info.get("description", ""),
-                            }
-                        )
-                    except ValueError:
-                        pass  # Duplicate
-
+            return {
+                "domain": domain,
+                "domain_tasks": domain_tasks,
+                "missing": missing,
+                "error": None,
+            }
         except Exception as e:
-            if args.verbose:
-                print(f"      Error: {e}")
+            return {"domain": domain, "domain_tasks": [], "missing": [], "error": str(e)}
 
-    # Step 3: Analyze sparse branches
-    print(f"\n[3] Analyzing sparse branches...")
-    sparse = structure["stats"]["sparse_branches"][:20]  # Limit
-
-    for branch in sparse:
-        if args.verbose:
-            print(f"    Expanding: {branch['name']} ({branch['children']} children)")
+    def analyze_sparse_branch(branch_info):
+        """Analyze a sparse branch for expansion (runs in thread)."""
+        branch_name = branch_info["name"]
 
         # Find the node
         node = None
         for n in graph.iter_nodes():
-            if n.name == branch["name"]:
+            if n.name == branch_name:
                 node = n
                 break
 
         if not node:
-            continue
+            return {"branch": branch_info, "node": None, "missing": [], "error": "not found"}
 
         existing_children = graph.get_children(node.id)
         child_names = [c.name for c in existing_children]
@@ -979,25 +976,144 @@ Return JSON:
 Return 5-10 missing subtasks."""
 
         try:
-            response = client.generate(prompt, DIVERSIFY_SYSTEM_PROMPT, use_thinking=False)
-
-            json_text = response.strip()
-            if "```json" in json_text:
-                json_text = json_text.split("```json")[1].split("```")[0]
-            elif "```" in json_text:
-                json_text = json_text.split("```")[1].split("```")[0]
-
-            result = json.loads(json_text.strip())
+            response = rate_limited_generate(prompt, DIVERSIFY_SYSTEM_PROMPT)
+            result = parse_json_response(response)
             missing = result.get("missing_subtasks", [])
+            return {
+                "branch": branch_info,
+                "node": node,
+                "child_names": child_names,
+                "missing": missing,
+                "error": None,
+            }
+        except Exception as e:
+            return {
+                "branch": branch_info,
+                "node": node,
+                "child_names": [],
+                "missing": [],
+                "error": str(e),
+            }
 
-            if not args.dry_run and missing:
-                for subtask_info in missing[:5]:
+    # Process domains concurrently
+    domain_progress = ProgressTracker(total=len(domains))
+    domain_results = []
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {executor.submit(analyze_domain, d): d for d in domains}
+
+        for future in as_completed(futures):
+            result = future.result()
+            domain = result["domain"]
+
+            with print_lock:
+                count, rpm = domain_progress.increment(error=bool(result["error"]))
+
+                if result["error"]:
+                    print(
+                        f"    [{count}/{len(domains)}] {domain.name}... ERROR: {result['error']} ({rpm:.0f} RPM)",
+                        flush=True,
+                    )
+                else:
+                    print(
+                        f"    [{count}/{len(domains)}] {domain.name}... found {len(result['missing'])} gaps ({rpm:.0f} RPM)",
+                        flush=True,
+                    )
+
+            domain_results.append(result)
+
+    # Process domain results (create nodes) - sequential to avoid race conditions
+    print(f"\n    Creating task nodes...")
+    for result in domain_results:
+        if result["error"] or not result["missing"]:
+            continue
+
+        domain = result["domain"]
+        domain_tasks = result["domain_tasks"]
+        existing = [t.name for t in domain_tasks]
+
+        if not args.dry_run:
+            for task_info in result["missing"][: args.max_per_domain]:
+                task_name = task_info.get("name", "").strip()
+                if not task_name:
+                    continue
+
+                task_name = task_name.lower().replace(" ", "_").replace("-", "_")
+                if task_name in existing:
+                    continue
+
+                new_task = TaskNode(
+                    id=TaskNode.make_id(task_name, domain.id),
+                    name=task_name,
+                    node_type=NodeType.TASK,
+                    parent_id=domain.id,
+                    description=task_info.get("description", ""),
+                    sources=[SeedSource.LLM_GENERATED],
+                    tags=["gap_filled", "diversification"],
+                )
+
+                try:
+                    graph.add_node(new_task)
+                    nodes_created[0] += 1
+                    gaps_found.append(
+                        {
+                            "domain": domain.name,
+                            "task": task_name,
+                            "description": task_info.get("description", ""),
+                        }
+                    )
+                except ValueError:
+                    pass
+
+    # Step 3: Analyze sparse branches concurrently
+    print(f"\n[3] Analyzing sparse branches...")
+    sparse = structure["stats"]["sparse_branches"][:20]
+
+    if not sparse:
+        print("    No sparse branches found.")
+    else:
+        sparse_progress = ProgressTracker(total=len(sparse))
+        sparse_results = []
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = {executor.submit(analyze_sparse_branch, b): b for b in sparse}
+
+            for future in as_completed(futures):
+                result = future.result()
+                branch = result["branch"]
+
+                with print_lock:
+                    count, rpm = sparse_progress.increment(error=bool(result["error"]))
+
+                    if result["error"]:
+                        print(
+                            f"    [{count}/{len(sparse)}] {branch['name']}... {result['error']} ({rpm:.0f} RPM)",
+                            flush=True,
+                        )
+                    else:
+                        print(
+                            f"    [{count}/{len(sparse)}] {branch['name']}... found {len(result['missing'])} ({rpm:.0f} RPM)",
+                            flush=True,
+                        )
+
+                sparse_results.append(result)
+
+        # Process sparse branch results
+        print(f"\n    Creating subtask nodes...")
+        for result in sparse_results:
+            if result["error"] or not result["missing"] or not result["node"]:
+                continue
+
+            node = result["node"]
+            child_names = result.get("child_names", [])
+
+            if not args.dry_run:
+                for subtask_info in result["missing"][:5]:
                     subtask_name = subtask_info.get("name", "").strip()
                     if not subtask_name:
                         continue
 
                     subtask_name = subtask_name.lower().replace(" ", "_").replace("-", "_")
-
                     if subtask_name in child_names:
                         continue
 
@@ -1017,20 +1133,103 @@ Return 5-10 missing subtasks."""
 
                     try:
                         graph.add_node(new_subtask)
-                        nodes_created += 1
+                        nodes_created[0] += 1
+                    except ValueError:
+                        pass
+
+    # Step 4: Diversify domains (suggest new top-level domains)
+    new_domains_suggested = []
+    if getattr(args, "diversify_domains", False):
+        print(f"\n[4] Analyzing for missing domains...")
+
+        # Get all existing domain names
+        existing_domain_names = [d.name for d in domains]
+
+        domain_diversify_prompt = f"""Analyze this task hierarchy for MISSING TOP-LEVEL DOMAINS.
+
+CURRENT TREE STRUCTURE (L2 depth):
+{tree_text}
+
+EXISTING DOMAINS ({len(existing_domain_names)}):
+{chr(10).join(f'  - {name}' for name in existing_domain_names)}
+
+ACTION VERB CATEGORIES (use these to identify gaps):
+{action_categories}
+
+What major categories of human activity are COMPLETELY MISSING as top-level domains?
+
+Consider:
+- Activities not covered by any existing domain
+- Professional domains (specific industries/trades)
+- Life stage activities (childhood, elderly care)
+- Cultural/regional activities
+- Modern technology-related domains
+- Recreational/hobby domains
+- Emergency/crisis response domains
+
+IMPORTANT: Only suggest domains that are truly DISTINCT from existing ones.
+Do NOT suggest domains that would overlap with existing ones.
+
+Return JSON:
+{{
+    "analysis": "brief analysis of domain coverage gaps",
+    "missing_domains": [
+        {{
+            "name": "domain_name (lowercase_with_underscores)",
+            "description": "what this domain covers",
+            "why_distinct": "why this doesn't overlap with existing domains",
+            "example_tasks": ["task1", "task2", "task3"]
+        }}
+    ]
+}}
+
+Return 3-8 truly distinct missing domains."""
+
+        try:
+            response = rate_limited_generate(domain_diversify_prompt, DIVERSIFY_SYSTEM_PROMPT)
+            result = parse_json_response(response)
+            new_domains_suggested = result.get("missing_domains", [])
+
+            print(f"    Found {len(new_domains_suggested)} potential new domains")
+
+            if not args.dry_run:
+                for domain_info in new_domains_suggested:
+                    domain_name = domain_info.get("name", "").strip()
+                    if not domain_name:
+                        continue
+
+                    domain_name = domain_name.lower().replace(" ", "_").replace("-", "_")
+                    if domain_name in existing_domain_names:
+                        continue
+
+                    new_domain = TaskNode(
+                        id=TaskNode.make_id(domain_name, "root"),
+                        name=domain_name,
+                        node_type=NodeType.DOMAIN,
+                        parent_id="root",
+                        description=domain_info.get("description", ""),
+                        sources=[SeedSource.LLM_GENERATED],
+                        tags=["gap_filled", "domain_diversification"],
+                    )
+
+                    try:
+                        graph.add_node(new_domain)
+                        nodes_created[0] += 1
+                        print(f"      + {domain_name}")
                     except ValueError:
                         pass
 
         except Exception as e:
-            if args.verbose:
-                print(f"      Error: {e}")
+            print(f"    Error analyzing domains: {e}")
 
     # Summary
     print("\n" + "=" * 60)
     print("  DIVERSIFICATION COMPLETE")
     print("=" * 60)
     print(f"  Domains analyzed: {len(domains)}")
-    print(f"  Nodes created:    {nodes_created}")
+    print(f"  Sparse branches:  {len(sparse)}")
+    print(f"  New domains suggested: {len(new_domains_suggested)}")
+    print(f"  Nodes created:    {nodes_created[0]}")
 
     if args.dry_run:
         print("\n  [DRY RUN - no changes made]")
@@ -1260,9 +1459,26 @@ Examples:
         help="LLM model (default: gemini-2.5-flash)",
     )
     diversify_parser.add_argument(
+        "--workers",
+        type=int,
+        default=32,
+        help="Parallel workers for LLM calls (default: 32)",
+    )
+    diversify_parser.add_argument(
+        "--rpm",
+        type=int,
+        default=800,
+        help="Rate limit RPM (default: 800)",
+    )
+    diversify_parser.add_argument(
         "--mock",
         action="store_true",
         help="Use mock LLM (no API calls)",
+    )
+    diversify_parser.add_argument(
+        "--diversify-domains",
+        action="store_true",
+        help="Also suggest new domains based on gaps",
     )
     diversify_parser.add_argument(
         "--dry-run",
