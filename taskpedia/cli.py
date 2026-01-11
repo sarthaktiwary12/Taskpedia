@@ -666,6 +666,151 @@ def cmd_qa_problems(args):
             print(f"  ... and {len(ambiguous) - 15} more")
 
 
+def cmd_qa_prune_internals(args):
+    """Remove robot-internal nodes (joint torques, actuators, etc.)."""
+    import json
+    import re
+
+    task_dir = Path(args.output)
+    manifest_path = task_dir / "_manifest.json"
+
+    if not manifest_path.exists():
+        print(f"Error: {manifest_path} not found")
+        sys.exit(1)
+
+    print(f"Loading manifest from {manifest_path}...")
+    with open(manifest_path) as f:
+        data = json.load(f)
+
+    nodes = data.get("nodes", {})
+    print(f"Total nodes: {len(nodes):,}")
+
+    # Patterns that indicate robot-internal control (not observable behavior)
+    ROBOT_INTERNAL_PATTERNS = [
+        # Joint/motor control
+        r"joint.?torque",
+        r"motor.?command",
+        r"motor.?output",
+        r"motor.?current",
+        r"pid.?output",
+        r"pid.?control",
+        r"impedance.?control",
+        r"flexor.?torque",
+        r"extensor.?torque",
+        r"corrective.?torque",
+        r"apply.+torque(?!.*wrench)",
+        r"compute.+torque",
+        r"joint.?error",
+        r"joint.?velocity",
+        r"actuator.?command",
+        r"actuator.?state",
+        r"actuator.?torque",
+        r"servo.?command",
+        r"control.?law",
+        r"control.?algorithm",
+        r"torque.?signal",
+        r"torque.?value",
+        r"torque.?target",
+        r"spool.?alignment",
+        # Trajectory/path
+        r"trajectory.?comput",
+        r"gait.?trajectory",
+        r"com.?shift",
+        r"center.?of.?mass",
+        # Sensor processing
+        r"signal.?filter",
+        r"sensor.?process",
+        r"proprioceptive.?feedback",
+        r"force.?feedback.?loop",
+        # Balance/posture control
+        r"postural.?control",
+        r"balance.?control",
+        r"micro.?adjustment",
+        r"pose.?micro",
+        # Body part + actuator/motor
+        r"limb.?actuator",
+        r"arm.?actuator",
+        r"leg.?actuator",
+        r"spine.?actuator",
+        r"neck.?actuator",
+        r"torso.?actuator",
+        r"head.?actuator",
+        r"hand.?actuator",
+        r"facial.?actuator",
+        r"body.?motor.?command",
+        r"arm.?motor.?command",
+        r"hand.?motor.?command",
+        # Specific joint torques
+        r"ankle.?joint.?torque",
+        r"hip.?joint.?torque",
+        r"knee.?joint.?torque",
+        r"shoulder.?joint.?torque",
+        r"elbow.?joint.?torque",
+        r"wrist.?joint.?torque",
+        r"spine.?joint.?torque",
+        r"neck.?joint.?torque",
+    ]
+
+    patterns = [re.compile(p, re.IGNORECASE) for p in ROBOT_INTERNAL_PATTERNS]
+
+    robot_internal = set()
+    for node_id, node in nodes.items():
+        text = f"{node_id} {node.get('name', '')}"
+        for pattern in patterns:
+            if pattern.search(text):
+                robot_internal.add(node_id)
+                break
+
+    print(f"Found {len(robot_internal):,} robot-internal nodes")
+
+    if not robot_internal:
+        print("Nothing to prune!")
+        return
+
+    # Get all descendants
+    to_remove = set(robot_internal)
+    changed = True
+    while changed:
+        changed = False
+        for nid, node in nodes.items():
+            if nid in to_remove:
+                continue
+            parent = node.get("parent_id", "")
+            if parent in to_remove:
+                to_remove.add(nid)
+                changed = True
+
+    print(f"Including descendants: {len(to_remove):,}")
+
+    if args.dry_run:
+        print("\n[DRY RUN] Would remove:")
+        for n in sorted(to_remove)[:30]:
+            print(f"  {n}")
+        if len(to_remove) > 30:
+            print(f"  ... and {len(to_remove) - 30} more")
+        print(f"\nRun without --dry-run to actually remove")
+        return
+
+    # Remove nodes
+    for nid in to_remove:
+        if nid in nodes:
+            del nodes[nid]
+
+    # Update parent references
+    for nid, node in nodes.items():
+        if "children_ids" in node:
+            node["children_ids"] = [c for c in node["children_ids"] if c not in to_remove]
+
+    data["nodes"] = nodes
+
+    print(f"Remaining nodes: {len(nodes):,}")
+    print("Saving manifest...")
+    with open(manifest_path, "w") as f:
+        json.dump(data, f)
+
+    print(f"Done! Removed {len(to_remove):,} robot-internal nodes")
+
+
 def cmd_qa_coverage(args):
     """Show detailed domain coverage."""
     from taskpedia.postprocess import check_domain_coverage
@@ -1617,6 +1762,13 @@ Examples:
     qa_test = qa_sub.add_parser("test", help="Run all data quality tests")
     qa_test.add_argument("-v", "--verbose", action="store_true", help="Show all details")
     qa_test.set_defaults(func=cmd_qa_test)
+
+    # qa prune-internals
+    qa_prune = qa_sub.add_parser(
+        "prune-internals", help="Remove robot-internal nodes (torques, actuators, etc.)"
+    )
+    qa_prune.add_argument("--dry-run", action="store_true", help="Preview without removing")
+    qa_prune.set_defaults(func=cmd_qa_prune_internals)
 
     # ─── DIVERSIFY ──────────────────────────────────────────
     diversify_parser = subparsers.add_parser(

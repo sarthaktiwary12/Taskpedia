@@ -42,67 +42,65 @@ from taskpedia.llm import _is_retryable_error
 # SYSTEM PROMPT - Optimized for VLA/VLN/WBC Training
 # ============================================================================
 
-SYSTEM_PROMPT = """You are decomposing human tasks into training data for humanoid robots (VLA/VLN/Whole-Body Control).
+SYSTEM_PROMPT = """You are decomposing human tasks for Vision-Language-Action (VLA) robot learning.
 
 ## GOAL
-Break tasks into ATOMIC ACTIONS that a robot can learn from demonstrations or execute via learned policies.
+Break tasks into ATOMIC ACTIONS that can be learned from human video demonstrations.
 
-## WHAT MAKES A GOOD ATOMIC ACTION (for robot training)
-1. **Observable**: Can be demonstrated and recorded (video/mocap)
-2. **Executable**: Single motor primitive with clear start/end states
-3. **Groundable**: References SPECIFIC objects/locations, not abstractions
-4. **Repeatable**: Same action structure applies across contexts
+## CRITICAL: STAY AT THE BEHAVIORAL LEVEL
+Atomic actions are what a HUMAN DEMONSTRATOR would do, observable in video:
+- "reach for the cup" ✓ (observable human motion)
+- "adjust_shoulder_joint_torque" ✗ (robot control internals - NEVER do this)
+- "grasp the cup handle" ✓ (observable)
+- "activate_gripper_motor" ✗ (robot internals - NEVER)
+- "walk to the door" ✓ (observable)
+- "compute_gait_trajectory" ✗ (control system - NEVER)
 
-## ATOMIC ACTION CATEGORIES
+## ATOMIC ACTION EXAMPLES (correct level)
 
-**Manipulation (arm/hand control):**
-- grasp <specific_object> - close gripper/hand on object
-- release <object> - open gripper, let go
-- pick_up <object> from <surface/container>
-- place <object> on/in <target_location>
-- push/pull <object> <direction/distance>
-- rotate/twist <object> <angle/direction>
+**Manipulation:**
+- reach_for <object>
+- grasp <object>
+- release <object>
+- pick_up <object>
+- place <object> on <surface>
+- push/pull <object>
+- rotate/twist <object>
 - insert <object> into <receptacle>
-- pour <substance> from <source> into <target>
-- open/close <door/drawer/lid/container>
-- press/push <button/switch/key>
-- turn <knob/dial/handle> <direction>
-- slide <object> <direction>
-- flip/toss <object>
-- catch <object>
-- hold <object> while <other_action> (bimanual)
-- stabilize <object> with <hand>
+- pour from <container> into <target>
+- open/close <door/drawer/lid>
+- press <button/switch>
+- turn <knob/handle>
 
-**Locomotion/Navigation (VLN - whole body):**
-- walk_to <specific_location/object>
-- approach <target> until <distance>
+**Locomotion:**
+- walk_to <location>
+- approach <target>
 - navigate_around <obstacle>
-- enter/exit <room/door/area>
-- climb/descend <stairs/ladder/step>
-- turn_to_face <direction/object>
-- step <direction> <distance>
-- crouch/stand/kneel
-- lean <direction> to <reach/see>
-- balance_on <surface>
+- enter/exit <room>
+- climb/descend <stairs>
+- turn_toward <direction>
+- step <direction>
+- crouch/stand/sit
 
-**Active Perception (head/gaze/sensors):**
-- look_at <target_object/location>
-- scan <area> for <object_type>
-- track <moving_object> visually
-- read <text/display/label>
-- inspect <object> for <property>
-- listen_for <sound_type>
-- feel/probe <surface> for <property>
-- measure <dimension> of <object>
+**Perception:**
+- look_at <target>
+- scan_for <object_type>
+- inspect <object>
+- read <text/display>
 
-**Communication/Social (for HRI):**
+**Social:**
 - say "<utterance>"
-- gesture <type> toward <target>
-- point_at <object/direction>
-- nod/shake_head
-- make_eye_contact with <person>
+- gesture_toward <target>
+- point_at <object>
 - hand_over <object> to <person>
-- receive <object> from <person>
+
+## NEVER DECOMPOSE INTO:
+- Joint angles, torques, forces, velocities
+- Motor commands, actuator states, PID control
+- Trajectory computation, path planning internals
+- Sensor processing, signal filtering
+- Balance control, impedance control
+- Anything a human demonstrator cannot show in video
 
 ## OUTPUT FORMAT
 ```json
@@ -110,56 +108,40 @@ Break tasks into ATOMIC ACTIONS that a robot can learn from demonstrations or ex
     "is_atomic": boolean,
     "subtasks": [
         {
-            "name": "<verb> <specific_object/location>",
-            "description": "Physical execution: <how body moves>. Sensing: <what to perceive>. Success: <end state>.",
-            "is_atomic": boolean,
-            "category": "manipulation|locomotion|perception|communication"
+            "name": "<verb> <object/location>",
+            "description": "What a human demonstrator would do, visible in video.",
+            "is_atomic": boolean
         }
     ]
 }
 ```
 
-## RULES FOR VLA/VLN TRAINING UTILITY
-1. **Specific objects**: "grasp the red mug" not "grasp object" - robots need grounded references
-2. **Physical descriptions**: Include body parts, forces, directions - "extend right arm forward, close fingers around handle"
-3. **Clear success criteria**: "until fingers contact surface" or "until object is 10cm above table"
-4. **Sensing modalities**: Specify visual/tactile/proprioceptive feedback needed
-5. **No abstractions**: Decompose cognitive tasks (decide, plan, think) into observable actions
-6. **Reusable primitives**: "pick_up mug from table" is reusable; "do the mug thing" is not
-7. **3-8 subtasks**: Enough granularity without over-fragmentation
-
-## ANTI-PATTERNS (reject these)
-- "Step 1: prepare materials" - generic, not trainable
-- "check equipment" - what sensing? what equipment?
-- "handle the situation" - not executable
-- "process the items" - not physical"""
+## RULES
+1. **Observable in video**: Would this appear in a human demonstration video?
+2. **3-7 subtasks**: Meaningful decomposition without over-fragmentation
+3. **Specific objects**: "grasp the red mug" not "grasp object"
+4. **Stop at behavior**: Once you reach a single observable motion, mark as atomic"""
 
 
 def make_prompt(node: TaskNode) -> str:
-    """Create the decomposition prompt for VLA/VLN training."""
+    """Create the decomposition prompt for VLA training."""
     context_parts = []
-    if node.description:
-        context_parts.append(f"Description: {node.description}")
     if node.parent_id:
         parent_parts = node.parent_id.split("/")
-        if len(parent_parts) >= 2:
+        if len(parent_parts) >= 1:
             context_parts.append(f"Domain: {parent_parts[0].replace('_', ' ')}")
-        if len(parent_parts) >= 3:
-            context_parts.append(f"Parent task: {parent_parts[-1].replace('_', ' ')}")
 
     context = "\n".join(context_parts) if context_parts else ""
 
-    return f"""Decompose into atomic actions for humanoid robot training:
+    return f"""Decompose this task into observable actions a human would demonstrate:
 
 **Task:** {node.name}
 {context}
 
-For each subtask, specify:
-- The PHYSICAL motion (which body parts, what trajectory)
-- The SENSING required (visual, tactile, proprioceptive)
-- The SUCCESS condition (how robot knows it's done)
+Remember: Output actions visible in video (reach, grasp, walk, look).
+NEVER output robot internals (torques, motors, trajectories, controllers).
 
-Output JSON with specific, trainable actions."""
+Output JSON."""
 
 
 # ============================================================================
@@ -929,7 +911,7 @@ def run_with_tui(config: FastGenConfig) -> dict:
             return text
 
         def _render_files(self) -> Text:
-            """Render recent files list."""
+            """Render recent files list showing full path from domain."""
             text = Text()
 
             with recent_lock:
@@ -940,23 +922,28 @@ def run_with_tui(config: FastGenConfig) -> dict:
                 return text
 
             # Show most recent at top
-            for name, node_type, path in reversed(files):
-                # Truncate long names
-                display_name = name[:38] if len(name) > 38 else name
+            for name, node_type, node_id in reversed(files):
+                # Use node_id which contains full path (e.g., domain/category/task)
+                # Truncate from left if too long, keeping the end visible
+                max_len = 55
+                if len(node_id) > max_len:
+                    display_path = "..." + node_id[-(max_len - 3) :]
+                else:
+                    display_path = node_id
 
                 # Color by type
                 if node_type == "ATOMIC":
                     type_style = "#a371f7"
-                    icon = ""
+                    icon = "A"
                 elif node_type == "TASK":
                     type_style = "#238636"
-                    icon = ""
+                    icon = "T"
                 else:
                     type_style = "#58a6ff"
-                    icon = ""
+                    icon = "D"
 
-                text.append(f" {icon} ", style=type_style)
-                text.append(f"{display_name}\n", style="white")
+                text.append(f"[{icon}] ", style=type_style)
+                text.append(f"{display_path}\n", style="white")
 
             return text
 
