@@ -1,70 +1,55 @@
 #!/usr/bin/env python3
 """
-CLI for TASKPEDIA - Hierarchical Task Decomposition.
+TASKPEDIA CLI - Hierarchical Task Decomposition for Embodied AI.
 
-Usage:
-    # Bootstrap from seed data (O*NET + Life Activities)
-    taskpedia bootstrap -o ./tasks
-
-    # Generate synthetic tasks using LLM
-    taskpedia generate -o ./tasks --max-tasks 1000
-
-    # Launch interactive TUI dashboard
-    taskpedia tui -o ./tasks --max-tasks 10000
-
-    # View the hierarchy
-    taskpedia tree -o ./tasks
-
-    # Statistics
-    taskpedia stats -o ./tasks
-
-    # Search for tasks
-    taskpedia search "cook" -o ./tasks
-
-    # Export to JSONL
-    taskpedia export -o ./tasks --format jsonl
-
-    # Show taxonomy
-    taskpedia taxonomy
+Commands are organized into groups:
+    taskpedia init          Initialize/bootstrap the hierarchy
+    taskpedia generate      Generate tasks with LLM
+    taskpedia show          View hierarchy (tree, stats, search)
+    taskpedia export        Export to various formats
+    taskpedia upload        Upload to HuggingFace
+    taskpedia cache         Manage LLM cache
 """
 
 import argparse
-import json
 import sys
 from pathlib import Path
 
+# Default paths
+DEFAULT_OUTPUT = "./task_hierarchy"
 
-def cmd_bootstrap(args):
-    """Bootstrap the task hierarchy from seed data (auto-downloads O*NET)."""
+
+def cmd_init(args):
+    """Initialize the task hierarchy from seed data."""
     from taskpedia.decompose import quick_bootstrap
 
-    print(f"Bootstrapping task hierarchy to: {args.output}")
+    print(f"Initializing task hierarchy: {args.output}")
     print()
 
     graph = quick_bootstrap(args.output)
 
     print()
-    print("=" * 60)
-    print("BOOTSTRAP COMPLETE")
-    print("=" * 60)
+    print("=" * 50)
+    print("INITIALIZATION COMPLETE")
+    print("=" * 50)
 
     stats = graph.get_stats()
-    print(f"Total nodes:    {stats['total_nodes']:,}")
-    print(f"Domains:        {stats['domains']}")
-    print(f"Max depth:      {stats['max_depth']}")
-    print(f"Leaf nodes:     {stats['leaf_count']:,}")
+    print(f"  Nodes:    {stats['total_nodes']:,}")
+    print(f"  Domains:  {stats['domains']}")
+    print(f"  Depth:    {stats['max_depth']}")
+    print()
+    print("Next: Run 'taskpedia generate' to expand with LLM")
 
 
 def cmd_generate(args):
-    """Generate synthetic tasks using LLM (fast ThreadPool-based generator)."""
-    from taskpedia.generate_fast import FastGenConfig, FastGenerator
+    """Generate tasks using LLM decomposition."""
+    from taskpedia.generate_fast import FastGenConfig, run
 
     output_path = Path(args.output)
 
-    # Check if bootstrapped
     if not output_path.exists():
         print(f"Error: {output_path} does not exist.")
-        print("Run 'taskpedia bootstrap' first to create seed hierarchy.")
+        print("Run 'taskpedia init' first.")
         sys.exit(1)
 
     config = FastGenConfig(
@@ -72,160 +57,285 @@ def cmd_generate(args):
         model=args.model,
         max_tasks=args.max_tasks,
         max_workers=args.workers,
-        batch_size=args.batch_size,
+        queue_size=args.queue_size,
         rpm_limit=args.rpm,
         mock=args.mock,
+        tui=not args.no_tui,
     )
 
-    generator = FastGenerator(config=config)
-    stats = generator.run()
-
-    return stats
+    run(config)
 
 
-def cmd_tui(args):
-    """Launch the interactive TUI dashboard."""
-    from taskpedia.tui import run_tui
-
-    run_tui(
-        output_dir=args.output,
-        max_tasks=args.max_tasks,
-        model=args.model,
-    )
-
-
-def cmd_tree(args):
-    """Display the task hierarchy as a tree."""
+def cmd_show_tree(args):
+    """Display hierarchy as a tree."""
     from taskpedia.hierarchy import TaskGraph
 
     output_path = Path(args.output)
-
     if not output_path.exists():
-        print(f"Error: {output_path} does not exist. Run 'bootstrap' first.")
+        print(f"Error: {output_path} not found. Run 'taskpedia init' first.")
         sys.exit(1)
 
     graph = TaskGraph(output_path)
-
-    print(f"Task Hierarchy (max depth: {args.depth})")
-    print("=" * 60)
-    print()
     print(graph.visualize_tree(max_depth=args.depth))
 
 
-def cmd_stats(args):
-    """Show statistics about the task hierarchy."""
-    from taskpedia.hierarchy import NodeType, TaskGraph
-    from taskpedia.seeds.taxonomy import LifeDomain
+def cmd_show_stats(args):
+    """Show hierarchy statistics."""
+    from taskpedia.hierarchy import TaskGraph
 
     output_path = Path(args.output)
-
     if not output_path.exists():
-        print(f"Error: {output_path} does not exist. Run 'bootstrap' first.")
+        print(f"Error: {output_path} not found. Run 'taskpedia init' first.")
         sys.exit(1)
 
     graph = TaskGraph(output_path)
     stats = graph.get_stats()
 
-    print("Task Hierarchy Statistics")
-    print("=" * 60)
     print()
-    print(f"Total nodes:    {stats['total_nodes']:,}")
-    print(f"Domains:        {stats['domains']}")
-    print(f"Max depth:      {stats['max_depth']}")
-    print(f"Average depth:  {stats['avg_depth']:.2f}")
-    print(f"Leaf nodes:     {stats['leaf_count']:,}")
+    print("TASKPEDIA Statistics")
+    print("=" * 40)
+    print(f"  Total nodes:   {stats['total_nodes']:>10,}")
+    print(f"  Domains:       {stats['domains']:>10}")
+    print(f"  Max depth:     {stats['max_depth']:>10}")
+    print(f"  Avg depth:     {stats['avg_depth']:>10.1f}")
+    print(f"  Leaf nodes:    {stats['leaf_count']:>10,}")
     print()
-    print("By node type:")
+    print("By Type:")
     for node_type, count in stats["by_type"].items():
         pct = count / stats["total_nodes"] * 100 if stats["total_nodes"] > 0 else 0
-        print(f"  {node_type:12} {count:6,} ({pct:.1f}%)")
+        print(f"  {node_type:12} {count:>8,} ({pct:>5.1f}%)")
+    print()
 
 
-def cmd_search(args):
-    """Search for tasks in the hierarchy."""
+def cmd_show_search(args):
+    """Search for tasks."""
     from taskpedia.hierarchy import TaskGraph
 
     output_path = Path(args.output)
-
     if not output_path.exists():
-        print(f"Error: {output_path} does not exist.")
+        print(f"Error: {output_path} not found.")
         sys.exit(1)
 
     graph = TaskGraph(output_path)
     query = args.query.lower()
 
-    matches = []
-    for node in graph.iter_nodes():
-        if query in node.name.lower():
-            matches.append(node)
+    matches = [n for n in graph.iter_nodes() if query in n.name.lower()]
 
-    print(f"Found {len(matches)} matches for '{args.query}':")
-    print()
+    print(f"\nFound {len(matches)} matches for '{args.query}':\n")
 
     for node in matches[: args.limit]:
         ancestors = graph.get_ancestors(node.id)
         path = " > ".join([a.name for a in reversed(ancestors)] + [node.name])
         print(f"  [{node.node_type.value}] {path}")
         if node.description:
-            desc = node.description[:80] + "..." if len(node.description) > 80 else node.description
-            print(f"    {desc}")
-        print()
+            desc = node.description[:70] + "..." if len(node.description) > 70 else node.description
+            print(f"      {desc}")
+    print()
 
 
 def cmd_export(args):
-    """Export the hierarchy to various formats."""
+    """Export hierarchy to file."""
+    import json
     from taskpedia.hierarchy import TaskGraph
 
     output_path = Path(args.output)
-
     if not output_path.exists():
-        print(f"Error: {output_path} does not exist. Run 'bootstrap' first.")
+        print(f"Error: {output_path} not found.")
         sys.exit(1)
 
     graph = TaskGraph(output_path)
-    export_path = Path(args.file) if args.file else output_path / "export.jsonl"
+    export_path = Path(args.file) if args.file else output_path / f"export.{args.format}"
 
     if args.format == "jsonl":
         graph.export_flat(export_path)
-        print(f"Exported {graph.get_stats()['total_nodes']:,} nodes to: {export_path}")
-
     elif args.format == "tree":
-        tree_path = export_path.with_suffix(".txt")
-        with open(tree_path, "w") as f:
+        export_path = export_path.with_suffix(".txt")
+        with open(export_path, "w") as f:
             f.write(graph.visualize_tree(max_depth=10))
-        print(f"Exported tree to: {tree_path}")
-
     elif args.format == "json":
 
-        def node_to_nested(node_id):
+        def to_nested(node_id):
             node = graph.get_node(node_id)
             if not node:
                 return None
             data = node.to_dict()
             children = graph.get_children(node_id)
             if children:
-                data["children"] = [node_to_nested(c.id) for c in children]
+                data["children"] = [to_nested(c.id) for c in children]
             return data
 
         roots = [n for n in graph.iter_nodes() if n.parent_id is None]
-        nested = [node_to_nested(r.id) for r in roots]
+        nested = [to_nested(r.id) for r in roots]
 
-        json_path = export_path.with_suffix(".json")
-        with open(json_path, "w") as f:
+        export_path = export_path.with_suffix(".json")
+        with open(export_path, "w") as f:
             json.dump(nested, f, indent=2)
-        print(f"Exported nested JSON to: {json_path}")
+
+    print(f"Exported {graph.get_stats()['total_nodes']:,} nodes to: {export_path}")
 
 
-def cmd_taxonomy(args):
-    """Show the full taxonomy."""
-    from taskpedia.seeds.taxonomy import print_taxonomy_summary
+def cmd_upload(args):
+    """Upload to HuggingFace."""
+    from datetime import datetime
+    import yaml
 
-    print_taxonomy_summary()
+    try:
+        from datasets import Dataset, DatasetDict, Features, Sequence, Value
+        from huggingface_hub import HfApi
+    except ImportError:
+        print("Error: Upload requires 'datasets' and 'huggingface_hub' packages.")
+        print("Install with: pip install datasets huggingface_hub")
+        sys.exit(1)
+
+    task_dir = Path(args.output)
+    if not task_dir.exists():
+        print(f"Error: {task_dir} not found.")
+        sys.exit(1)
+
+    # Load tasks
+    print(f"Loading tasks from {task_dir}...")
+    tasks = []
+    for yaml_path in task_dir.glob("**/*.yaml"):
+        try:
+            with open(yaml_path) as f:
+                data = yaml.safe_load(f)
+            if not data or "id" not in data:
+                continue
+
+            completion = data.get("completion", {}) or {}
+            tasks.append(
+                {
+                    "id": data.get("id", ""),
+                    "name": data.get("name", ""),
+                    "node_type": data.get("node_type", ""),
+                    "parent_id": data.get("parent_id", "") or "",
+                    "children_ids": data.get("children_ids", []) or [],
+                    "description": data.get("description", "") or "",
+                    "precondition": completion.get("precondition", "") or "",
+                    "postcondition": completion.get("postcondition", "") or "",
+                    "invariants": completion.get("invariants", "") or "",
+                    "physical_requirements": data.get("physical_requirements", "") or "",
+                    "sensing_requirements": data.get("sensing_requirements", "") or "",
+                    "cognitive_requirements": data.get("cognitive_requirements", "") or "",
+                    "language": data.get("language", "en"),
+                    "aliases": data.get("aliases", []) or [],
+                    "tags": data.get("tags", []) or [],
+                    "sources": data.get("sources", []) or [],
+                    "confidence": float(data.get("confidence", 1.0)),
+                    "depth": len(data.get("id", "").split("/")),
+                    "is_leaf": len(data.get("children_ids", []) or []) == 0,
+                    "is_atomic": data.get("node_type") == "atomic",
+                }
+            )
+        except Exception as e:
+            pass
+
+    if not tasks:
+        print("No tasks found!")
+        sys.exit(1)
+
+    print(f"Loaded {len(tasks):,} tasks")
+
+    # Create dataset
+    features = Features(
+        {
+            "id": Value("string"),
+            "name": Value("string"),
+            "node_type": Value("string"),
+            "parent_id": Value("string"),
+            "children_ids": Sequence(Value("string")),
+            "description": Value("string"),
+            "precondition": Value("string"),
+            "postcondition": Value("string"),
+            "invariants": Value("string"),
+            "physical_requirements": Value("string"),
+            "sensing_requirements": Value("string"),
+            "cognitive_requirements": Value("string"),
+            "language": Value("string"),
+            "aliases": Sequence(Value("string")),
+            "tags": Sequence(Value("string")),
+            "sources": Sequence(Value("string")),
+            "confidence": Value("float32"),
+            "depth": Value("int32"),
+            "is_leaf": Value("bool"),
+            "is_atomic": Value("bool"),
+        }
+    )
+
+    dataset = Dataset.from_list(tasks, features=features)
+    dataset_dict = DatasetDict({"full": dataset})
+
+    # Stats for README
+    atomic_count = sum(1 for t in tasks if t["is_atomic"])
+    leaf_count = sum(1 for t in tasks if t["is_leaf"])
+    from collections import Counter
+
+    node_types = Counter(t["node_type"] for t in tasks)
+    sources = Counter(s for t in tasks for s in t["sources"])
+
+    # Upload
+    repo_id = args.repo
+    private = not args.public
+
+    api = HfApi()
+    print(f"Creating repo: {repo_id} (private={private})...")
+
+    try:
+        api.create_repo(repo_id=repo_id, repo_type="dataset", private=private, exist_ok=True)
+    except Exception as e:
+        print(f"Error: {e}")
+        print("\nMake sure you're logged in: huggingface-cli login")
+        sys.exit(1)
+
+    print("Uploading dataset...")
+    dataset_dict.push_to_hub(repo_id=repo_id, private=private)
+
+    # README
+    readme = f"""---
+license: apache-2.0
+task_categories:
+  - robotics
+tags:
+  - embodied-ai
+  - task-decomposition
+  - VLA
+  - VLN
+---
+
+# TASKPEDIA
+
+Hierarchical task decomposition for embodied AI. {len(tasks):,} tasks, {atomic_count:,} atomic actions.
+
+## Stats
+- Total: {len(tasks):,}
+- Atomic: {atomic_count:,}
+- Leaf: {leaf_count:,}
+
+## Usage
+```python
+from datasets import load_dataset
+ds = load_dataset("{repo_id}")
+atomic = ds["full"].filter(lambda x: x["is_atomic"])
+```
+"""
+
+    api.upload_file(
+        path_or_fileobj=readme.encode(),
+        path_in_repo="README.md",
+        repo_id=repo_id,
+        repo_type="dataset",
+    )
+
+    print(f"\nUploaded to: https://huggingface.co/datasets/{repo_id}")
 
 
 def cmd_cache_stats(args):
-    """Show LLM cache statistics."""
-    from diskcache import Cache
+    """Show cache statistics."""
+    try:
+        from diskcache import Cache
+    except ImportError:
+        print("diskcache not installed")
+        return
 
     cache_dir = Path("./.taskpedia_cache")
     if not cache_dir.exists():
@@ -233,17 +343,14 @@ def cmd_cache_stats(args):
         return
 
     cache = Cache(str(cache_dir))
-    print("LLM Response Cache")
-    print("=" * 60)
-    print(f"Entries:  {len(cache):,}")
-    print(f"Size:     {cache.volume() / 1024 / 1024:.1f} MB")
+    print(f"\nLLM Cache: {cache_dir}")
+    print(f"  Entries: {len(cache):,}")
+    print(f"  Size:    {cache.volume() / 1024 / 1024:.1f} MB\n")
 
 
 def cmd_cache_clear(args):
-    """Clear the LLM cache."""
+    """Clear the cache."""
     import shutil
-
-    from diskcache import Cache
 
     cache_dir = Path("./.taskpedia_cache")
     if cache_dir.exists():
@@ -253,149 +360,130 @@ def cmd_cache_clear(args):
         print("No cache to clear.")
 
 
-def add_output_arg(parser):
-    """Add the common -o/--output argument."""
+def main():
+    parser = argparse.ArgumentParser(
+        prog="taskpedia",
+        description="TASKPEDIA - Hierarchical Task Decomposition for Embodied AI",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  taskpedia init                    # Initialize from O*NET + Life Activities
+  taskpedia generate -n 100000      # Generate 100K tasks with LLM
+  taskpedia show stats              # View statistics
+  taskpedia show tree               # View as tree
+  taskpedia export --format jsonl   # Export to JSONL
+  taskpedia upload --repo org/name  # Upload to HuggingFace
+""",
+    )
+
     parser.add_argument(
         "-o",
         "--output",
-        default="./task_hierarchy",
-        help="Output directory for the task hierarchy (default: ./task_hierarchy)",
+        default=DEFAULT_OUTPUT,
+        help=f"Task hierarchy directory (default: {DEFAULT_OUTPUT})",
     )
 
+    subparsers = parser.add_subparsers(dest="command", metavar="command")
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="TASKPEDIA - Hierarchical Task Decomposition",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
+    # ─── INIT ───────────────────────────────────────────────
+    init_parser = subparsers.add_parser(
+        "init",
+        help="Initialize hierarchy from seed data (O*NET + Life Activities)",
     )
+    init_parser.set_defaults(func=cmd_init)
 
-    subparsers = parser.add_subparsers(dest="command", help="Command to run")
-
-    # Bootstrap command
-    boot_parser = subparsers.add_parser(
-        "bootstrap",
-        help="Bootstrap hierarchy from O*NET + Life Activities (auto-downloads)",
-    )
-    add_output_arg(boot_parser)
-    boot_parser.set_defaults(func=cmd_bootstrap)
-
-    # Generate command
+    # ─── GENERATE ───────────────────────────────────────────
     gen_parser = subparsers.add_parser(
         "generate",
-        help="Generate synthetic tasks using LLM",
+        help="Generate tasks using LLM decomposition",
     )
-    add_output_arg(gen_parser)
     gen_parser.add_argument(
         "-n",
         "--max-tasks",
         type=int,
-        default=1000,
-        help="Maximum tasks to generate (default: 1000)",
+        default=10000,
+        help="Max tasks to generate (default: 10000)",
     )
     gen_parser.add_argument(
         "--model",
         default="models/gemini-2.5-flash",
-        help="LLM model to use (default: models/gemini-2.5-flash)",
+        help="LLM model (default: gemini-2.5-flash)",
     )
     gen_parser.add_argument(
         "--workers",
         type=int,
         default=64,
-        help="Number of parallel workers (default: 64)",
+        help="Parallel workers (default: 64)",
     )
     gen_parser.add_argument(
-        "--batch-size",
+        "--queue-size",
         type=int,
-        default=500,
-        help="Batch size for processing (default: 500)",
+        default=1000,
+        help="Work queue size (default: 1000)",
     )
     gen_parser.add_argument(
         "--rpm",
         type=int,
         default=1000,
-        help="Rate limit: requests per minute (default: 1000 for Gemini 2.5 Flash)",
+        help="Rate limit RPM (default: 1000)",
     )
     gen_parser.add_argument(
         "--mock",
         action="store_true",
-        help="Use mock LLM for testing (no API calls, no cost)",
+        help="Use mock LLM (no API calls)",
+    )
+    gen_parser.add_argument(
+        "--no-tui",
+        action="store_true",
+        help="Disable TUI, use simple progress",
     )
     gen_parser.set_defaults(func=cmd_generate)
 
-    # TUI command
-    tui_parser = subparsers.add_parser(
-        "tui",
-        help="Launch interactive TUI dashboard for monitoring generation",
+    # ─── SHOW (subcommands) ─────────────────────────────────
+    show_parser = subparsers.add_parser(
+        "show",
+        help="View hierarchy (tree, stats, search)",
     )
-    add_output_arg(tui_parser)
-    tui_parser.add_argument(
-        "-n",
-        "--max-tasks",
-        type=int,
-        default=10000,
-        help="Maximum tasks to generate (default: 10000)",
-    )
-    tui_parser.add_argument(
-        "--model",
-        default="models/gemini-2.5-flash",
-        help="LLM model to use (default: models/gemini-2.5-flash)",
-    )
-    tui_parser.set_defaults(func=cmd_tui)
+    show_sub = show_parser.add_subparsers(dest="show_cmd", metavar="what")
 
-    # Tree command
-    tree_parser = subparsers.add_parser(
-        "tree",
-        help="Display the hierarchy as a tree",
-    )
-    add_output_arg(tree_parser)
+    # show tree
+    tree_parser = show_sub.add_parser("tree", help="Display as tree")
     tree_parser.add_argument(
         "-d",
         "--depth",
         type=int,
         default=3,
-        help="Maximum depth to display (default: 3)",
+        help="Max depth (default: 3)",
     )
-    tree_parser.set_defaults(func=cmd_tree)
+    tree_parser.set_defaults(func=cmd_show_tree)
 
-    # Stats command
-    stats_parser = subparsers.add_parser(
-        "stats",
-        help="Show hierarchy statistics",
-    )
-    add_output_arg(stats_parser)
-    stats_parser.set_defaults(func=cmd_stats)
+    # show stats
+    stats_parser = show_sub.add_parser("stats", help="Show statistics")
+    stats_parser.set_defaults(func=cmd_show_stats)
 
-    # Search command
-    search_parser = subparsers.add_parser(
-        "search",
-        help="Search for tasks",
-    )
-    add_output_arg(search_parser)
-    search_parser.add_argument(
-        "query",
-        help="Search query",
-    )
+    # show search
+    search_parser = show_sub.add_parser("search", help="Search tasks")
+    search_parser.add_argument("query", help="Search query")
     search_parser.add_argument(
         "-l",
         "--limit",
         type=int,
         default=20,
-        help="Maximum results (default: 20)",
+        help="Max results (default: 20)",
     )
-    search_parser.set_defaults(func=cmd_search)
+    search_parser.set_defaults(func=cmd_show_search)
 
-    # Export command
+    # ─── EXPORT ─────────────────────────────────────────────
     export_parser = subparsers.add_parser(
         "export",
-        help="Export hierarchy to file",
+        help="Export to file (jsonl, json, tree)",
     )
-    add_output_arg(export_parser)
     export_parser.add_argument(
         "-f",
         "--format",
         choices=["jsonl", "json", "tree"],
         default="jsonl",
-        help="Export format (default: jsonl)",
+        help="Format (default: jsonl)",
     )
     export_parser.add_argument(
         "--file",
@@ -403,33 +491,57 @@ def main():
     )
     export_parser.set_defaults(func=cmd_export)
 
-    # Taxonomy command
-    tax_parser = subparsers.add_parser(
-        "taxonomy",
-        help="Show the full taxonomy (23 work + 12 life domains)",
+    # ─── UPLOAD ─────────────────────────────────────────────
+    upload_parser = subparsers.add_parser(
+        "upload",
+        help="Upload to HuggingFace",
     )
-    tax_parser.set_defaults(func=cmd_taxonomy)
-
-    # Cache commands
-    cache_stats_parser = subparsers.add_parser(
-        "cache-stats",
-        help="Show LLM cache statistics",
+    upload_parser.add_argument(
+        "--repo",
+        default="Sentient-x/taskpedia",
+        help="HuggingFace repo (default: Sentient-x/taskpedia)",
     )
-    cache_stats_parser.set_defaults(func=cmd_cache_stats)
-
-    cache_clear_parser = subparsers.add_parser(
-        "cache-clear",
-        help="Clear the LLM cache",
+    upload_parser.add_argument(
+        "--public",
+        action="store_true",
+        help="Make public (default: private)",
     )
-    cache_clear_parser.set_defaults(func=cmd_cache_clear)
+    upload_parser.set_defaults(func=cmd_upload)
 
+    # ─── CACHE (subcommands) ────────────────────────────────
+    cache_parser = subparsers.add_parser(
+        "cache",
+        help="Manage LLM cache",
+    )
+    cache_sub = cache_parser.add_subparsers(dest="cache_cmd", metavar="action")
+
+    cache_stats = cache_sub.add_parser("stats", help="Show cache stats")
+    cache_stats.set_defaults(func=cmd_cache_stats)
+
+    cache_clear = cache_sub.add_parser("clear", help="Clear cache")
+    cache_clear.set_defaults(func=cmd_cache_clear)
+
+    # ─── PARSE & RUN ────────────────────────────────────────
     args = parser.parse_args()
 
     if not args.command:
         parser.print_help()
-        sys.exit(1)
+        sys.exit(0)
 
-    args.func(args)
+    # Handle subcommand groups
+    if args.command == "show":
+        if not args.show_cmd:
+            show_parser.print_help()
+            sys.exit(0)
+    elif args.command == "cache":
+        if not args.cache_cmd:
+            cache_parser.print_help()
+            sys.exit(0)
+
+    if hasattr(args, "func"):
+        args.func(args)
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":
