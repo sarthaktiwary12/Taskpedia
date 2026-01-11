@@ -81,10 +81,10 @@ class PraxisConfig(BaseSettings):
         description="Ray object store memory in bytes",
     )
     workers_per_cpu: int = Field(
-        default=2,
+        default=4,
         ge=1,
-        le=10,
-        description="Number of worker tasks per CPU",
+        le=20,
+        description="Number of worker tasks per CPU (increase for I/O bound tasks)",
     )
 
     # Storage and Caching

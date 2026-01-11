@@ -431,10 +431,18 @@ class ParallelTaskGenerator:
 
         # Initialize Ray if needed
         if not ray.is_initialized():
+            import os
+
+            # Use all cores minus 1 for system interactivity
+            num_cpus = self.config.ray_num_cpus or (os.cpu_count() - 1)
+
             ray.init(
-                num_cpus=self.config.ray_num_cpus,
+                num_cpus=num_cpus,
                 object_store_memory=self.config.ray_object_store_memory,
                 ignore_reinit_error=True,
+                _system_config={
+                    "worker_register_timeout_seconds": 120,  # Increase timeout
+                },
             )
 
         # Create checkpoint manager
