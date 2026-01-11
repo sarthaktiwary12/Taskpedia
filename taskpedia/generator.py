@@ -35,15 +35,7 @@ from taskpedia.llm import LLMClient, LLMConfig, MockLLMClient
 from taskpedia.verbs import ATOMIC_VERBS, get_action_categories_summary
 from taskpedia.validation import is_generic_template, is_valid_atomic, GENERIC_NOUNS, GENERIC_VERBS
 from taskpedia.utils import RateLimiter
-
-
-def _is_rate_limit_error(exception: Exception) -> bool:
-    """Check if exception is a transient rate limit error (not quota exhaustion)."""
-    error_str = str(exception)
-    # Don't retry on quota exhaustion (daily limit) - only on transient rate limits
-    if "quota" in error_str.lower() and "per_day" in error_str.lower():
-        return False  # Daily quota - don't retry
-    return "429" in error_str or "RESOURCE_EXHAUSTED" in error_str
+from taskpedia.llm import _is_retryable_error
 
 
 # ============================================================================
@@ -350,7 +342,7 @@ class GeneratorCore:
             self.in_flight.increment(-1)
 
     @retry(
-        retry=retry_if_exception(_is_rate_limit_error),
+        retry=retry_if_exception(_is_retryable_error),
         stop=stop_after_attempt(5),
         wait=wait_exponential(multiplier=1, min=2, max=30),
         reraise=True,
@@ -393,7 +385,7 @@ class GeneratorCore:
             return {"node_id": node.id, "node": node, "success": False, "error": error_msg}
         except Exception as e:
             log.error(f"Exception in LLM call: {type(e).__name__}: {e}")
-            if _is_rate_limit_error(e):
+            if _is_retryable_error(e):
                 raise  # Let tenacity retry
             self.errors.increment()
             error_msg = f"{type(e).__name__}: {str(e)[:80]}"

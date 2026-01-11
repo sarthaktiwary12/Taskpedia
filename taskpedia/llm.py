@@ -37,12 +37,28 @@ from google.genai import types
 from tenacity import (
     before_sleep_log,
     retry,
-    retry_if_exception_type,
+    retry_if_exception,
     stop_after_attempt,
     wait_exponential,
 )
 
 log = logging.getLogger(__name__)
+
+
+def _is_retryable_error(exception: BaseException) -> bool:
+    """Check if an exception is retryable (rate limit, server error).
+
+    Returns False for daily quota exhaustion - those should fail fast.
+    """
+    error_str = str(exception).lower()
+    # Don't retry on daily quota exhaustion - fail fast
+    if "quota" in error_str and "per_day" in error_str:
+        return False
+    if "limit: 0" in error_str:  # Zero quota remaining
+        return False
+    # Retry on transient errors
+    return any(x in error_str for x in ["429", "resource_exhausted", "500", "503", "timeout"])
+
 
 # ============================================================================
 # LLM Response Cache
@@ -180,13 +196,16 @@ def get_cache(enabled: bool = True) -> LLMCache:
 # Default model - Gemini 2.5 Flash
 DEFAULT_MODEL = "models/gemini-2.5-flash"
 
-# Preview model with latest improvements
-PREVIEW_MODEL = "models/gemini-2.5-flash-preview-09-2025"
+# Fallback models
+GEMINI_25_FLASH = "models/gemini-2.5-flash"
 
-# Gemini 2.5 Flash pricing (as of Jan 2025)
-# Input: $0.075 per 1M tokens, Output: $0.30 per 1M tokens
-# Thinking: $0.075 per 1M tokens
+# Gemini pricing (as of Jan 2025)
 PRICING = {
+    "models/gemini-2.0-flash": {
+        "input_per_1m": 0.10,
+        "output_per_1m": 0.40,
+        "thinking_per_1m": 0.0,
+    },
     "models/gemini-2.5-flash": {
         "input_per_1m": 0.075,
         "output_per_1m": 0.30,
@@ -319,33 +338,24 @@ class LLMClient:
 
         return types.GenerateContentConfig(**config_dict)
 
-    def _is_retryable_error(self, exception: BaseException) -> bool:
-        """Check if an exception is retryable (rate limit, server error)."""
-        error_str = str(exception).lower()
-        # Don't retry on daily quota exhaustion
-        if "quota" in error_str and "per_day" in error_str:
-            return False
-        return any(x in error_str for x in ["429", "resource_exhausted", "500", "503", "timeout"])
-
     @retry(
+        retry=retry_if_exception(_is_retryable_error),
         stop=stop_after_attempt(5),
         wait=wait_exponential(multiplier=1, min=2, max=60),
         before_sleep=before_sleep_log(log, logging.WARNING),
         reraise=True,
     )
     def _call_api_with_retry(self, contents: list, use_thinking: bool):
-        """Call the Gemini API with tenacity retry."""
-        try:
-            return self._client.models.generate_content(
-                model=self.config.model,
-                contents=contents,
-                config=self._get_generation_config(use_thinking),
-            )
-        except Exception as e:
-            if self._is_retryable_error(e):
-                log.warning(f"Retryable API error: {e}")
-                raise
-            raise
+        """Call the Gemini API with tenacity retry.
+
+        Only retries on transient errors (rate limits, server errors).
+        Fails fast on quota exhaustion (daily limit reached).
+        """
+        return self._client.models.generate_content(
+            model=self.config.model,
+            contents=contents,
+            config=self._get_generation_config(use_thinking),
+        )
 
     def generate(
         self,
