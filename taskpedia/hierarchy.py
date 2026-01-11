@@ -27,6 +27,7 @@ Seed Sources (priority order):
 from __future__ import annotations
 
 import json
+import os
 import re
 from dataclasses import dataclass, field
 from enum import Enum
@@ -258,20 +259,56 @@ class TaskGraph:
     def _load_manifest(self) -> None:
         """Load the node index from disk."""
         if self._manifest_path.exists():
-            with open(self._manifest_path) as f:
-                manifest = json.load(f)
-                for node_id, node_data in manifest.get("nodes", {}).items():
-                    self._nodes[node_id] = TaskNode.from_dict(node_data)
+            try:
+                with open(self._manifest_path) as f:
+                    manifest = json.load(f)
+                    for node_id, node_data in manifest.get("nodes", {}).items():
+                        self._nodes[node_id] = TaskNode.from_dict(node_data)
+            except json.JSONDecodeError as e:
+                print(f"[WARNING] Manifest file corrupted: {e}")
+                print("[WARNING] Attempting to rebuild from YAML files...")
+                self._rebuild_from_yaml()
+
+    def _rebuild_from_yaml(self) -> None:
+        """Rebuild manifest by scanning YAML files."""
+        yaml_files = list(self.root.glob("**/*.yaml"))
+        print(f"[INFO] Found {len(yaml_files)} YAML files to scan...")
+
+        for yaml_path in yaml_files:
+            if yaml_path.name == "_meta.yaml" or yaml_path.suffix == ".yaml":
+                try:
+                    with open(yaml_path) as f:
+                        node = TaskNode.from_yaml(f.read())
+                        self._nodes[node.id] = node
+                except Exception as e:
+                    print(f"[WARNING] Could not load {yaml_path}: {e}")
+
+        print(f"[INFO] Rebuilt manifest with {len(self._nodes)} nodes")
+        self._save_manifest()
 
     def _save_manifest(self) -> None:
-        """Save the node index to disk."""
+        """Save the node index to disk atomically."""
+        import tempfile
+
         manifest = {
             "version": "1.0",
             "node_count": len(self._nodes),
             "nodes": {nid: node.to_dict() for nid, node in self._nodes.items()},
         }
-        with open(self._manifest_path, "w") as f:
-            json.dump(manifest, f, indent=2)
+
+        # Write to temp file first, then atomically rename
+        # This prevents corruption if the process is interrupted
+        temp_fd, temp_path = tempfile.mkstemp(dir=self.root, prefix="_manifest_", suffix=".json")
+        try:
+            with os.fdopen(temp_fd, "w") as f:
+                json.dump(manifest, f, indent=2)
+            # Atomic rename (on POSIX systems)
+            os.replace(temp_path, self._manifest_path)
+        except Exception:
+            # Clean up temp file if something goes wrong
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+            raise
 
     def _get_node_path(self, node: TaskNode) -> Path:
         """Get the filesystem path for a node."""

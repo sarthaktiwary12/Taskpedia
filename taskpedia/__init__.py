@@ -6,7 +6,7 @@ filesystem-backed directed acyclic graph (DAG).
 
 Core modules:
     hierarchy - TaskNode, TaskGraph data structures
-    generate - Synthetic data generation pipeline
+    generate_fast - Fast synthetic data generation (ThreadPool-based)
     llm - LLM client (Gemini 2.5 Flash)
     seeds - Seed data from O*NET, ATUS, etc.
     cli - Command-line interface
@@ -24,7 +24,7 @@ Quick start:
 
 __version__ = "0.3.0"
 
-from taskpedia.generate import GenerationConfig, TaskGenerator, run_generation
+from taskpedia.generate_fast import FastGenConfig, FastGenerator
 from taskpedia.hierarchy import NodeType, SeedSource, TaskGraph, TaskNode
 from taskpedia.llm import LLMClient, LLMConfig
 
@@ -35,9 +35,8 @@ __all__ = [
     "NodeType",
     "SeedSource",
     # Generation
-    "TaskGenerator",
-    "GenerationConfig",
-    "run_generation",
+    "FastGenerator",
+    "FastGenConfig",
     # LLM
     "LLMClient",
     "LLMConfig",

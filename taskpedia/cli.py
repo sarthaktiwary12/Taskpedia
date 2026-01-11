@@ -9,6 +9,9 @@ Usage:
     # Generate synthetic tasks using LLM
     taskpedia generate -o ./tasks --max-tasks 1000
 
+    # Launch interactive TUI dashboard
+    taskpedia tui -o ./tasks --max-tasks 10000
+
     # View the hierarchy
     taskpedia tree -o ./tasks
 
@@ -53,8 +56,8 @@ def cmd_bootstrap(args):
 
 
 def cmd_generate(args):
-    """Generate synthetic tasks using LLM."""
-    from taskpedia.generate import GenerationConfig, TaskGenerator
+    """Generate synthetic tasks using LLM (fast ThreadPool-based generator)."""
+    from taskpedia.generate_fast import FastGenConfig, FastGenerator
 
     output_path = Path(args.output)
 
@@ -64,21 +67,31 @@ def cmd_generate(args):
         print("Run 'taskpedia bootstrap' first to create seed hierarchy.")
         sys.exit(1)
 
-    config = GenerationConfig(
+    config = FastGenConfig(
         output_dir=output_path,
         model=args.model,
         max_tasks=args.max_tasks,
-        num_workers=args.workers,
+        max_workers=args.workers,
+        batch_size=args.batch_size,
         rpm_limit=args.rpm,
+        mock=args.mock,
     )
 
-    generator = TaskGenerator(config=config)
-    stats = generator.run(
-        max_tasks=args.max_tasks,
-        expand_domains=not args.no_expand,
-    )
+    generator = FastGenerator(config=config)
+    stats = generator.run()
 
     return stats
+
+
+def cmd_tui(args):
+    """Launch the interactive TUI dashboard."""
+    from taskpedia.tui import run_tui
+
+    run_tui(
+        output_dir=args.output,
+        max_tasks=args.max_tasks,
+        model=args.model,
+    )
 
 
 def cmd_tree(args):
@@ -287,21 +300,47 @@ def main():
     gen_parser.add_argument(
         "--workers",
         type=int,
-        default=4,
-        help="Number of parallel workers (default: 4)",
+        default=64,
+        help="Number of parallel workers (default: 64)",
+    )
+    gen_parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=500,
+        help="Batch size for processing (default: 500)",
     )
     gen_parser.add_argument(
         "--rpm",
         type=int,
-        default=60,
-        help="Rate limit: requests per minute (default: 60)",
+        default=1000,
+        help="Rate limit: requests per minute (default: 1000 for Gemini 2.5 Flash)",
     )
     gen_parser.add_argument(
-        "--no-expand",
+        "--mock",
         action="store_true",
-        help="Don't expand domains with new tasks, only decompose",
+        help="Use mock LLM for testing (no API calls, no cost)",
     )
     gen_parser.set_defaults(func=cmd_generate)
+
+    # TUI command
+    tui_parser = subparsers.add_parser(
+        "tui",
+        help="Launch interactive TUI dashboard for monitoring generation",
+    )
+    add_output_arg(tui_parser)
+    tui_parser.add_argument(
+        "-n",
+        "--max-tasks",
+        type=int,
+        default=10000,
+        help="Maximum tasks to generate (default: 10000)",
+    )
+    tui_parser.add_argument(
+        "--model",
+        default="models/gemini-2.5-flash",
+        help="LLM model to use (default: models/gemini-2.5-flash)",
+    )
+    tui_parser.set_defaults(func=cmd_tui)
 
     # Tree command
     tree_parser = subparsers.add_parser(

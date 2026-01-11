@@ -19,10 +19,8 @@ Algorithm Overview:
 
 from __future__ import annotations
 
-import json
 from collections import deque
 from dataclasses import dataclass, field
-from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any, Callable
@@ -30,16 +28,10 @@ from typing import Any, Callable
 from taskpedia.hierarchy import NodeType, SeedSource, TaskGraph, TaskNode
 from taskpedia.seeds.onet import ONetDatabase, load_onet
 from taskpedia.seeds.taxonomy import (
-    DOMAIN_NAMES,
-    LIFE_ACTIVITIES,
     SOC_TO_DOMAIN,
-    LifeDomain,
-    get_all_domains,
     get_categories_for_domain,
     get_domain_name,
     get_life_domains,
-    get_work_domains,
-    is_work_domain,
 )
 
 

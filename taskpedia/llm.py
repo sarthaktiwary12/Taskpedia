@@ -1,5 +1,5 @@
 """
-LLM Client for PRAXIS Task Decomposition.
+LLM Client for TASKPEDIA Task Decomposition.
 
 Uses Google's Gemini 2.5 Flash for task decomposition and expansion.
 The model's thinking capabilities are particularly useful for reasoning
@@ -11,6 +11,10 @@ Usage:
     client = LLMClient()
     result = client.decompose_task("make breakfast")
 
+    # For testing without API calls:
+    from taskpedia.llm import MockLLMClient
+    client = MockLLMClient()
+
 Environment Variables:
     GEMINI_API_KEY or GOOGLE_API_KEY: API key for Gemini
 """
@@ -19,6 +23,8 @@ from __future__ import annotations
 
 import json
 import os
+import random
+import time
 from dataclasses import dataclass, field
 from typing import Any, Iterator
 
@@ -30,6 +36,22 @@ DEFAULT_MODEL = "models/gemini-2.5-flash"
 
 # Preview model with latest improvements
 PREVIEW_MODEL = "models/gemini-2.5-flash-preview-09-2025"
+
+# Gemini 2.5 Flash pricing (as of Jan 2025)
+# Input: $0.075 per 1M tokens, Output: $0.30 per 1M tokens
+# Thinking: $0.075 per 1M tokens
+PRICING = {
+    "models/gemini-2.5-flash": {
+        "input_per_1m": 0.075,
+        "output_per_1m": 0.30,
+        "thinking_per_1m": 0.075,
+    },
+    "models/gemini-2.5-pro": {
+        "input_per_1m": 1.25,
+        "output_per_1m": 10.00,
+        "thinking_per_1m": 1.25,
+    },
+}
 
 
 @dataclass
@@ -63,6 +85,37 @@ class DecompositionResult:
     raw_response: str = ""
 
 
+@dataclass
+class UsageStats:
+    """Token usage and cost statistics."""
+
+    input_tokens: int = 0
+    output_tokens: int = 0
+    thinking_tokens: int = 0
+    requests: int = 0
+
+    def add(self, input_tokens: int, output_tokens: int, thinking_tokens: int = 0):
+        """Add usage from a request."""
+        self.input_tokens += input_tokens
+        self.output_tokens += output_tokens
+        self.thinking_tokens += thinking_tokens
+        self.requests += 1
+
+    def get_cost(self, model: str = DEFAULT_MODEL) -> float:
+        """Calculate total cost in USD."""
+        pricing = PRICING.get(model, PRICING[DEFAULT_MODEL])
+        input_cost = (self.input_tokens / 1_000_000) * pricing["input_per_1m"]
+        output_cost = (self.output_tokens / 1_000_000) * pricing["output_per_1m"]
+        thinking_cost = (self.thinking_tokens / 1_000_000) * pricing["thinking_per_1m"]
+        return input_cost + output_cost + thinking_cost
+
+    def __str__(self) -> str:
+        return (
+            f"Tokens: {self.input_tokens:,} in, {self.output_tokens:,} out, "
+            f"{self.thinking_tokens:,} thinking | Requests: {self.requests:,}"
+        )
+
+
 class LLMClient:
     """
     Client for interacting with Gemini 2.5 Flash.
@@ -73,6 +126,7 @@ class LLMClient:
 
     def __init__(self, config: LLMConfig | None = None, api_key: str | None = None):
         self.config = config or LLMConfig()
+        self.usage = UsageStats()
 
         # Get API key from parameter or environment
         self._api_key = (
@@ -145,6 +199,15 @@ class LLMClient:
             contents=contents,
             config=self._get_generation_config(use_thinking),
         )
+
+        # Track token usage if available
+        if hasattr(response, "usage_metadata") and response.usage_metadata:
+            usage = response.usage_metadata
+            self.usage.add(
+                input_tokens=getattr(usage, "prompt_token_count", 0) or 0,
+                output_tokens=getattr(usage, "candidates_token_count", 0) or 0,
+                thinking_tokens=getattr(usage, "thoughts_token_count", 0) or 0,
+            )
 
         return response.text
 
@@ -415,22 +478,222 @@ Return as JSON."""
         return False
 
 
+class MockLLMClient:
+    """
+    Mock LLM client for testing the pipeline without API calls.
+
+    Generates realistic-looking but fake responses for decomposition,
+    expansion, and completion criteria tasks.
+
+    Usage:
+        client = MockLLMClient()
+        result = client.generate_json(prompt, system_prompt)
+    """
+
+    # Sample subtask templates for decomposition
+    SUBTASK_TEMPLATES = [
+        "prepare {item}",
+        "gather {item}",
+        "check {item}",
+        "position {item}",
+        "adjust {item}",
+        "verify {item}",
+        "clean {item}",
+        "inspect {item}",
+        "move {item}",
+        "secure {item}",
+    ]
+
+    ITEMS = [
+        "materials",
+        "equipment",
+        "workspace",
+        "components",
+        "tools",
+        "surface",
+        "container",
+        "target",
+        "source",
+        "area",
+    ]
+
+    def __init__(self, config: LLMConfig | None = None, delay: float = 0.1):
+        self.config = config or LLMConfig()
+        self.usage = UsageStats()
+        self.delay = delay  # Simulated API delay
+
+    def generate(
+        self,
+        prompt: str,
+        system_prompt: str | None = None,
+        use_thinking: bool = True,
+    ) -> str:
+        """Generate a mock response."""
+        time.sleep(self.delay)
+
+        # Simulate token usage
+        input_tokens = len(prompt.split()) * 2
+        output_tokens = random.randint(100, 300)
+        thinking_tokens = random.randint(50, 200) if use_thinking else 0
+        self.usage.add(input_tokens, output_tokens, thinking_tokens)
+
+        # Generate appropriate mock response based on prompt content
+        if "decompose" in prompt.lower() or "subtask" in prompt.lower():
+            return self._mock_decomposition_response(prompt)
+        elif "completion criteria" in prompt.lower() or "precondition" in prompt.lower():
+            return self._mock_completion_response(prompt)
+        elif "generate" in prompt.lower() and "task" in prompt.lower():
+            return self._mock_expansion_response(prompt)
+        else:
+            return '{"result": "mock response"}'
+
+    def generate_json(
+        self,
+        prompt: str,
+        system_prompt: str | None = None,
+        use_thinking: bool = True,
+    ) -> dict[str, Any]:
+        """Generate and parse mock JSON response."""
+        response = self.generate(prompt, system_prompt, use_thinking)
+        return json.loads(response)
+
+    def _mock_decomposition_response(self, prompt: str) -> str:
+        """Generate mock decomposition response."""
+        # Extract task name from prompt
+        task_name = "task"
+        if "Task:" in prompt:
+            lines = prompt.split("\n")
+            for line in lines:
+                if line.startswith("Task:"):
+                    task_name = line.replace("Task:", "").strip()
+                    break
+
+        # Determine if atomic (short tasks are more likely atomic)
+        is_atomic = len(task_name.split()) <= 2 and random.random() < 0.3
+
+        if is_atomic:
+            return json.dumps(
+                {
+                    "is_atomic": True,
+                    "reasoning": f"'{task_name}' is a fundamental action that cannot be meaningfully decomposed.",
+                    "confidence": round(random.uniform(0.8, 0.95), 2),
+                    "subtasks": [],
+                }
+            )
+
+        # Generate 4-8 subtasks
+        num_subtasks = random.randint(4, 8)
+        subtasks = []
+        used_templates = random.sample(
+            self.SUBTASK_TEMPLATES, min(num_subtasks, len(self.SUBTASK_TEMPLATES))
+        )
+
+        for i, template in enumerate(used_templates[:num_subtasks]):
+            item = random.choice(self.ITEMS)
+            subtask_name = template.format(item=item)
+            subtasks.append(
+                {
+                    "name": subtask_name,
+                    "description": f"Step {i+1}: {subtask_name} for {task_name}",
+                    "is_likely_atomic": random.random() < 0.4,
+                }
+            )
+
+        return json.dumps(
+            {
+                "is_atomic": False,
+                "reasoning": f"'{task_name}' can be broken down into {num_subtasks} sequential steps.",
+                "confidence": round(random.uniform(0.75, 0.95), 2),
+                "subtasks": subtasks,
+            }
+        )
+
+    def _mock_completion_response(self, prompt: str) -> str:
+        """Generate mock completion criteria response."""
+        task_name = "task"
+        if "Task:" in prompt:
+            lines = prompt.split("\n")
+            for line in lines:
+                if line.startswith("Task:"):
+                    task_name = line.replace("Task:", "").strip()
+                    break
+
+        return json.dumps(
+            {
+                "precondition": f"Required materials and workspace available for {task_name}. Area is clear and safe.",
+                "postcondition": f"{task_name.capitalize()} completed successfully. Result meets quality standards.",
+                "invariants": "Safety protocols maintained. No damage to equipment or materials.",
+            }
+        )
+
+    def _mock_expansion_response(self, prompt: str) -> str:
+        """Generate mock domain expansion response."""
+        # Extract domain from prompt
+        domain = "general"
+        if "Domain:" in prompt:
+            lines = prompt.split("\n")
+            for line in lines:
+                if line.startswith("Domain:"):
+                    domain = line.replace("Domain:", "").strip()
+                    break
+
+        tasks = []
+        task_verbs = ["perform", "complete", "execute", "handle", "manage", "process", "conduct"]
+        task_objects = [
+            "routine check",
+            "maintenance",
+            "inspection",
+            "preparation",
+            "cleanup",
+            "setup",
+            "review",
+        ]
+
+        for i in range(random.randint(5, 10)):
+            verb = random.choice(task_verbs)
+            obj = random.choice(task_objects)
+            tasks.append(
+                {
+                    "name": f"{verb} {obj} ({i+1})",
+                    "description": f"A task in the {domain} domain involving {obj}",
+                    "typical_context": f"Performed during regular {domain.lower()} activities",
+                    "tags": [domain.lower().replace(" ", "_"), "mock"],
+                }
+            )
+
+        return json.dumps({"tasks": tasks})
+
+    def close(self):
+        """No-op for mock client."""
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        return False
+
+
 # Convenience function
 def get_client(
     model: str = DEFAULT_MODEL,
     api_key: str | None = None,
+    mock: bool = False,
     **kwargs,
-) -> LLMClient:
+) -> LLMClient | MockLLMClient:
     """
     Get an LLM client with the specified configuration.
 
     Args:
         model: Model to use (default: gemini-2.5-flash)
         api_key: Optional API key
+        mock: If True, return a MockLLMClient for testing
         **kwargs: Additional config options
 
     Returns:
-        Configured LLMClient
+        Configured LLMClient or MockLLMClient
     """
     config = LLMConfig(model=model, **kwargs)
+    if mock:
+        return MockLLMClient(config=config)
     return LLMClient(config=config, api_key=api_key)

@@ -22,20 +22,20 @@ dependencies = [
     # Core
     "pyyaml>=6.0",
     "tqdm>=4.66.0",
-
     # LLM
     "google-genai>=1.0.0",
-
     # Resilience & Caching
     "tenacity>=8.2.0",
     "diskcache>=5.6.0",
-
     # Parallelization
     "ray[default]>=2.9.0",
-
     # Data loading
     "datasets>=2.16.0",
     "huggingface-hub>=0.20.0",
+    # TUI
+    "textual>=0.89.0",
+    "rich>=13.7.0",
+    "plotext>=5.2.0",
 ]
 
 [project.optional-dependencies]

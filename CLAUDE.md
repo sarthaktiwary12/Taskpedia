@@ -181,7 +181,8 @@ task_hierarchy/
 - **Max output tokens**: 8192
 - **Workers**: 4 (parallel)
 - **Rate limit**: 60 RPM
-- **Cache size limit**: 10GB
+- **LLM cache**: `~/.taskpedia_cache/` (10GB limit)
+- **O*NET cache**: `~/.cache/taskpedia/onet/` (auto-downloaded)
 
 ## Environment Variables
 
@@ -221,8 +222,8 @@ Development:
   - `base.py` - Base loader classes
   - `loaders.py` - Additional dataset loaders
 
-### Data
-- `data/onet/` - O*NET 30.1 database files
+### Data (auto-downloaded)
+- `~/.cache/taskpedia/onet/` - O*NET 30.1 database (auto-downloaded on first bootstrap)
 
 ## Notes for Future Development
 
