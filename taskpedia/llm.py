@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
 import random
 import time
@@ -33,6 +34,15 @@ from typing import Any, Iterator
 from diskcache import Cache
 from google import genai
 from google.genai import types
+from tenacity import (
+    before_sleep_log,
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
+
+log = logging.getLogger(__name__)
 
 # ============================================================================
 # LLM Response Cache
@@ -309,6 +319,34 @@ class LLMClient:
 
         return types.GenerateContentConfig(**config_dict)
 
+    def _is_retryable_error(self, exception: BaseException) -> bool:
+        """Check if an exception is retryable (rate limit, server error)."""
+        error_str = str(exception).lower()
+        # Don't retry on daily quota exhaustion
+        if "quota" in error_str and "per_day" in error_str:
+            return False
+        return any(x in error_str for x in ["429", "resource_exhausted", "500", "503", "timeout"])
+
+    @retry(
+        stop=stop_after_attempt(5),
+        wait=wait_exponential(multiplier=1, min=2, max=60),
+        before_sleep=before_sleep_log(log, logging.WARNING),
+        reraise=True,
+    )
+    def _call_api_with_retry(self, contents: list, use_thinking: bool):
+        """Call the Gemini API with tenacity retry."""
+        try:
+            return self._client.models.generate_content(
+                model=self.config.model,
+                contents=contents,
+                config=self._get_generation_config(use_thinking),
+            )
+        except Exception as e:
+            if self._is_retryable_error(e):
+                log.warning(f"Retryable API error: {e}")
+                raise
+            raise
+
     def generate(
         self,
         prompt: str,
@@ -357,11 +395,7 @@ class LLMClient:
 
         contents.append(types.Content(role="user", parts=[types.Part.from_text(text=prompt)]))
 
-        response = self._client.models.generate_content(
-            model=self.config.model,
-            contents=contents,
-            config=self._get_generation_config(use_thinking),
-        )
+        response = self._call_api_with_retry(contents, use_thinking)
 
         # Track token usage if available
         if hasattr(response, "usage_metadata") and response.usage_metadata:

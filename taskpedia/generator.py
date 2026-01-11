@@ -11,6 +11,7 @@ Continuous flow architecture with Textual TUI for monitoring.
 from __future__ import annotations
 
 import json
+import logging
 import re
 import time
 import threading
@@ -19,11 +20,30 @@ from pathlib import Path
 from typing import Any
 from concurrent.futures import ThreadPoolExecutor, as_completed, Future
 
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception
+
+# Setup logging - file only to avoid polluting TUI
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
+_file_handler = logging.FileHandler("taskpedia_debug.log")
+_file_handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
+log.addHandler(_file_handler)
+log.propagate = False  # Don't propagate to root logger
+
 from taskpedia.hierarchy import NodeType, SeedSource, TaskGraph, TaskNode
 from taskpedia.llm import LLMClient, LLMConfig, MockLLMClient
 from taskpedia.verbs import ATOMIC_VERBS, get_action_categories_summary
 from taskpedia.validation import is_generic_template, is_valid_atomic, GENERIC_NOUNS, GENERIC_VERBS
 from taskpedia.utils import RateLimiter
+
+
+def _is_rate_limit_error(exception: Exception) -> bool:
+    """Check if exception is a transient rate limit error (not quota exhaustion)."""
+    error_str = str(exception)
+    # Don't retry on quota exhaustion (daily limit) - only on transient rate limits
+    if "quota" in error_str.lower() and "per_day" in error_str.lower():
+        return False  # Daily quota - don't retry
+    return "429" in error_str or "RESOURCE_EXHAUSTED" in error_str
 
 
 # ============================================================================
@@ -181,16 +201,15 @@ class AtomicCounter:
 class FastGenConfig:
     """Configuration for fast generation.
 
-    Note: max_tasks refers to TARGET number of top-level tasks (NodeType.TASK).
-    The system auto-counts existing tasks and generates more to reach the target.
+    Note: max_tasks refers to NEW nodes to generate this session.
     """
 
     output_dir: Path
     model: str = "models/gemini-2.5-flash"
-    max_tasks: int = 100000  # Target total node count
-    max_workers: int = 64  # ~RPM/60 * avg_latency (1000/60 * 3s = 50)
-    queue_size: int = 1000
-    rpm_limit: int = 1000
+    max_tasks: int = 100000  # New nodes to generate this session
+    max_workers: int = 64  # Good for Tier 1 (1000+ RPM)
+    queue_size: int = 500
+    rpm_limit: int = 1000  # Tier 1 allows ~1500 RPM
     mock: bool = False
     save_interval: int = 200
     tui: bool = True
@@ -228,6 +247,10 @@ class GeneratorCore:
         # Pending nodes to save
         self._pending_nodes: list[TaskNode] = []
         self._pending_lock = threading.Lock()
+
+        # Additional counters for debugging
+        self.duplicates = AtomicCounter(0)
+        self.empty_responses = AtomicCounter(0)
 
         # Status message
         self.status = "Initializing..."
@@ -319,16 +342,29 @@ class GeneratorCore:
             return len(self._pending_nodes)
 
     def _decompose_node(self, node: TaskNode) -> dict:
-        """Decompose a single node. Thread-safe."""
-        # Rate limit before API call
-        self._rate_limiter.acquire()
-
-        self.api_calls.increment()
+        """Decompose a single node. Thread-safe with tenacity retry."""
         self.in_flight.increment()
+        try:
+            return self._call_llm_with_retry(node)
+        finally:
+            self.in_flight.increment(-1)
+
+    @retry(
+        retry=retry_if_exception(_is_rate_limit_error),
+        stop=stop_after_attempt(5),
+        wait=wait_exponential(multiplier=1, min=2, max=30),
+        reraise=True,
+    )
+    def _call_llm_with_retry(self, node: TaskNode) -> dict:
+        """Call LLM with tenacity retry on rate limits."""
+        self._rate_limiter.acquire()
+        self.api_calls.increment()
 
         try:
             prompt = make_prompt(node)
+            log.debug(f"Calling LLM for node: {node.id[:50]}...")
             response = self._client.generate(prompt, SYSTEM_PROMPT, use_thinking=False)
+            log.debug(f"LLM response length: {len(response)} chars")
 
             # Parse JSON
             json_text = response.strip()
@@ -343,35 +379,38 @@ class GeneratorCore:
                         break
 
             result = json.loads(json_text.strip())
+            log.debug(
+                f"Parsed result: is_atomic={result.get('is_atomic')}, subtasks={len(result.get('subtasks', []))}"
+            )
             return {"node_id": node.id, "node": node, "success": True, **result}
 
         except json.JSONDecodeError as e:
+            log.error(f"JSON decode error: {e}")
+            log.error(f"Raw response: {response[:500] if response else 'None'}")
             self.errors.increment()
             error_msg = f"JSON: {str(e)[:50]}"
-            with self._errors_lock:
-                self._recent_errors.append(error_msg)
-                if len(self._recent_errors) > 10:
-                    self._recent_errors.pop(0)
-            return {
-                "node_id": node.id,
-                "node": node,
-                "success": False,
-                "error": error_msg,
-            }
+            self._record_error(error_msg)
+            return {"node_id": node.id, "node": node, "success": False, "error": error_msg}
         except Exception as e:
+            log.error(f"Exception in LLM call: {type(e).__name__}: {e}")
+            if _is_rate_limit_error(e):
+                raise  # Let tenacity retry
             self.errors.increment()
             error_msg = f"{type(e).__name__}: {str(e)[:80]}"
-            with self._errors_lock:
-                self._recent_errors.append(error_msg)
-                if len(self._recent_errors) > 10:
-                    self._recent_errors.pop(0)
+            self._record_error(error_msg)
             return {"node_id": node.id, "node": node, "success": False, "error": error_msg}
-        finally:
-            self.in_flight.increment(-1)
+
+    def _record_error(self, error_msg: str) -> None:
+        """Record an error message for display."""
+        with self._errors_lock:
+            self._recent_errors.append(error_msg)
+            if len(self._recent_errors) > 10:
+                self._recent_errors.pop(0)
 
     def _process_result(self, result: dict) -> int:
         """Process a decomposition result with validation."""
         if not result.get("success"):
+            log.debug(f"Skipping failed result: {result.get('error', 'unknown')}")
             return 0
 
         node_id = result["node_id"]
@@ -379,9 +418,14 @@ class GeneratorCore:
         is_atomic = result.get("is_atomic", False)
         subtasks = result.get("subtasks", [])
 
+        log.debug(
+            f"Processing result for {node_id[:40]}: is_atomic={is_atomic}, subtasks={len(subtasks)}"
+        )
         self.mark_processed(node_id)
 
         if is_atomic or not subtasks:
+            self.empty_responses.increment()
+            log.debug(f"Node {node_id[:40]} is atomic or has no subtasks")
             # Validate atomic
             if self.config.validate and not is_valid_atomic(node.name):
                 # Don't mark as atomic if it doesn't look like one
@@ -451,7 +495,7 @@ class GeneratorCore:
                         with self._queue_lock:
                             self._decomposable_queue.append(child)
                 except ValueError:
-                    pass  # Duplicate
+                    self.duplicates.increment()  # Track duplicates
 
         self.decomposed.increment()
         self.generated.increment(count)
@@ -593,9 +637,17 @@ def run_with_tui(config: FastGenConfig) -> dict:
     from collections import deque
     from textual.app import App, ComposeResult
     from textual.widgets import Static
-    from textual.containers import Horizontal, Vertical, ScrollableContainer
-    from textual_plotext import PlotextPlot
+    from textual.containers import Horizontal, Vertical
     from rich.text import Text
+
+    # Try to import plotext, fall back to no graph
+    try:
+        from textual_plotext import PlotextPlot
+
+        HAS_PLOTEXT = True
+    except ImportError:
+        HAS_PLOTEXT = False
+        PlotextPlot = None
 
     # Create core outside the app
     core = GeneratorCore(config)
@@ -681,14 +733,11 @@ def run_with_tui(config: FastGenConfig) -> dict:
             text-style: bold;
         }
 
-        #files-scroll {
-            height: 1fr;
-            background: #0d1117;
-        }
-
         #files-list {
+            height: 1fr;
             padding: 0 1;
             background: #0d1117;
+            overflow-y: auto;
         }
 
         PlotextPlot {
@@ -744,13 +793,13 @@ def run_with_tui(config: FastGenConfig) -> dict:
                 with Vertical(id="left-panel"):
                     yield Static(id="progress-box")
                     yield Static(id="meters-box")
-                    yield PlotextPlot(id="graph-box")
+                    if HAS_PLOTEXT:
+                        yield PlotextPlot(id="graph-box")
                     yield Static(id="stats-box")
 
                 with Vertical(id="right-panel"):
                     yield Static("  RECENT FILES", id="files-header")
-                    with ScrollableContainer(id="files-scroll"):
-                        yield Static("", id="files-list")
+                    yield Static("", id="files-list")
 
             yield Static("", id="status-bar")
             yield Static(
@@ -850,11 +899,13 @@ def run_with_tui(config: FastGenConfig) -> dict:
             text.append("─" * 38, style="dim #30363d")
             text.append("\n")
 
-            # Main stats in two columns
+            # Main stats
             stats = [
                 ("Generated", f"{generated:,}", "#238636"),
                 ("Atomic", f"{core.atomic_found.value:,}", "#a371f7"),
                 ("Decomposed", f"{core.decomposed.value:,}", "#58a6ff"),
+                ("Empty/Atomic", f"{core.empty_responses.value:,}", "#8b949e"),
+                ("Duplicates", f"{core.duplicates.value:,}", "#f0883e"),
                 ("Rejected", f"{core.rejected.value:,}", "#f85149"),
                 ("Errors", f"{core.errors.value:,}", "#f85149" if core.errors.value > 0 else "dim"),
             ]
@@ -919,6 +970,8 @@ def run_with_tui(config: FastGenConfig) -> dict:
 
         def _update_graph(self) -> None:
             """Update the RPM graph."""
+            if not HAS_PLOTEXT:
+                return
             try:
                 # Sample current RPM
                 elapsed = core.get_elapsed()
@@ -994,7 +1047,9 @@ def run_with_tui(config: FastGenConfig) -> dict:
                                 break
                             try:
                                 result = future.result(timeout=30)
+                                log.debug(f"Future completed: success={result.get('success')}")
                                 count = core._process_result(result)
+                                log.debug(f"Processed result: count={count}")
 
                                 # Track generated files for preview
                                 if result.get("success") and count > 0:
@@ -1010,7 +1065,8 @@ def run_with_tui(config: FastGenConfig) -> dict:
                                             )
 
                                 save_counter += 1
-                            except Exception:
+                            except Exception as e:
+                                log.error(f"Future exception: {type(e).__name__}: {e}")
                                 core.errors.increment()
 
                         if save_counter >= config.save_interval:

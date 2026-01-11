@@ -1458,8 +1458,8 @@ Examples:
     gen_parser.add_argument(
         "--queue-size",
         type=int,
-        default=1000,
-        help="Work queue size (default: 1000)",
+        default=500,
+        help="Work queue size (default: 500)",
     )
     gen_parser.add_argument(
         "--rpm",
