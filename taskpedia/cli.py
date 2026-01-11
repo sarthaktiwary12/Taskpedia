@@ -430,6 +430,202 @@ def cmd_qa_clean(args):
         print("\nDone!")
 
 
+def cmd_qa_verbs(args):
+    """Analyze verb taxonomy."""
+    from taskpedia.postprocess import (
+        get_verb_statistics,
+        analyze_verb_stems,
+        check_domain_coverage,
+    )
+
+    print("Verb Taxonomy Analysis")
+    print("=" * 60)
+
+    stats = get_verb_statistics()
+    print(f"\nTotal ATOMIC_VERBS:    {stats['total_atomic']:,}")
+    print(f"Unique ATOMIC_VERBS:   {stats['unique_atomic']:,}")
+    print(f"Total COGNITIVE_VERBS: {stats['total_cognitive']:,}")
+    print(f"Unique COGNITIVE_VERBS:{stats['unique_cognitive']:,}")
+
+    # Duplicates
+    dups = stats["duplicates"]
+    if dups:
+        print(f"\nDuplicates ({len(dups)}):")
+        for v, count in sorted(dups.items(), key=lambda x: -x[1])[:15]:
+            print(f"  {v}: {count}x")
+        if len(dups) > 15:
+            print(f"  ... and {len(dups) - 15} more")
+    else:
+        print("\nNo duplicates found!")
+
+    # Verb stems
+    stems = analyze_verb_stems()
+    print(f"\nVerb stems with 3+ variants: {len(stems)}")
+    top_stems = sorted(stems.items(), key=lambda x: -len(x[1]))[:10]
+    for stem, variants in top_stems:
+        print(f"  {stem}: {len(variants)} variants")
+
+    # Domain coverage
+    print("\nDomain Coverage:")
+    coverage = check_domain_coverage()
+    for domain, data in coverage.items():
+        found = len(data["found"])
+        total = len(data["expected"])
+        missing = data["missing"]
+        status = "✓" if not missing else "△"
+        print(f"  {status} {domain}: {found}/{total}")
+        if missing and args.verbose:
+            print(f"      Missing: {', '.join(missing)}")
+
+
+def cmd_qa_problems(args):
+    """Show problematic verbs."""
+    from taskpedia.postprocess import find_problematic_verbs, find_ambiguous_verbs
+
+    print("Problematic Verbs in ATOMIC_VERBS")
+    print("=" * 60)
+
+    problems = find_problematic_verbs()
+    if not problems:
+        print("\nNo problematic verbs found!")
+    else:
+        for issue_type, verbs in problems.items():
+            print(f"\n{issue_type.replace('_', ' ').title()} ({len(verbs)}):")
+            for v in sorted(verbs)[:20]:
+                print(f"  - {v}")
+            if len(verbs) > 20:
+                print(f"  ... and {len(verbs) - 20} more")
+
+    # Ambiguous verbs
+    ambiguous = find_ambiguous_verbs()
+    if ambiguous:
+        print(f"\nAmbiguous single words ({len(ambiguous)}):")
+        for word, disambiguated in sorted(ambiguous.items())[:15]:
+            if disambiguated:
+                print(f"  {word} -> has {len(disambiguated)} disambiguated versions")
+            else:
+                print(f"  {word} -> NEEDS DISAMBIGUATION")
+        if len(ambiguous) > 15:
+            print(f"  ... and {len(ambiguous) - 15} more")
+
+
+def cmd_qa_coverage(args):
+    """Show detailed domain coverage."""
+    from taskpedia.postprocess import check_domain_coverage
+
+    print("Domain Coverage Analysis")
+    print("=" * 60)
+
+    coverage = check_domain_coverage()
+
+    for domain, data in sorted(coverage.items()):
+        found = data["found"]
+        missing = data["missing"]
+        total = len(data["expected"])
+        pct = (len(found) / total * 100) if total > 0 else 0
+
+        print(f"\n{domain} ({len(found)}/{total} = {pct:.0f}%)")
+        print("-" * 40)
+
+        if found:
+            print(f"  Found: {', '.join(sorted(found))}")
+        if missing:
+            print(f"  MISSING: {', '.join(sorted(missing))}")
+
+
+def cmd_qa_test(args):
+    """Run all data quality tests."""
+    from taskpedia.postprocess import (
+        run_verb_taxonomy_tests,
+        run_domain_coverage_tests,
+        run_comprehensive_domain_tests,
+        run_generated_data_tests,
+    )
+
+    print("Running Data Quality Tests")
+    print("=" * 60)
+
+    task_dir = Path(args.output)
+
+    # Run verb taxonomy tests
+    print("\n[1] Verb Taxonomy Tests")
+    print("-" * 40)
+    verb_results = run_verb_taxonomy_tests(args.verbose)
+    for status, msg in verb_results["details"]:
+        icon = "✓" if status == "PASS" else "△" if status == "WARN" else "✗"
+        print(f"  {icon} {msg}")
+
+    # Run domain coverage tests
+    print("\n[2] Domain Coverage Tests")
+    print("-" * 40)
+    coverage_results = run_domain_coverage_tests(args.verbose)
+    for status, msg in coverage_results["details"]:
+        icon = "✓" if status == "PASS" else "△" if status == "WARN" else "✗"
+        print(f"  {icon} {msg}")
+
+    # Run comprehensive domain tests
+    print("\n[3] Comprehensive Domain Tests")
+    print("-" * 40)
+    comprehensive_results = run_comprehensive_domain_tests(args.verbose)
+    # Only show failures and warnings unless verbose
+    shown = 0
+    for status, msg in comprehensive_results["details"]:
+        if status != "PASS" or args.verbose:
+            icon = "✓" if status == "PASS" else "△" if status == "WARN" else "✗"
+            print(f"  {icon} {msg}")
+            shown += 1
+    if shown == 0:
+        print(f"  ✓ All {len(comprehensive_results['details'])} domain tests passed")
+
+    # Run generated data tests if directory exists
+    if task_dir.exists():
+        print("\n[4] Generated Data Tests")
+        print("-" * 40)
+        data_results = run_generated_data_tests(task_dir, args.verbose)
+        for status, msg in data_results["details"]:
+            icon = "✓" if status == "PASS" else "△" if status == "WARN" else "✗"
+            print(f"  {icon} {msg}")
+    else:
+        data_results = {"passed": 0, "failed": 0, "warnings": 0}
+        print("\n[4] Generated Data Tests")
+        print("-" * 40)
+        print("  (skipped - no task directory)")
+
+    # Summary
+    total_passed = (
+        verb_results["passed"]
+        + coverage_results["passed"]
+        + comprehensive_results["passed"]
+        + data_results["passed"]
+    )
+    total_failed = (
+        verb_results["failed"]
+        + coverage_results["failed"]
+        + comprehensive_results["failed"]
+        + data_results["failed"]
+    )
+    total_warnings = (
+        verb_results["warnings"]
+        + coverage_results["warnings"]
+        + comprehensive_results["warnings"]
+        + data_results["warnings"]
+    )
+
+    print("\n" + "=" * 60)
+    print("SUMMARY")
+    print("=" * 60)
+    print(f"  Passed:   {total_passed}")
+    print(f"  Warnings: {total_warnings}")
+    print(f"  Failed:   {total_failed}")
+
+    if total_failed == 0:
+        print("\n✓ All tests passed!")
+        return 0
+    else:
+        print(f"\n✗ {total_failed} test(s) failed")
+        return 1
+
+
 def cmd_cache_stats(args):
     """Show cache statistics."""
     try:
@@ -444,9 +640,20 @@ def cmd_cache_stats(args):
         return
 
     cache = Cache(str(cache_dir))
-    print(f"\nLLM Cache: {cache_dir}")
-    print(f"  Entries: {len(cache):,}")
-    print(f"  Size:    {cache.volume() / 1024 / 1024:.1f} MB\n")
+    entries = len(cache)
+    size_mb = cache.volume() / 1024 / 1024
+
+    print(f"\nLLM Response Cache: {cache_dir}")
+    print("=" * 40)
+    print(f"  Entries:     {entries:>10,}")
+    print(f"  Size:        {size_mb:>10.1f} MB")
+
+    if entries > 0:
+        # Estimate savings (avg ~2K tokens per cached response at $0.30/1M output)
+        estimated_savings = entries * 2000 * 0.30 / 1_000_000
+        print(f"  Est. savings:   ${estimated_savings:>7.2f}")
+
+    print()
 
 
 def cmd_cache_clear(args):
@@ -625,18 +832,36 @@ Examples:
     # ─── QA (subcommands) ───────────────────────────────────
     qa_parser = subparsers.add_parser(
         "qa",
-        help="Quality assurance (analyze, clean)",
+        help="Quality assurance (analyze, clean, verbs, problems, coverage)",
     )
     qa_sub = qa_parser.add_subparsers(dest="qa_cmd", metavar="action")
 
     # qa analyze
-    qa_analyze = qa_sub.add_parser("analyze", help="Analyze data quality")
+    qa_analyze = qa_sub.add_parser("analyze", help="Analyze generated data quality")
     qa_analyze.set_defaults(func=cmd_qa_analyze)
 
     # qa clean
     qa_clean = qa_sub.add_parser("clean", help="Remove bad nodes")
     qa_clean.add_argument("--dry-run", action="store_true", help="Preview without removing")
     qa_clean.set_defaults(func=cmd_qa_clean)
+
+    # qa verbs
+    qa_verbs = qa_sub.add_parser("verbs", help="Analyze verb taxonomy")
+    qa_verbs.add_argument("-v", "--verbose", action="store_true", help="Show details")
+    qa_verbs.set_defaults(func=cmd_qa_verbs)
+
+    # qa problems
+    qa_problems = qa_sub.add_parser("problems", help="Show problematic verbs")
+    qa_problems.set_defaults(func=cmd_qa_problems)
+
+    # qa coverage
+    qa_coverage = qa_sub.add_parser("coverage", help="Show domain coverage")
+    qa_coverage.set_defaults(func=cmd_qa_coverage)
+
+    # qa test
+    qa_test = qa_sub.add_parser("test", help="Run all data quality tests")
+    qa_test.add_argument("-v", "--verbose", action="store_true", help="Show all details")
+    qa_test.set_defaults(func=cmd_qa_test)
 
     # ─── PARSE & RUN ────────────────────────────────────────
     args = parser.parse_args()

@@ -21,15 +21,151 @@ Environment Variables:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import random
 import time
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Iterator
 
+from diskcache import Cache
 from google import genai
 from google.genai import types
+
+# ============================================================================
+# LLM Response Cache
+# ============================================================================
+
+# Cache directory
+CACHE_DIR = Path("./.taskpedia_cache")
+
+# Cache TTL (365 days - LLM responses don't expire)
+CACHE_TTL = 365 * 24 * 60 * 60
+
+
+def _get_cache_key(
+    prompt: str,
+    system_prompt: str | None,
+    model: str,
+    temperature: float,
+    use_thinking: bool,
+) -> str:
+    """Generate a unique cache key for an LLM request."""
+    key_data = json.dumps(
+        {
+            "prompt": prompt,
+            "system_prompt": system_prompt or "",
+            "model": model,
+            "temperature": temperature,
+            "use_thinking": use_thinking,
+        },
+        sort_keys=True,
+    )
+    return hashlib.sha256(key_data.encode()).hexdigest()
+
+
+class LLMCache:
+    """
+    Disk-based cache for LLM responses.
+
+    Caches responses keyed by (prompt, system_prompt, model, temperature, use_thinking).
+    Saves significant API costs by avoiding redundant calls.
+    """
+
+    def __init__(self, cache_dir: Path | str = CACHE_DIR, enabled: bool = True):
+        self.enabled = enabled
+        self.cache_dir = Path(cache_dir)
+        self._cache: Cache | None = None
+        self.hits = 0
+        self.misses = 0
+
+    @property
+    def cache(self) -> Cache:
+        """Lazy-initialize the cache."""
+        if self._cache is None:
+            self.cache_dir.mkdir(parents=True, exist_ok=True)
+            self._cache = Cache(str(self.cache_dir))
+        return self._cache
+
+    def get(
+        self,
+        prompt: str,
+        system_prompt: str | None,
+        model: str,
+        temperature: float,
+        use_thinking: bool,
+    ) -> str | None:
+        """Get cached response if available."""
+        if not self.enabled:
+            return None
+
+        key = _get_cache_key(prompt, system_prompt, model, temperature, use_thinking)
+        result = self.cache.get(key)
+
+        if result is not None:
+            self.hits += 1
+        else:
+            self.misses += 1
+
+        return result
+
+    def set(
+        self,
+        prompt: str,
+        system_prompt: str | None,
+        model: str,
+        temperature: float,
+        use_thinking: bool,
+        response: str,
+    ) -> None:
+        """Cache a response."""
+        if not self.enabled:
+            return
+
+        key = _get_cache_key(prompt, system_prompt, model, temperature, use_thinking)
+        self.cache.set(key, response, expire=CACHE_TTL)
+
+    def stats(self) -> dict[str, Any]:
+        """Get cache statistics."""
+        total = self.hits + self.misses
+        hit_rate = (self.hits / total * 100) if total > 0 else 0.0
+        return {
+            "hits": self.hits,
+            "misses": self.misses,
+            "total": total,
+            "hit_rate": hit_rate,
+            "entries": len(self.cache) if self._cache else 0,
+            "size_mb": self.cache.volume() / 1024 / 1024 if self._cache else 0,
+        }
+
+    def clear(self) -> int:
+        """Clear all cached responses. Returns number of entries cleared."""
+        if self._cache:
+            count = len(self._cache)
+            self._cache.clear()
+            return count
+        return 0
+
+    def close(self):
+        """Close the cache."""
+        if self._cache:
+            self._cache.close()
+            self._cache = None
+
+
+# Global cache instance
+_global_cache: LLMCache | None = None
+
+
+def get_cache(enabled: bool = True) -> LLMCache:
+    """Get or create the global LLM cache."""
+    global _global_cache
+    if _global_cache is None:
+        _global_cache = LLMCache(enabled=enabled)
+    return _global_cache
+
 
 # Default model - Gemini 2.5 Flash
 DEFAULT_MODEL = "models/gemini-2.5-flash"
@@ -71,6 +207,10 @@ class LLMConfig:
     # Retry settings
     max_retries: int = 3
     retry_delay: float = 1.0
+
+    # Cache settings
+    cache_enabled: bool = True
+    cache_dir: str = "./.taskpedia_cache"
 
 
 @dataclass
@@ -122,6 +262,11 @@ class LLMClient:
 
     Provides methods for task decomposition and expansion using
     the model's reasoning capabilities.
+
+    Features:
+    - Automatic response caching to reduce API costs
+    - Token usage tracking with cost estimation
+    - Thinking mode for complex reasoning tasks
     """
 
     def __init__(self, config: LLMConfig | None = None, api_key: str | None = None):
@@ -140,6 +285,12 @@ class LLMClient:
 
         # Initialize client
         self._client = genai.Client(api_key=self._api_key)
+
+        # Initialize cache
+        self._cache = LLMCache(
+            cache_dir=self.config.cache_dir,
+            enabled=self.config.cache_enabled,
+        )
 
     def _get_generation_config(self, use_thinking: bool = True) -> types.GenerateContentConfig:
         """Build generation config with optional thinking."""
@@ -175,6 +326,18 @@ class LLMClient:
         Returns:
             The model's text response
         """
+        # Check cache first
+        cached = self._cache.get(
+            prompt=prompt,
+            system_prompt=system_prompt,
+            model=self.config.model,
+            temperature=self.config.temperature,
+            use_thinking=use_thinking,
+        )
+        if cached is not None:
+            return cached
+
+        # Build request
         contents = []
 
         if system_prompt:
@@ -209,7 +372,18 @@ class LLMClient:
                 thinking_tokens=getattr(usage, "thoughts_token_count", 0) or 0,
             )
 
-        return response.text
+        # Cache the response
+        response_text = response.text
+        self._cache.set(
+            prompt=prompt,
+            system_prompt=system_prompt,
+            model=self.config.model,
+            temperature=self.config.temperature,
+            use_thinking=use_thinking,
+            response=response_text,
+        )
+
+        return response_text
 
     def generate_json(
         self,
@@ -465,10 +639,16 @@ Return as JSON."""
             if chunk.text:
                 yield chunk.text
 
+    @property
+    def cache_stats(self) -> dict[str, Any]:
+        """Get cache statistics."""
+        return self._cache.stats()
+
     def close(self):
         """Close the client and release resources."""
         if hasattr(self._client, "close"):
             self._client.close()
+        self._cache.close()
 
     def __enter__(self):
         return self
@@ -679,6 +859,7 @@ def get_client(
     model: str = DEFAULT_MODEL,
     api_key: str | None = None,
     mock: bool = False,
+    cache_enabled: bool = True,
     **kwargs,
 ) -> LLMClient | MockLLMClient:
     """
@@ -688,12 +869,13 @@ def get_client(
         model: Model to use (default: gemini-2.5-flash)
         api_key: Optional API key
         mock: If True, return a MockLLMClient for testing
+        cache_enabled: Whether to enable response caching (default: True)
         **kwargs: Additional config options
 
     Returns:
         Configured LLMClient or MockLLMClient
     """
-    config = LLMConfig(model=model, **kwargs)
+    config = LLMConfig(model=model, cache_enabled=cache_enabled, **kwargs)
     if mock:
         return MockLLMClient(config=config)
     return LLMClient(config=config, api_key=api_key)
