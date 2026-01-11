@@ -23,6 +23,7 @@ from taskpedia.hierarchy import NodeType, SeedSource, TaskGraph, TaskNode
 from taskpedia.llm import LLMClient, LLMConfig, MockLLMClient
 from taskpedia.verbs import ATOMIC_VERBS, get_action_categories_summary
 from taskpedia.validation import is_generic_template, is_valid_atomic, GENERIC_NOUNS, GENERIC_VERBS
+from taskpedia.utils import RateLimiter
 
 
 # ============================================================================
@@ -186,8 +187,8 @@ class FastGenConfig:
 
     output_dir: Path
     model: str = "models/gemini-2.5-flash"
-    max_tasks: int = 100000  # Target top-level TASK count
-    max_workers: int = 128
+    max_tasks: int = 100000  # Target total node count
+    max_workers: int = 64  # ~RPM/60 * avg_latency (1000/60 * 3s = 50)
     queue_size: int = 1000
     rpm_limit: int = 1000
     mock: bool = False
@@ -203,11 +204,11 @@ class GeneratorCore:
         self.config = config
         self.graph = TaskGraph(config.output_dir)
 
-        # Count existing top-level tasks
-        self.initial_task_count = sum(
-            1 for n in self.graph.iter_nodes() if n.node_type == NodeType.TASK
-        )
-        self.tasks_to_generate = max(0, config.max_tasks - self.initial_task_count)
+        # Count existing nodes
+        all_nodes = list(self.graph.iter_nodes())
+        self.initial_node_count = len(all_nodes)
+        self.initial_task_count = sum(1 for n in all_nodes if n.node_type == NodeType.TASK)
+        self.nodes_to_generate = max(0, config.max_tasks - self.initial_node_count)
 
         # Stats
         self.generated = AtomicCounter(0)  # All nodes generated this session
@@ -232,12 +233,19 @@ class GeneratorCore:
         self.status = "Initializing..."
         self._status_lock = threading.Lock()
 
+        # Recent errors for debugging
+        self._recent_errors: list[str] = []
+        self._errors_lock = threading.Lock()
+
         # Control
         self._shutdown = threading.Event()
         self._start_time = time.time()
         self._done = False
 
         self._load_processed()
+
+        # Rate limiter
+        self._rate_limiter = RateLimiter(rpm=config.rpm_limit)
 
         # LLM client
         llm_config = LLMConfig(model=config.model, thinking_budget=0)
@@ -277,6 +285,10 @@ class GeneratorCore:
         with self._status_lock:
             return self.status
 
+    def get_recent_errors(self) -> list[str]:
+        with self._errors_lock:
+            return list(self._recent_errors)
+
     def _load_processed(self):
         count = 0
         for node in self.graph.iter_nodes():
@@ -308,6 +320,9 @@ class GeneratorCore:
 
     def _decompose_node(self, node: TaskNode) -> dict:
         """Decompose a single node. Thread-safe."""
+        # Rate limit before API call
+        self._rate_limiter.acquire()
+
         self.api_calls.increment()
         self.in_flight.increment()
 
@@ -332,15 +347,25 @@ class GeneratorCore:
 
         except json.JSONDecodeError as e:
             self.errors.increment()
+            error_msg = f"JSON: {str(e)[:50]}"
+            with self._errors_lock:
+                self._recent_errors.append(error_msg)
+                if len(self._recent_errors) > 10:
+                    self._recent_errors.pop(0)
             return {
                 "node_id": node.id,
                 "node": node,
                 "success": False,
-                "error": f"JSON: {str(e)[:50]}",
+                "error": error_msg,
             }
         except Exception as e:
             self.errors.increment()
-            return {"node_id": node.id, "node": node, "success": False, "error": str(e)[:100]}
+            error_msg = f"{type(e).__name__}: {str(e)[:80]}"
+            with self._errors_lock:
+                self._recent_errors.append(error_msg)
+                if len(self._recent_errors) > 10:
+                    self._recent_errors.pop(0)
+            return {"node_id": node.id, "node": node, "success": False, "error": error_msg}
         finally:
             self.in_flight.increment(-1)
 
@@ -457,9 +482,9 @@ class GeneratorCore:
             return result
 
     def should_stop(self) -> bool:
-        """Stop when we've generated enough top-level tasks or shutdown requested."""
-        current_tasks = self.initial_task_count + self.tasks_generated.value
-        return self._shutdown.is_set() or current_tasks >= self.config.max_tasks
+        """Stop when we've generated enough new nodes this session or shutdown requested."""
+        # max_tasks is the number of NEW nodes to generate this session
+        return self._shutdown.is_set() or self.generated.value >= self.config.max_tasks
 
     def stop(self):
         self._shutdown.set()
@@ -482,13 +507,13 @@ def run_without_tui(config: FastGenConfig) -> dict:
     print(f"{'='*60}")
     print(f"  Output:       {config.output_dir}")
     print(f"  Workers:      {config.max_workers}")
+    print(f"  RPM limit:    {config.rpm_limit}")
     print(f"  Validate:     {config.validate}")
-    print(f"  Total nodes:  {initial_count:,}")
-    print(f"  Top-level:    {core.initial_task_count:,} / {config.max_tasks:,} tasks")
-    print(f"  To generate:  {core.tasks_to_generate:,} more tasks")
+    print(f"  Existing:     {initial_count:,} nodes")
+    print(f"  To generate:  {config.max_tasks:,} new nodes")
     print(f"{'='*60}\n")
 
-    pbar = tqdm(total=core.tasks_to_generate, desc="Tasks", unit="tasks")
+    pbar = tqdm(total=config.max_tasks, desc="Nodes", unit="nodes")
     save_counter = 0
 
     with ThreadPoolExecutor(max_workers=config.max_workers) as executor:
@@ -513,14 +538,13 @@ def run_without_tui(config: FastGenConfig) -> dict:
                     count = core._process_result(result)
                     save_counter += count
 
-                    # Update progress bar to show tasks generated
-                    pbar.n = core.tasks_generated.value
+                    # Update progress bar to show nodes generated
+                    pbar.n = core.generated.value
                     pbar.refresh()
 
                     pbar.set_postfix(
                         {
                             "rpm": f"{core.get_rpm():.0f}",
-                            "nodes": core.generated.value,
                             "atomic": core.atomic_found.value,
                             "rej": core.rejected.value,
                         }
@@ -565,201 +589,385 @@ def run_without_tui(config: FastGenConfig) -> dict:
 
 
 def run_with_tui(config: FastGenConfig) -> dict:
-    """Run generation with Textual TUI."""
+    """Run generation with Textual TUI - htop/neovim inspired design."""
+    from collections import deque
     from textual.app import App, ComposeResult
-    from textual.widgets import Header, Footer, Static, ProgressBar, Label
-    from textual.containers import Container
+    from textual.widgets import Static
+    from textual.containers import Horizontal, Vertical, ScrollableContainer
+    from textual_plotext import PlotextPlot
+    from rich.text import Text
 
     # Create core outside the app
     core = GeneratorCore(config)
     initial_count = len(list(core.graph.iter_nodes()))
     result_holder = {"result": {}}
 
+    # Track recent files for preview (thread-safe deque)
+    recent_files: deque[tuple[str, str, str]] = deque(maxlen=100)  # (name, type, path)
+    recent_lock = threading.Lock()
+
+    # Time series for RPM graph
+    rpm_history: deque[tuple[float, float]] = deque(maxlen=60)  # (elapsed, rpm)
+    rpm_lock = threading.Lock()
+
     class GeneratorApp(App):
-        """Textual app for monitoring generation."""
+        """htop-inspired task mining TUI."""
+
+        TITLE = "taskpedia"
 
         CSS = """
         Screen {
-            layout: vertical;
+            background: #0d1117;
         }
 
-        #title {
+        #header-bar {
+            height: 1;
+            background: #238636;
+            color: #ffffff;
             text-align: center;
             text-style: bold;
-            background: $primary;
-            color: $text;
-            padding: 1;
         }
 
-        #progress-section {
-            height: 4;
-            padding: 0 2;
+        #main-container {
+            height: 1fr;
         }
 
-        #flow-section {
+        #left-panel {
+            width: 1fr;
+            min-width: 50;
+        }
+
+        #right-panel {
+            width: 45;
+            border-left: solid #30363d;
+        }
+
+        #progress-box {
+            height: 5;
+            padding: 0 1;
+            border: solid #30363d;
+            background: #161b22;
+            margin: 0 1 0 1;
+        }
+
+        #meters-box {
             height: 6;
-            padding: 1 2;
-            border: solid $primary;
-            margin: 1;
+            padding: 0 1;
+            border: solid #30363d;
+            background: #161b22;
+            margin: 0 1;
         }
 
-        #stats-section {
-            height: 14;
-            padding: 1 2;
-            border: solid $secondary;
-            margin: 1;
+        #graph-box {
+            height: 10;
+            border: solid #30363d;
+            background: #161b22;
+            margin: 0 1;
         }
 
-        #status {
-            text-align: center;
-            background: $surface;
-            padding: 1;
+        #stats-box {
+            height: 1fr;
+            padding: 0 1;
+            border: solid #30363d;
+            background: #161b22;
+            margin: 0 1;
         }
 
-        .flow-line {
+        #files-header {
             height: 1;
+            background: #21262d;
+            color: #8b949e;
+            padding: 0 1;
+            text-style: bold;
+        }
+
+        #files-scroll {
+            height: 1fr;
+            background: #0d1117;
+        }
+
+        #files-list {
+            padding: 0 1;
+            background: #0d1117;
+        }
+
+        PlotextPlot {
+            background: #161b22;
+        }
+
+        #status-bar {
+            height: 1;
+            background: #21262d;
+            color: #8b949e;
+            padding: 0 1;
+        }
+
+        #keybinds {
+            height: 1;
+            background: #161b22;
+            color: #58a6ff;
+            padding: 0 1;
+        }
+
+        ProgressBar {
+            padding: 0;
+        }
+
+        ProgressBar > .bar--bar {
+            color: #238636;
+        }
+
+        ProgressBar > .bar--complete {
+            color: #238636;
         }
         """
 
         BINDINGS = [
             ("q", "quit", "Quit"),
-            ("s", "save", "Save Now"),
+            ("s", "save", "Save"),
+            ("c", "clear_files", "Clear"),
         ]
 
         def __init__(self):
             super().__init__()
-            self._executor: ThreadPoolExecutor | None = None
             self._worker_thread: threading.Thread | None = None
             self._running = True
             self._graceful_shutdown = False
 
         def compose(self) -> ComposeResult:
-            yield Header()
-            yield Static("TASK MINING (improved prompts + validation)", id="title")
+            yield Static(
+                f" TASKPEDIA  Task Mining Pipeline  {config.output_dir}",
+                id="header-bar",
+            )
 
-            with Container(id="progress-section"):
-                yield Label(
-                    f"Tasks: {core.initial_task_count:,} / {config.max_tasks:,} (need +{core.tasks_to_generate:,})",
-                    id="progress-label",
-                )
-                yield ProgressBar(total=core.tasks_to_generate, show_eta=True, id="progress-bar")
+            with Horizontal(id="main-container"):
+                with Vertical(id="left-panel"):
+                    yield Static(id="progress-box")
+                    yield Static(id="meters-box")
+                    yield PlotextPlot(id="graph-box")
+                    yield Static(id="stats-box")
 
-            with Container(id="flow-section"):
-                yield Static("─── FLOW ───", id="flow-title")
-                yield Static(
-                    "Work Queue:   [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]    0",
-                    id="work-bar",
-                    classes="flow-line",
-                )
-                yield Static(
-                    "In Flight:    [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]    0",
-                    id="flight-bar",
-                    classes="flow-line",
-                )
-                yield Static(
-                    "Pending Save: [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]    0",
-                    id="pending-bar",
-                    classes="flow-line",
-                )
+                with Vertical(id="right-panel"):
+                    yield Static("  RECENT FILES", id="files-header")
+                    with ScrollableContainer(id="files-scroll"):
+                        yield Static("", id="files-list")
 
-            with Container(id="stats-section"):
-                yield Static(self._render_stats(), id="stats")
+            yield Static("", id="status-bar")
+            yield Static(
+                "  Q:Quit  S:Save  C:Clear",
+                id="keybinds",
+            )
 
-            yield Static("Starting...", id="status")
-            yield Footer()
+        def _format_time(self, seconds: float) -> str:
+            """Format seconds to human readable."""
+            if seconds < 60:
+                return f"{seconds:.0f}s"
+            elif seconds < 3600:
+                return f"{seconds/60:.0f}m {seconds%60:.0f}s"
+            else:
+                h = int(seconds // 3600)
+                m = int((seconds % 3600) // 60)
+                return f"{h}h {m}m"
 
-        def _make_bar(self, label: str, value: int, max_val: int) -> str:
+        def _make_meter(self, label: str, value: int, max_val: int, color: str = "green") -> Text:
+            """Create an htop-style meter bar with pipe chars."""
             if max_val == 0:
                 pct = 0
             else:
                 pct = min(100, (value / max_val) * 100)
-            width = 30
-            filled = int(width * pct / 100)
-            bar = "█" * filled + "░" * (width - filled)
-            return f"{label:14}[{bar}] {value:>4}"
 
-        def _render_stats(self) -> str:
+            width = 25
+            filled = int(width * pct / 100)
+            empty = width - filled
+
+            text = Text()
+            text.append(f"{label:12}", style="bold white")
+            text.append("[", style="dim white")
+            text.append("|" * filled, style=color)
+            text.append("-" * empty, style="dim #30363d")
+            text.append("]", style="dim white")
+            text.append(f" {value:>5}", style="white")
+            return text
+
+        def _render_progress(self) -> Text:
+            """Render progress section."""
+            generated = core.generated.value
+            total_nodes = core.initial_node_count + generated
+            pct = (generated / config.max_tasks * 100) if config.max_tasks > 0 else 0
+
+            # Calculate ETA
+            elapsed = core.get_elapsed()
+            node_rate = generated / elapsed if elapsed > 0 else 0
+            if node_rate > 0 and generated < config.max_tasks:
+                remaining = config.max_tasks - generated
+                eta_sec = remaining / node_rate
+                eta = self._format_time(eta_sec)
+            else:
+                eta = "--:--"
+
+            text = Text()
+            text.append("\n")
+            text.append(" Progress ", style="bold #58a6ff")
+            text.append(f"{generated:,}", style="bold #238636")
+            text.append(f" / {config.max_tasks:,}", style="dim white")
+            text.append(f"  ({pct:.1f}%)", style="dim #8b949e")
+            text.append(f"  ETA: {eta}", style="#f0883e")
+            text.append("\n")
+            text.append(f" Total nodes: {total_nodes:,}", style="dim #8b949e")
+            text.append(f"  (started with {core.initial_node_count:,})", style="dim #6e7681")
+            return text
+
+        def _render_meters(self) -> Text:
+            """Render meter bars."""
+            text = Text()
+            text.append("\n")
+            text.append(
+                self._make_meter("Queue", core.work_queued.value, config.queue_size, "#58a6ff")
+            )
+            text.append("\n")
+            text.append(
+                self._make_meter("Workers", core.in_flight.value, config.max_workers, "#f0883e")
+            )
+            text.append("\n")
+            text.append(
+                self._make_meter(
+                    "Pending", core.get_pending_count(), config.save_interval, "#a371f7"
+                )
+            )
+            text.append("\n")
+            return text
+
+        def _render_stats(self) -> Text:
+            """Render statistics panel."""
             elapsed = core.get_elapsed()
             rpm = core.get_rpm()
-            current_tasks = core.initial_task_count + core.tasks_generated.value
-            task_rate = core.tasks_generated.value / elapsed if elapsed > 0 else 0
+            generated = core.generated.value
+            rate = generated / elapsed if elapsed > 0 else 0
 
-            # ETA based on task generation rate
-            if task_rate > 0:
-                remaining = core.tasks_to_generate - core.tasks_generated.value
-                eta_sec = remaining / task_rate
-                if eta_sec > 3600:
-                    eta = f"{eta_sec/3600:.1f}h"
-                elif eta_sec > 60:
-                    eta = f"{eta_sec/60:.0f}m"
+            text = Text()
+            text.append("\n")
+            text.append(" Statistics\n", style="bold #58a6ff")
+            text.append("─" * 38, style="dim #30363d")
+            text.append("\n")
+
+            # Main stats in two columns
+            stats = [
+                ("Generated", f"{generated:,}", "#238636"),
+                ("Atomic", f"{core.atomic_found.value:,}", "#a371f7"),
+                ("Decomposed", f"{core.decomposed.value:,}", "#58a6ff"),
+                ("Rejected", f"{core.rejected.value:,}", "#f85149"),
+                ("Errors", f"{core.errors.value:,}", "#f85149" if core.errors.value > 0 else "dim"),
+            ]
+
+            for label, value, color in stats:
+                text.append(f" {label:12}", style="dim white")
+                text.append(f"{value:>12}\n", style=color)
+
+            text.append("─" * 38, style="dim #30363d")
+            text.append("\n")
+            text.append(" Performance\n", style="bold #58a6ff")
+            text.append(f" {'RPM':12}", style="dim white")
+            text.append(f"{rpm:>12.0f}\n", style="#f0883e")
+            text.append(f" {'Rate':12}", style="dim white")
+            text.append(f"{rate:>9.1f}/s\n", style="#f0883e")
+            text.append(f" {'Elapsed':12}", style="dim white")
+            text.append(f"{self._format_time(elapsed):>12}\n", style="#8b949e")
+            text.append(f" {'API Calls':12}", style="dim white")
+            text.append(f"{core.api_calls.value:>12,}\n", style="#8b949e")
+
+            # Show last error if any
+            recent_errors = core.get_recent_errors()
+            if recent_errors:
+                text.append("─" * 38 + "\n", style="dim #30363d")
+                text.append(" Last Error\n", style="bold #f85149")
+                last_err = recent_errors[-1][:36]
+                text.append(f" {last_err}\n", style="#f85149")
+
+            return text
+
+        def _render_files(self) -> Text:
+            """Render recent files list."""
+            text = Text()
+
+            with recent_lock:
+                files = list(recent_files)
+
+            if not files:
+                text.append("\n  Waiting for files...", style="dim #6e7681")
+                return text
+
+            # Show most recent at top
+            for name, node_type, path in reversed(files):
+                # Truncate long names
+                display_name = name[:38] if len(name) > 38 else name
+
+                # Color by type
+                if node_type == "ATOMIC":
+                    type_style = "#a371f7"
+                    icon = ""
+                elif node_type == "TASK":
+                    type_style = "#238636"
+                    icon = ""
                 else:
-                    eta = f"{eta_sec:.0f}s"
-            else:
-                eta = "..."
+                    type_style = "#58a6ff"
+                    icon = ""
 
-            return f"""─── STATISTICS ───
-  Tasks:      {current_tasks:>10,} / {config.max_tasks:,}
-  +Generated: {core.tasks_generated.value:>10,}     ETA: {eta}
-  All Nodes:  {core.generated.value:>10,}
-  Atomic:     {core.atomic_found.value:>10,}
-  Decomposed: {core.decomposed.value:>10,}
-  Rejected:   {core.rejected.value:>10,}     (validation)
-  Errors:     {core.errors.value:>10,}
-  ─────────────────
-  RPM:        {rpm:>10.0f}
-  Elapsed:    {elapsed:>10.0f}s"""
+                text.append(f" {icon} ", style=type_style)
+                text.append(f"{display_name}\n", style="white")
+
+            return text
+
+        def _update_graph(self) -> None:
+            """Update the RPM graph."""
+            try:
+                # Sample current RPM
+                elapsed = core.get_elapsed()
+                rpm = core.get_rpm()
+                with rpm_lock:
+                    rpm_history.append((elapsed, rpm))
+                    data = list(rpm_history)
+
+                if len(data) < 2:
+                    return
+
+                plot_widget = self.query_one("#graph-box", PlotextPlot)
+                plt = plot_widget.plt
+
+                times = [d[0] for d in data]
+                rpms = [d[1] for d in data]
+
+                plt.clear_figure()
+                plt.theme("dark")
+                plt.plot(times, rpms, marker="braille")
+                plt.title("RPM")
+                plt.xlabel("Time (s)")
+                max_rpm = max(rpms) if rpms else 1000
+                plt.ylim(0, max(max_rpm * 1.2, 100))
+
+                plot_widget.refresh()
+            except Exception:
+                pass
 
         def on_mount(self) -> None:
-            # Start worker thread (NOT daemon - we need graceful shutdown)
             self._worker_thread = threading.Thread(target=self._run_generation, daemon=False)
             self._worker_thread.start()
-
-            # Update UI periodically
             self.set_interval(0.2, self._update_ui)
-
-            # Register signal handlers for graceful shutdown
-            import signal
-            import atexit
-
-            def graceful_exit(*args):
-                if not self._graceful_shutdown:
-                    self._graceful_shutdown = True
-                    self._running = False
-                    core.stop()
-                    core.save_pending()
-
-            atexit.register(graceful_exit)
-            # Note: signal handlers may not work in all contexts with Textual
+            self.set_interval(1.0, self._update_graph)
 
         def _update_ui(self) -> None:
-            # Progress - track top-level tasks
-            current_tasks = core.initial_task_count + core.tasks_generated.value
-            self.query_one("#progress-bar", ProgressBar).update(progress=core.tasks_generated.value)
-            self.query_one("#progress-label", Label).update(
-                f"Tasks: {current_tasks:,} / {config.max_tasks:,} (+{core.tasks_generated.value:,} this session)"
-            )
-
-            # Flow bars
-            self.query_one("#work-bar", Static).update(
-                self._make_bar("Work Queue:", core.work_queued.value, config.queue_size)
-            )
-            self.query_one("#flight-bar", Static).update(
-                self._make_bar("In Flight:", core.in_flight.value, config.max_workers)
-            )
-            self.query_one("#pending-bar", Static).update(
-                self._make_bar("Pending Save:", core.get_pending_count(), config.save_interval)
-            )
-
-            # Stats
-            self.query_one("#stats", Static).update(self._render_stats())
-
-            # Status
-            self.query_one("#status", Static).update(core.get_status())
+            try:
+                self.query_one("#progress-box", Static).update(self._render_progress())
+                self.query_one("#meters-box", Static).update(self._render_meters())
+                self.query_one("#stats-box", Static).update(self._render_stats())
+                self.query_one("#files-list", Static).update(self._render_files())
+                self.query_one("#status-bar", Static).update(f" {core.get_status()}")
+            except Exception:
+                pass  # UI not ready yet
 
         def _run_generation(self) -> None:
             """Run generation in background thread."""
             save_counter = 0
-            batch_size = min(config.queue_size, 500)  # Use config, cap at 500 for responsiveness
+            batch_size = min(config.queue_size, 500)
 
             try:
                 with ThreadPoolExecutor(max_workers=config.max_workers) as executor:
@@ -770,16 +978,15 @@ def run_with_tui(config: FastGenConfig) -> dict:
                         if not nodes:
                             core.save_pending()
                             save_counter = 0
-                            core._rebuild_queue()  # Rebuild queue from graph
+                            core._rebuild_queue()
                             nodes = core.iter_decomposable(limit=batch_size)
                             core.work_queued.set(len(nodes))
                             if not nodes:
-                                core.set_status("Hierarchy fully mined! Press Q to exit.")
+                                core.set_status("Complete! Press Q to exit.")
                                 core._done = True
                                 break
 
                         core.set_status(f"Processing {len(nodes)} nodes...")
-
                         futures = [executor.submit(core._decompose_node, n) for n in nodes]
 
                         for future in as_completed(futures):
@@ -787,9 +994,23 @@ def run_with_tui(config: FastGenConfig) -> dict:
                                 break
                             try:
                                 result = future.result(timeout=30)
-                                core._process_result(result)
+                                count = core._process_result(result)
+
+                                # Track generated files for preview
+                                if result.get("success") and count > 0:
+                                    node = result.get("node")
+                                    if node:
+                                        with recent_lock:
+                                            recent_files.append(
+                                                (
+                                                    node.name,
+                                                    node.node_type.name,
+                                                    str(node.id),
+                                                )
+                                            )
+
                                 save_counter += 1
-                            except Exception as e:
+                            except Exception:
                                 core.errors.increment()
 
                         if save_counter >= config.save_interval:
@@ -797,7 +1018,6 @@ def run_with_tui(config: FastGenConfig) -> dict:
                             core.save_pending()
                             save_counter = 0
 
-                # Final save
                 core.save_pending()
 
                 result_holder["result"] = {
@@ -810,19 +1030,18 @@ def run_with_tui(config: FastGenConfig) -> dict:
                 }
 
                 if core.generated.value >= config.max_tasks:
-                    core.set_status(f"Reached {config.max_tasks:,} tasks! Press Q to exit.")
+                    core.set_status(f"Target reached! Press Q to exit.")
 
             except Exception as e:
                 core.set_status(f"Error: {e}")
 
         def action_quit(self) -> None:
             if self._graceful_shutdown:
-                return  # Already shutting down
+                return
             self._graceful_shutdown = True
             self._running = False
             core.stop()
-            core.set_status("Saving and shutting down...")
-            # Wait for worker thread to finish current batch (max 5 seconds)
+            core.set_status("Shutting down...")
             if self._worker_thread and self._worker_thread.is_alive():
                 self._worker_thread.join(timeout=5.0)
             core.save_pending()
@@ -832,7 +1051,10 @@ def run_with_tui(config: FastGenConfig) -> dict:
             core.save_pending()
             core.set_status("Saved!")
 
-    # Run the app
+        def action_clear_files(self) -> None:
+            with recent_lock:
+                recent_files.clear()
+
     app = GeneratorApp()
     app.run()
 

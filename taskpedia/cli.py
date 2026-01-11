@@ -1441,8 +1441,8 @@ Examples:
         "-n",
         "--max-tasks",
         type=int,
-        default=10000,
-        help="Max tasks to generate (default: 10000)",
+        default=100000,
+        help="Max new nodes to generate this session (default: 100000)",
     )
     gen_parser.add_argument(
         "--model",
