@@ -49,9 +49,24 @@ taskpedia export -f json
 # Upload to HuggingFace
 taskpedia upload --repo Sentient-x/taskpedia --public
 
+# Download from HuggingFace
+taskpedia download --repo Sentient-x/taskpedia
+taskpedia download --force    # Force re-download
+taskpedia download -y         # Skip confirmation
+
 # Cache management
 taskpedia cache stats
 taskpedia cache clear
+
+# Quality Assurance
+taskpedia qa test             # Run all QA tests
+taskpedia qa analyze          # Analyze data quality
+taskpedia qa clean            # Remove bad nodes
+taskpedia qa verbs            # Analyze verb taxonomy
+taskpedia qa coverage         # Check domain coverage
+
+# Diversify (fill gaps in tree)
+taskpedia diversify --max-tasks 1000
 ```
 
 ## Architecture
@@ -60,8 +75,13 @@ taskpedia cache clear
 taskpedia/
 ├── cli.py            # CLI entry point (hierarchical subcommands)
 ├── hierarchy.py      # TaskNode, TaskGraph (filesystem DAG)
-├── generate_fast.py  # Continuous flow generator + Textual TUI
+├── generator.py      # Continuous flow generator + Textual TUI
+├── verbs.py          # ATOMIC_VERBS (3,479), COGNITIVE_VERBS taxonomies
+├── validation.py     # is_generic_template, is_valid_atomic
+├── qa.py             # QA tests, domain coverage checks
 ├── llm.py            # Gemini 2.5 Flash client
+├── utils.py          # RateLimiter, ProgressTracker (shared utilities)
+├── postprocess.py    # Data cleaning commands
 ├── decompose.py      # Bootstrap from seed data
 └── seeds/
     ├── onet.py       # O*NET database loader
@@ -72,10 +92,14 @@ taskpedia/
 
 | File | Purpose |
 |------|---------|
-| `generate_fast.py` | Main generator - ThreadPoolExecutor, Textual TUI, atomic saves |
+| `generator.py` | Main generator - ThreadPoolExecutor, Textual TUI, atomic saves |
+| `verbs.py` | ATOMIC_VERBS (3,479 verbs), COGNITIVE_VERBS, category utilities |
+| `validation.py` | Template detection, atomic action validation |
+| `qa.py` | Test suites for verb taxonomy and domain coverage |
 | `hierarchy.py` | TaskNode dataclass, TaskGraph (filesystem-backed DAG) |
 | `llm.py` | LLMClient for Gemini, MockLLMClient for testing |
-| `cli.py` | Click-style CLI with subcommand groups |
+| `utils.py` | RateLimiter (800 RPM default), ProgressTracker with tenacity |
+| `cli.py` | CLI with subcommand groups |
 
 ### Data Model
 
@@ -104,7 +128,7 @@ task_hierarchy/
         └── boil_water.yaml  # Atomic action
 ```
 
-## Generator Design (generate_fast.py)
+## Generator Design (generator.py)
 
 **Continuous flow architecture**:
 - `GeneratorCore`: Thread-safe core with atomic counters
@@ -118,14 +142,19 @@ task_hierarchy/
 - `GeneratorApp`: Textual app for TUI
 - `AtomicCounter`: Thread-safe counter
 
+## Verb Taxonomy (verbs.py)
+
+- **ATOMIC_VERBS**: 3,479 physical action verbs organized by domain
+- **COGNITIVE_VERBS**: 81 mental/internal verbs (not directly observable)
+- Categories: Manipulation, Tool Use, Cooking, Locomotion, Perception, Communication, Industrial, Warehouse, Mining, Construction, and 70+ more
+
 ## Defaults
 
 - Model: `models/gemini-2.5-flash`
 - Workers: 128
 - Queue size: 1000
-- RPM limit: 1000
+- RPM limit: 1000 (generator), 800 (diversify)
 - Save interval: 200 nodes
-- Thinking: disabled (speed)
 
 ## Environment Variables
 
@@ -136,6 +165,9 @@ task_hierarchy/
 ```bash
 # Run tests
 pytest
+
+# Run QA tests
+taskpedia qa test
 
 # Test generation without API
 taskpedia generate -n 1000 --mock
@@ -154,7 +186,7 @@ taskpedia generate -n 100 --mock
 
 ### Modifying generation prompts
 
-Edit `_decompose_node()` in `generate_fast.py` - the system prompt defines what "atomic" means.
+Edit `SYSTEM_PROMPT` in `generator.py` - defines what "atomic" means for robot training.
 
 ### Changing the task schema
 
@@ -162,10 +194,17 @@ Edit `_decompose_node()` in `generate_fast.py` - the system prompt defines what 
 2. Update `to_dict()` and `from_dict()` methods
 3. Update upload schema in `cli.py` `cmd_upload()`
 
+### Adding new verbs
+
+1. Add verbs to appropriate category section in `verbs.py` ATOMIC_VERBS
+2. Run `taskpedia qa test` to verify no duplicates
+3. Update domain coverage tests in `qa.py` if adding new domains
+
 ## Notes
 
 - Task IDs are hierarchical paths: `domain/task/subtask/atomic`
 - Atomic actions are leaf nodes with `node_type=ATOMIC`
 - Files are only written on save (no partial files)
 - TUI requires terminal; falls back to tqdm if not TTY
-- HuggingFace upload requires `datasets` and `huggingface_hub` packages
+- HuggingFace upload/download requires `datasets` and `huggingface_hub` packages
+- Download caches SHA to skip re-download if local copy is up-to-date
