@@ -8,6 +8,7 @@ Commands are organized into groups:
     taskpedia show          View hierarchy (tree, stats, search)
     taskpedia export        Export to various formats
     taskpedia upload        Upload to HuggingFace
+    taskpedia download      Download from HuggingFace
     taskpedia cache         Manage LLM cache
 """
 
@@ -327,6 +328,162 @@ atomic = ds["full"].filter(lambda x: x["is_atomic"])
     )
 
     print(f"\nUploaded to: https://huggingface.co/datasets/{repo_id}")
+
+
+def cmd_download(args):
+    """Download from HuggingFace and lay out in filesystem."""
+    import json
+    import hashlib
+    from datetime import datetime
+
+    try:
+        from datasets import load_dataset
+        from huggingface_hub import HfApi, hf_hub_download
+    except ImportError:
+        print("Error: Download requires 'datasets' and 'huggingface_hub' packages.")
+        print("Install with: pip install datasets huggingface_hub")
+        sys.exit(1)
+
+    output_dir = Path(args.output)
+    repo_id = args.repo
+
+    # Check if output directory exists
+    if output_dir.exists():
+        # Check for metadata to see if we have a local copy
+        meta_file = output_dir / ".taskpedia_meta.json"
+        if meta_file.exists() and not args.force:
+            with open(meta_file) as f:
+                meta = json.load(f)
+
+            # Check if repo matches
+            if meta.get("repo_id") == repo_id:
+                # Get remote dataset info to compare
+                try:
+                    api = HfApi()
+                    repo_info = api.dataset_info(repo_id)
+                    remote_sha = repo_info.sha
+
+                    if meta.get("sha") == remote_sha:
+                        print(f"Local copy is up-to-date (sha: {remote_sha[:8]})")
+                        print(f"Use --force to re-download anyway")
+                        return
+                    else:
+                        print(
+                            f"Remote has been updated (local: {meta.get('sha', 'unknown')[:8]}, remote: {remote_sha[:8]})"
+                        )
+                except Exception as e:
+                    print(f"Warning: Could not check remote version: {e}")
+
+            # Ask before overwriting
+            if not args.yes:
+                response = input(f"Directory {output_dir} already exists. Overwrite? [y/N]: ")
+                if response.lower() not in ("y", "yes"):
+                    print("Aborted.")
+                    return
+
+    # Download dataset
+    print(f"Downloading from: https://huggingface.co/datasets/{repo_id}")
+    try:
+        ds = load_dataset(repo_id, split="full")
+    except Exception as e:
+        print(f"Error downloading dataset: {e}")
+        sys.exit(1)
+
+    print(f"Downloaded {len(ds):,} tasks")
+
+    # Create output directory
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Convert to filesystem layout
+    print(f"Writing to {output_dir}...")
+    written = 0
+    skipped = 0
+
+    for task in ds:
+        task_id = task["id"]
+        if not task_id:
+            skipped += 1
+            continue
+
+        # Create path from ID (e.g., "work/cooking/chop_onion" -> work/cooking/chop_onion.yaml)
+        task_path = output_dir / f"{task_id}.yaml"
+        task_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Build task dict
+        task_data = {
+            "id": task["id"],
+            "name": task["name"],
+            "node_type": task["node_type"],
+            "description": task["description"] or None,
+            "parent_id": task["parent_id"] or None,
+            "children_ids": list(task["children_ids"]) if task["children_ids"] else [],
+            "completion": {
+                "precondition": task["precondition"] or None,
+                "postcondition": task["postcondition"] or None,
+                "invariants": task["invariants"] or None,
+            }
+            if any([task["precondition"], task["postcondition"], task["invariants"]])
+            else None,
+            "physical_requirements": task["physical_requirements"] or None,
+            "sensing_requirements": task["sensing_requirements"] or None,
+            "cognitive_requirements": task["cognitive_requirements"] or None,
+            "language": task["language"],
+            "aliases": list(task["aliases"]) if task["aliases"] else [],
+            "tags": list(task["tags"]) if task["tags"] else [],
+            "sources": list(task["sources"]) if task["sources"] else [],
+            "confidence": float(task["confidence"]),
+        }
+
+        # Remove None values for cleaner YAML
+        task_data = {k: v for k, v in task_data.items() if v is not None}
+        if "completion" in task_data:
+            task_data["completion"] = {
+                k: v for k, v in task_data["completion"].items() if v is not None
+            }
+            if not task_data["completion"]:
+                del task_data["completion"]
+
+        # Write YAML
+        try:
+            import yaml
+
+            with open(task_path, "w") as f:
+                yaml.safe_dump(
+                    task_data, f, default_flow_style=False, allow_unicode=True, sort_keys=False
+                )
+            written += 1
+        except Exception as e:
+            print(f"  Error writing {task_path}: {e}")
+            skipped += 1
+
+    # Save metadata for future sync checks
+    try:
+        api = HfApi()
+        repo_info = api.dataset_info(repo_id)
+        remote_sha = repo_info.sha
+    except:
+        remote_sha = None
+
+    meta = {
+        "repo_id": repo_id,
+        "sha": remote_sha,
+        "downloaded_at": datetime.now().isoformat(),
+        "task_count": written,
+    }
+    with open(output_dir / ".taskpedia_meta.json", "w") as f:
+        json.dump(meta, f, indent=2)
+
+    # Create manifest
+    manifest_path = output_dir / "manifest.json"
+    manifest = {"nodes": [task["id"] for task in ds if task["id"]]}
+    with open(manifest_path, "w") as f:
+        json.dump(manifest, f)
+
+    print(f"\nDownload complete!")
+    print(f"  Written: {written:,} tasks")
+    if skipped:
+        print(f"  Skipped: {skipped:,}")
+    print(f"  Output:  {output_dir}")
 
 
 def cmd_qa_analyze(args):
@@ -1390,6 +1547,29 @@ Examples:
         help="Make public (default: private)",
     )
     upload_parser.set_defaults(func=cmd_upload)
+
+    # ─── DOWNLOAD ───────────────────────────────────────────
+    download_parser = subparsers.add_parser(
+        "download",
+        help="Download from HuggingFace",
+    )
+    download_parser.add_argument(
+        "--repo",
+        default="Sentient-x/taskpedia",
+        help="HuggingFace repo (default: Sentient-x/taskpedia)",
+    )
+    download_parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Force re-download even if local copy is up-to-date",
+    )
+    download_parser.add_argument(
+        "-y",
+        "--yes",
+        action="store_true",
+        help="Skip confirmation prompts (auto-yes)",
+    )
+    download_parser.set_defaults(func=cmd_download)
 
     # ─── CACHE (subcommands) ────────────────────────────────
     cache_parser = subparsers.add_parser(
