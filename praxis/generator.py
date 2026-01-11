@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import hashlib
 import itertools
-import os
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -468,14 +466,10 @@ class ParallelTaskGenerator:
     def _ensure_workers(self) -> list[ray.ObjectRef]:
         """Ensure workers are initialized."""
         if self._workers is None:
-            num_workers = int(
-                ray.cluster_resources().get("CPU", 4) * self.config.workers_per_cpu
-            )
+            num_workers = int(ray.cluster_resources().get("CPU", 4) * self.config.workers_per_cpu)
             config_dict = self.config.model_dump()
 
-            self._workers = [
-                TaskGeneratorWorker.remote(i, config_dict) for i in range(num_workers)
-            ]
+            self._workers = [TaskGeneratorWorker.remote(i, config_dict) for i in range(num_workers)]
             logger.info("workers_created", count=len(self._workers))
 
         return self._workers

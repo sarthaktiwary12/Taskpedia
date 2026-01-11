@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -167,9 +166,7 @@ class LLMCache:
                 return None
 
             self._stats["hits"] = self._stats.get("hits", 0) + 1
-            self._stats["tokens_saved"] = (
-                self._stats.get("tokens_saved", 0) + entry.tokens_used
-            )
+            self._stats["tokens_saved"] = self._stats.get("tokens_saved", 0) + entry.tokens_used
             logger.debug("cache_hit", prompt_hash=prompt_hash[:16])
             return entry
 
