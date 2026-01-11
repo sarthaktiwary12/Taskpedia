@@ -1,0 +1,126 @@
+[project]
+name = "praxis-10m"
+version = "0.1.0"
+description = "PRAXIS: A Comprehensive Multilingual Dictionary of Human Tasks for Embodied AI"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "PRAXIS Team" }
+]
+keywords = ["robotics", "embodied-ai", "task-generation", "humanoid", "llm"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    # Core
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+
+    # CLI and TUI
+    "click>=8.1.0",
+    "rich>=13.7.0",
+    "textual>=0.89.0",
+
+    # Parallelization
+    "ray[default]>=2.9.0",
+
+    # LLM and API
+    "anthropic>=0.39.0",
+    "tenacity>=8.2.0",
+    "httpx>=0.27.0",
+
+    # Caching and Storage
+    "diskcache>=5.6.0",
+    "sqlitedict>=2.1.0",
+    "orjson>=3.9.0",
+
+    # Data and Diversity
+    "datasets>=2.16.0",
+    "huggingface-hub>=0.20.0",
+    "pandas>=2.1.0",
+    "pyarrow>=14.0.0",
+
+    # Clustering and Analysis
+    "scikit-learn>=1.4.0",
+    "numpy>=1.26.0",
+    "sentence-transformers>=2.3.0",
+
+    # Utilities
+    "tqdm>=4.66.0",
+    "python-dotenv>=1.0.0",
+    "structlog>=24.1.0",
+    "xxhash>=3.4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+    "mypy>=1.8.0",
+    "pre-commit>=3.6.0",
+]
+
+[project.scripts]
+praxis = "praxis.cli:main"
+
+[project.urls]
+Repository = "https://github.com/praxis-10m/praxis"
+Documentation = "https://praxis-10m.github.io"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["praxis"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+    "B008",  # do not perform function calls in argument defaults
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["praxis"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+    "mypy>=1.8.0",
+]
