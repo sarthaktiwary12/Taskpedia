@@ -24,11 +24,8 @@ MODULES:
 ========
     taxonomy - Life domains and activity categories
     onet - O*NET database loader (occupations + tasks)
-    base - Base classes for seed data
-    loaders - Additional dataset loaders (WikiHow, COIN, etc.)
 """
 
-from taskpedia.seeds.base import BaseSeedLoader, SeedTask
 from taskpedia.seeds.onet import (
     SOC_MAJOR_GROUPS,
     DetailedWorkActivity,
@@ -55,9 +52,6 @@ from taskpedia.seeds.taxonomy import (
 )
 
 __all__ = [
-    # Base
-    "BaseSeedLoader",
-    "SeedTask",
     # Taxonomy
     "LifeDomain",
     "ActivityCategory",

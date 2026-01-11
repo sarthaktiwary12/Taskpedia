@@ -43,7 +43,7 @@ def cmd_init(args):
 
 def cmd_generate(args):
     """Generate tasks using LLM decomposition."""
-    from taskpedia.generate_fast import FastGenConfig, run
+    from taskpedia.generator import FastGenConfig, run
 
     output_path = Path(args.output)
 
@@ -779,7 +779,7 @@ def cmd_diversify(args):
     from concurrent.futures import ThreadPoolExecutor, as_completed
     from taskpedia.hierarchy import TaskGraph, TaskNode, NodeType, SeedSource
     from taskpedia.llm import LLMClient, LLMConfig, MockLLMClient
-    from taskpedia.generate_fast import get_action_categories_summary
+    from taskpedia.verbs import get_action_categories_summary
     from taskpedia.utils import RateLimiter, ProgressTracker
 
     task_dir = Path(args.output)

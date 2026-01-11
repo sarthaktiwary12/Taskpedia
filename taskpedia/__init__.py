@@ -6,7 +6,10 @@ filesystem-backed directed acyclic graph (DAG).
 
 Core modules:
     hierarchy - TaskNode, TaskGraph data structures
-    generate_fast - Fast synthetic data generation (ThreadPool-based)
+    generator - Fast synthetic data generation (ThreadPool-based)
+    verbs - Verb taxonomies (ATOMIC_VERBS, COGNITIVE_VERBS)
+    validation - Task validation utilities
+    qa - QA tests and domain coverage
     llm - LLM client (Gemini 2.5 Flash)
     seeds - Seed data from O*NET, ATUS, etc.
     cli - Command-line interface
@@ -24,9 +27,11 @@ Quick start:
 
 __version__ = "0.3.0"
 
-from taskpedia.generate_fast import FastGenConfig, FastGenerator
+from taskpedia.generator import FastGenConfig, FastGenerator
 from taskpedia.hierarchy import NodeType, SeedSource, TaskGraph, TaskNode
 from taskpedia.llm import LLMClient, LLMConfig
+from taskpedia.validation import is_generic_template, is_valid_atomic
+from taskpedia.verbs import ATOMIC_VERBS, COGNITIVE_VERBS
 
 __all__ = [
     # Core data structures
@@ -34,6 +39,12 @@ __all__ = [
     "TaskGraph",
     "NodeType",
     "SeedSource",
+    # Verbs
+    "ATOMIC_VERBS",
+    "COGNITIVE_VERBS",
+    # Validation
+    "is_generic_template",
+    "is_valid_atomic",
     # Generation
     "FastGenerator",
     "FastGenConfig",
