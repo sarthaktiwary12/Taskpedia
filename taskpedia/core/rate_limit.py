@@ -1,7 +1,9 @@
 """
 Rate limiting utilities.
 
-Thread-safe rate limiter for API calls with configurable RPM limits.
+Provides both:
+1. Direct re-exports from `ratelimit` library for decorator-based limiting
+2. A thin RateLimiter class for imperative .acquire() pattern
 """
 
 from __future__ import annotations
@@ -9,114 +11,72 @@ from __future__ import annotations
 import threading
 import time
 
+from ratelimit import RateLimitException, limits, sleep_and_retry
+
+__all__ = [
+    # Library re-exports (preferred for new code)
+    "limits",
+    "sleep_and_retry",
+    "RateLimitException",
+    # Imperative wrapper (for existing code)
+    "RateLimiter",
+]
+
 # Default rate limits
-DEFAULT_RPM = 800  # Requests per minute
+DEFAULT_RPM = 800
 
 
 class RateLimiter:
     """
-    Thread-safe rate limiter for API calls.
+    Thin wrapper around `ratelimit` library for imperative .acquire() pattern.
 
-    Enforces a maximum requests-per-minute (RPM) limit across all threads.
-    Uses a sliding window approach with token bucket algorithm.
+    For new code, prefer using @sleep_and_retry @limits decorators directly:
 
-    Usage:
-        limiter = RateLimiter(rpm=800)
+        from taskpedia.core import sleep_and_retry, limits
 
-        # In any thread:
-        limiter.acquire()  # Blocks if rate limit exceeded
-        response = api_call()
+        @sleep_and_retry
+        @limits(calls=1000, period=60)
+        def call_api():
+            return requests.get(url)
+
+    This class exists for backward compatibility with code that uses:
+
+        limiter = RateLimiter(rpm=1000)
+        limiter.acquire()
+        response = call_api()
     """
 
     def __init__(self, rpm: int = DEFAULT_RPM):
-        """
-        Initialize rate limiter.
-
-        Args:
-            rpm: Maximum requests per minute (default: 800)
-        """
         self.rpm = rpm
-        self.min_interval = 60.0 / rpm  # Minimum seconds between requests
-        self.last_request_time = 0.0
         self._lock = threading.Lock()
         self._request_count = 0
         self._start_time = time.time()
 
+        # Create rate-limited no-op using the library
+        @sleep_and_retry
+        @limits(calls=rpm, period=60)
+        def _acquire():
+            pass
+
+        self._acquire = _acquire
+
     def acquire(self) -> float:
-        """
-        Acquire permission to make a request.
-
-        Blocks if necessary to maintain rate limit.
-
-        Returns:
-            Time waited (in seconds)
-        """
+        """Block until rate limit allows, return wait time."""
+        start = time.time()
+        self._acquire()
         with self._lock:
-            now = time.time()
-            elapsed = now - self.last_request_time
-            wait_time = 0.0
-
-            if elapsed < self.min_interval:
-                wait_time = self.min_interval - elapsed
-                time.sleep(wait_time)
-
-            self.last_request_time = time.time()
             self._request_count += 1
-            return wait_time
-
-    @property
-    def current_rpm(self) -> float:
-        """Get the current effective RPM."""
-        elapsed = time.time() - self._start_time
-        if elapsed <= 0:
-            return 0.0
-        return (self._request_count / elapsed) * 60
+        return time.time() - start
 
     @property
     def request_count(self) -> int:
-        """Get total number of requests made."""
-        return self._request_count
-
-    def reset_stats(self):
-        """Reset the request counter and start time."""
         with self._lock:
-            self._request_count = 0
-            self._start_time = time.time()
+            return self._request_count
 
-
-# Global rate limiter instance
-_global_rate_limiter: RateLimiter | None = None
-_rate_limiter_lock = threading.Lock()
-
-
-def get_rate_limiter(rpm: int = DEFAULT_RPM) -> RateLimiter:
-    """
-    Get or create the global rate limiter.
-
-    Args:
-        rpm: Requests per minute limit (only used on first call)
-
-    Returns:
-        The global RateLimiter instance
-    """
-    global _global_rate_limiter
-    with _rate_limiter_lock:
-        if _global_rate_limiter is None:
-            _global_rate_limiter = RateLimiter(rpm=rpm)
-        return _global_rate_limiter
-
-
-def reset_rate_limiter(rpm: int = DEFAULT_RPM) -> RateLimiter:
-    """
-    Reset the global rate limiter with new settings.
-
-    Args:
-        rpm: New requests per minute limit
-
-    Returns:
-        The new RateLimiter instance
-    """
-    global _global_rate_limiter
-    with _rate_limiter_lock:
-        _global_rate_limiter = RateLimiter(rpm=rpm)
-        return _global_rate_limiter
+    @property
+    def current_rpm(self) -> float:
+        elapsed = time.time() - self._start_time
+        if elapsed <= 0:
+            return 0.0
+        with self._lock:
+            return (self._request_count / elapsed) * 60

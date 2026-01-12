@@ -32,8 +32,9 @@ from taskpedia.core.io import (
 )
 from taskpedia.core.rate_limit import (
     RateLimiter,
-    get_rate_limiter,
-    reset_rate_limiter,
+    RateLimitException,
+    limits,
+    sleep_and_retry,
 )
 
 __all__ = [
@@ -58,8 +59,9 @@ __all__ = [
     "save_manifest",
     "parse_json_from_llm",
     "parse_json_from_llm_safe",
-    # Rate limiting
-    "RateLimiter",
-    "get_rate_limiter",
-    "reset_rate_limiter",
+    # Rate limiting (from ratelimit library)
+    "limits",
+    "sleep_and_retry",
+    "RateLimitException",
+    "RateLimiter",  # thin wrapper for .acquire() pattern
 ]

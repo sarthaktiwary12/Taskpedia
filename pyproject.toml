@@ -27,6 +27,7 @@ dependencies = [
     # Resilience & Caching
     "tenacity>=8.2.0",
     "diskcache>=5.6.0",
+    "ratelimit>=2.2.1",
     # Parallelization
     "ray[default]>=2.9.0",
     # Data loading
