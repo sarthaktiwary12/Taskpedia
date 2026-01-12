@@ -13,14 +13,14 @@ from __future__ import annotations
 import json
 import logging
 import re
-import time
 import threading
+import time
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-from concurrent.futures import ThreadPoolExecutor, as_completed, Future
 
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 # Setup logging - file only to avoid polluting TUI
 log = logging.getLogger(__name__)
@@ -30,145 +30,80 @@ _file_handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(mess
 log.addHandler(_file_handler)
 log.propagate = False  # Don't propagate to root logger
 
+from taskpedia.core import AtomicCounter, RateLimiter
+from taskpedia.data import ATOMIC_VERBS, get_action_categories_summary, is_valid_atomic
+from taskpedia.generation import LLMClient, LLMConfig, MockLLMClient
+from taskpedia.generation.llm import _is_retryable_error
 from taskpedia.hierarchy import NodeType, SeedSource, TaskGraph, TaskNode
-from taskpedia.llm import LLMClient, LLMConfig, MockLLMClient
-from taskpedia.verbs import ATOMIC_VERBS, get_action_categories_summary
-from taskpedia.validation import is_generic_template, is_valid_atomic, GENERIC_NOUNS, GENERIC_VERBS
-from taskpedia.utils import RateLimiter
-from taskpedia.llm import _is_retryable_error
-
+from taskpedia.quality import HybridJudge
 
 # ============================================================================
 # SYSTEM PROMPT - Optimized for VLA/VLN/WBC Training
 # ============================================================================
 
-SYSTEM_PROMPT = """You are decomposing human tasks for Vision-Language-Action (VLA) robot learning.
+SYSTEM_PROMPT = """You decompose human tasks into steps for imitation learning from video demonstrations.
 
-## GOAL
-Break tasks into ATOMIC ACTIONS that can be learned from human video demonstrations.
+## THE KEY QUESTION
+For each action, ask: "Could I record a human doing this on video?"
+- YES → Valid action (reach, grasp, walk, look, speak)
+- NO → Too low-level, stop decomposing
 
-## CRITICAL: STAY AT THE BEHAVIORAL LEVEL
-Atomic actions are what a HUMAN DEMONSTRATOR would do, observable in video:
-- "reach for the cup" ✓ (observable human motion)
-- "adjust_shoulder_joint_torque" ✗ (robot control internals - NEVER do this)
-- "grasp the cup handle" ✓ (observable)
-- "activate_gripper_motor" ✗ (robot internals - NEVER)
-- "walk to the door" ✓ (observable)
-- "compute_gait_trajectory" ✗ (control system - NEVER)
+## VALID ATOMIC ACTIONS (learnable from video)
 
-## ATOMIC ACTION EXAMPLES (correct level)
+Manipulation: reach, grasp, release, pick_up, place, push, pull, slide, rotate, twist,
+insert, pour, open, close, press, turn, flip, fold, tear, cut, spread, stir, shake, squeeze
 
-**Manipulation:**
-- reach_for <object>
-- grasp <object>
-- release <object>
-- pick_up <object>
-- place <object> on <surface>
-- push/pull <object>
-- rotate/twist <object>
-- insert <object> into <receptacle>
-- pour from <container> into <target>
-- open/close <door/drawer/lid>
-- press <button/switch>
-- turn <knob/handle>
+Locomotion: walk_to, approach, step, turn, enter, exit, climb, descend, crouch, stand,
+sit, kneel, lean, reach_across
 
-**Locomotion:**
-- walk_to <location>
-- approach <target>
-- navigate_around <obstacle>
-- enter/exit <room>
-- climb/descend <stairs>
-- turn_toward <direction>
-- step <direction>
-- crouch/stand/sit
+Perception: look_at, scan, inspect, read, check, find, locate, watch, track
 
-**Perception:**
-- look_at <target>
-- scan_for <object_type>
-- inspect <object>
-- read <text/display>
+Communication: say, ask, tell, gesture, point, wave, nod, shake_head, hand_over, receive
 
-**Social:**
-- say "<utterance>"
-- gesture_toward <target>
-- point_at <object>
-- hand_over <object> to <person>
+## STOP IMMEDIATELY IF YOU SEE YOURSELF WRITING:
+- Body parts with "joint", "torque", "angle", "force", "velocity"
+- Words like: actuator, motor, servo, controller, trajectory, impedance
+- Muscle names: bicep, tricep, deltoid, rectus, erector
+- Balance/posture internals: COM, pelvis, lumbar, girdle, bilateral
+- Anything starting with: adjust_, regulate_, stabilize_, maintain_, sense_, compute_
 
-## NEVER DECOMPOSE INTO:
-- Joint angles, torques, forces, velocities
-- Motor commands, actuator states, PID control
-- Trajectory computation, path planning internals
-- Sensor processing, signal filtering
-- Balance control, impedance control
-- Anything a human demonstrator cannot show in video
+These are ROBOT CONTROL INTERNALS, not human-demonstrable actions!
+
+## CORRECT DECOMPOSITION DEPTH
+
+"make coffee" → [walk to kitchen, approach coffee maker, pick up carafe, walk to sink,
+turn on faucet, fill carafe, turn off faucet, walk to coffee maker, pour water into reservoir,
+open coffee grounds compartment, pick up coffee scoop, scoop coffee grounds, pour into filter,
+close compartment, press start button]
+
+WRONG: "...adjust arm trajectory, regulate grip force, stabilize wrist angle..."
 
 ## OUTPUT FORMAT
 ```json
 {
-    "is_atomic": boolean,
-    "subtasks": [
-        {
-            "name": "<verb> <object/location>",
-            "description": "What a human demonstrator would do, visible in video.",
-            "is_atomic": boolean
-        }
-    ]
+    "is_atomic": true/false,
+    "subtasks": [{"name": "verb object", "is_atomic": true/false}]
 }
 ```
 
-## RULES
-1. **Observable in video**: Would this appear in a human demonstration video?
-2. **3-7 subtasks**: Meaningful decomposition without over-fragmentation
-3. **Specific objects**: "grasp the red mug" not "grasp object"
-4. **Stop at behavior**: Once you reach a single observable motion, mark as atomic"""
+If the input task is already a single observable motion (reach, grasp, step, look),
+set is_atomic=true and return empty subtasks."""
 
 
 def make_prompt(node: TaskNode) -> str:
     """Create the decomposition prompt for VLA training."""
-    context_parts = []
-    if node.parent_id:
-        parent_parts = node.parent_id.split("/")
-        if len(parent_parts) >= 1:
-            context_parts.append(f"Domain: {parent_parts[0].replace('_', ' ')}")
+    return f"""Task: {node.name}
 
-    context = "\n".join(context_parts) if context_parts else ""
+Decompose into actions recordable on video.
+If already atomic (single motion like reach/grasp/walk/look), return is_atomic=true.
+STOP if you find yourself writing joint/torque/force/muscle/trajectory words.
 
-    return f"""Decompose this task into observable actions a human would demonstrate:
-
-**Task:** {node.name}
-{context}
-
-Remember: Output actions visible in video (reach, grasp, walk, look).
-NEVER output robot internals (torques, motors, trajectories, controllers).
-
-Output JSON."""
+JSON:"""
 
 
 # ============================================================================
 # CORE GENERATOR
 # ============================================================================
-
-
-class AtomicCounter:
-    """Thread-safe counter."""
-
-    def __init__(self, initial: int = 0):
-        self._value = initial
-        self._lock = threading.Lock()
-
-    def increment(self, delta: int = 1) -> int:
-        with self._lock:
-            self._value += delta
-            return self._value
-
-    def set(self, value: int) -> None:
-        with self._lock:
-            self._value = value
-
-    @property
-    def value(self) -> int:
-        with self._lock:
-            return self._value
 
 
 @dataclass
@@ -187,7 +122,9 @@ class FastGenConfig:
     mock: bool = False
     save_interval: int = 200
     tui: bool = True
-    validate: bool = True  # Enable validation
+    use_judge: bool = True  # Enable quality judge (regex)
+    use_llm_judge: bool = False  # Enable LLM judge (slower but more accurate)
+    validate: bool = True  # Validate atomic actions against verb list
 
 
 class GeneratorCore:
@@ -250,6 +187,17 @@ class GeneratorCore:
             self._client = MockLLMClient(config=llm_config, delay=0.05)
         else:
             self._client = LLMClient(config=llm_config)
+
+        # Initialize quality judge
+        self._judge = (
+            HybridJudge(
+                client=self._client if config.use_llm_judge else None,
+                use_llm=config.use_llm_judge,
+                log_rejects=True,
+            )
+            if config.use_judge
+            else None
+        )
 
         # Pre-build decomposable queue (avoid O(N) scans)
         self._decomposable_queue: list[TaskNode] = []
@@ -382,7 +330,7 @@ class GeneratorCore:
                 self._recent_errors.pop(0)
 
     def _process_result(self, result: dict) -> int:
-        """Process a decomposition result with validation."""
+        """Process a decomposition result with judge validation."""
         if not result.get("success"):
             log.debug(f"Skipping failed result: {result.get('error', 'unknown')}")
             return 0
@@ -400,13 +348,6 @@ class GeneratorCore:
         if is_atomic or not subtasks:
             self.empty_responses.increment()
             log.debug(f"Node {node_id[:40]} is atomic or has no subtasks")
-            # Validate atomic
-            if self.config.validate and not is_valid_atomic(node.name):
-                # Don't mark as atomic if it doesn't look like one
-                # Just skip - it will be reprocessed or stay as subtask
-                self.rejected.increment()
-                return 0
-
             node.node_type = NodeType.ATOMIC
             with self._pending_lock:
                 self._pending_nodes.append(node)
@@ -423,10 +364,17 @@ class GeneratorCore:
 
                 description = subtask.get("description", "")
 
-                # Validate: reject generic templates
-                if self.config.validate and is_generic_template(name, description):
-                    self.rejected.increment()
-                    continue
+                # Judge quality (regex + optional LLM)
+                if self._judge:
+                    is_valid, reason = self._judge.judge(
+                        name=name,
+                        description=description,
+                        parent_context=node.name,
+                    )
+                    if not is_valid:
+                        self.rejected.increment()
+                        log.debug(f"Rejected by judge ({reason}): {name}")
+                        continue
 
                 # Determine child type based on parent
                 if node.node_type == NodeType.DOMAIN:
@@ -609,10 +557,11 @@ def run_without_tui(config: FastGenConfig) -> dict:
 def run_with_tui(config: FastGenConfig) -> dict:
     """Run generation with Textual TUI - htop/neovim inspired design."""
     from collections import deque
-    from textual.app import App, ComposeResult
-    from textual.widgets import Static
-    from textual.containers import Horizontal, Vertical
+
     from rich.text import Text
+    from textual.app import App, ComposeResult
+    from textual.containers import Horizontal, Vertical
+    from textual.widgets import Static
 
     # Try to import plotext, fall back to no graph
     try:

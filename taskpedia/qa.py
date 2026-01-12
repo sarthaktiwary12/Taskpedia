@@ -19,8 +19,12 @@ try:
 except ImportError:
     yaml = None
 
-from taskpedia.validation import is_generic_template, is_valid_atomic
-from taskpedia.verbs import ATOMIC_VERBS, COGNITIVE_VERBS
+from taskpedia.data import (
+    ATOMIC_VERBS,
+    COGNITIVE_VERBS,
+    is_generic_template,
+    is_valid_atomic,
+)
 
 # ============================================================================
 # VERB TAXONOMY QA FUNCTIONS

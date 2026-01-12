@@ -27,8 +27,9 @@ from typing import Any
 import yaml
 
 # Import from refactored modules
-from taskpedia.verbs import ATOMIC_VERBS, COGNITIVE_VERBS
-from taskpedia.validation import (
+from taskpedia.data import (
+    ATOMIC_VERBS,
+    COGNITIVE_VERBS,
     GENERIC_NOUNS,
     GENERIC_VERBS,
     is_generic_template,
@@ -37,15 +38,15 @@ from taskpedia.validation import (
 from taskpedia.qa import (
     analyze_verb_duplicates,
     analyze_verb_stems,
+    check_domain_coverage,
     find_ambiguous_verbs,
     find_problematic_verbs,
-    check_domain_coverage,
     get_verb_statistics,
     run_all_tests,
-    run_verb_taxonomy_tests,
+    run_comprehensive_domain_tests,
     run_domain_coverage_tests,
     run_generated_data_tests,
-    run_comprehensive_domain_tests,
+    run_verb_taxonomy_tests,
 )
 
 
@@ -252,6 +253,8 @@ def rebuild_manifest(task_dir: Path):
         json.dump(manifest, f, indent=2)
 
     return len(nodes)
+
+
 # ============================================================================
 # CLI COMMANDS
 # ============================================================================

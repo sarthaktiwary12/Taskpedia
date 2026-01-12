@@ -62,6 +62,8 @@ def cmd_generate(args):
         rpm_limit=args.rpm,
         mock=args.mock,
         tui=not args.no_tui,
+        use_judge=not getattr(args, "no_judge", False),
+        use_llm_judge=getattr(args, "llm_judge", False),
     )
 
     run(config)
@@ -137,6 +139,7 @@ def cmd_show_search(args):
 def cmd_export(args):
     """Export hierarchy to file."""
     import json
+
     from taskpedia.hierarchy import TaskGraph
 
     output_path = Path(args.output)
@@ -178,6 +181,7 @@ def cmd_export(args):
 def cmd_upload(args):
     """Upload to HuggingFace."""
     from datetime import datetime
+
     import yaml
 
     try:
@@ -332,8 +336,8 @@ atomic = ds["full"].filter(lambda x: x["is_atomic"])
 
 def cmd_download(args):
     """Download from HuggingFace and lay out in filesystem."""
-    import json
     import hashlib
+    import json
     from datetime import datetime
 
     try:
@@ -529,13 +533,14 @@ def cmd_qa_analyze(args):
 
 def cmd_qa_clean(args):
     """Remove bad nodes."""
+    import yaml
+
     from taskpedia.postprocess import (
         find_bad_nodes,
+        rebuild_manifest,
         remove_nodes,
         reset_parent_children,
-        rebuild_manifest,
     )
-    import yaml
 
     task_dir = Path(args.output)
     if not task_dir.exists():
@@ -590,9 +595,9 @@ def cmd_qa_clean(args):
 def cmd_qa_verbs(args):
     """Analyze verb taxonomy."""
     from taskpedia.postprocess import (
-        get_verb_statistics,
         analyze_verb_stems,
         check_domain_coverage,
+        get_verb_statistics,
     )
 
     print("Verb Taxonomy Analysis")
@@ -637,7 +642,7 @@ def cmd_qa_verbs(args):
 
 def cmd_qa_problems(args):
     """Show problematic verbs."""
-    from taskpedia.postprocess import find_problematic_verbs, find_ambiguous_verbs
+    from taskpedia.postprocess import find_ambiguous_verbs, find_problematic_verbs
 
     print("Problematic Verbs in ATOMIC_VERBS")
     print("=" * 60)
@@ -737,9 +742,9 @@ def cmd_qa_prune_internals(args):
         r"head.?actuator",
         r"hand.?actuator",
         r"facial.?actuator",
-        r"body.?motor.?command",
-        r"arm.?motor.?command",
-        r"hand.?motor.?command",
+        r"body.?motor",
+        r"arm.?motor",
+        r"hand.?motor",
         # Specific joint torques
         r"ankle.?joint.?torque",
         r"hip.?joint.?torque",
@@ -749,6 +754,85 @@ def cmd_qa_prune_internals(args):
         r"wrist.?joint.?torque",
         r"spine.?joint.?torque",
         r"neck.?joint.?torque",
+        # Postural/balance internals
+        r"postural.?shift",
+        r"regulate.?contact.?force",
+        r"contact.?force.?to.?target",
+        r"normal.?force.?on",
+        r"maintain.?stance",
+        r"deviation.?metrics",
+        r"pelvis.?deviation",
+        r"pelvis.?position",
+        r"lumbar.?posture",
+        r"lumbar.?spine.?joints",
+        r"sitting.?hip.?joints",
+        r"tense.?abdominal",
+        r"engage.?core.?muscles",
+        r"pelvic.?tilt",
+        r"shoulder.?girdle.?posture",
+        r"trunk.?for.?balance",
+        r"hips.?and.?trunk",
+        r"balance.?corrections",
+        r"position.?deltas",
+        r"compliant.?contact",
+        r"stabilize.?initial.?arm.?pose",
+        r"palm.?contact",
+        r"maintain.?position.?in.?zone",
+        r"interacting.?limb",
+        r"imbalance.?kinematics",
+        # General low-level body control
+        r"adjust.+joints?$",
+        r"sense.+posture",
+        r"sense.+deviation",
+        r"sense.+kinematics",
+        r"maintain.+posture",
+        r"stabilize.+pose",
+        r"execute.+corrections",
+        r"regulate.+force",
+        r"compliant.+retraction",
+        r"force.?compliance",
+        r"contact.?optimization",
+        r"pose.?adjustments",
+        r"girdle.?posture",
+        r"spinal.?deviation",
+        r"spine.?angles",
+        r"spine.?alignment",
+        r"balance.?deviation",
+        r"balance.?response",
+        # More low-level control
+        r"actuate.?sagittal",
+        r"actuate.?frontal",
+        r"bilateral.?dorsiflexion",
+        r"bilateral.?plantarflexion",
+        r"bilateral.?hip",
+        r"bilateral.?knee",
+        r"bilateral.?ankle",
+        r"sagittal.?ankle",
+        r"frontal.?ankle",
+        r"rectus.?abdominis",
+        r"erector.?spinae",
+        r"oblique.?activation",
+        r"muscle.?activation",
+        r"muscle.?tension",
+        r"tendon.?tension",
+        r"joint.?stiffness",
+        r"joint.?damping",
+        r"contact.?point",
+        r"force.?vector",
+        r"torque.?vector",
+        r"velocity.?profile",
+        r"acceleration.?profile",
+        r"position.?profile",
+        r"reference.?frame",
+        r"coordinate.?transform",
+        r"inverse.?kinematics",
+        r"forward.?kinematics",
+        r"jacobian",
+        r"end.?effector.?pose",
+        r"workspace.?limit",
+        r"singularity",
+        r"collision.?check",
+        r"self.?collision",
     ]
 
     patterns = [re.compile(p, re.IGNORECASE) for p in ROBOT_INTERNAL_PATTERNS]
@@ -838,10 +922,10 @@ def cmd_qa_coverage(args):
 def cmd_qa_test(args):
     """Run all data quality tests."""
     from taskpedia.postprocess import (
-        run_verb_taxonomy_tests,
-        run_domain_coverage_tests,
         run_comprehensive_domain_tests,
+        run_domain_coverage_tests,
         run_generated_data_tests,
+        run_verb_taxonomy_tests,
     )
 
     print("Running Data Quality Tests")
@@ -995,7 +1079,7 @@ Return JSON with suggested additions at each level."""
 
 def analyze_tree_structure(task_dir: Path) -> dict:
     """Analyze the task hierarchy tree structure."""
-    from taskpedia.hierarchy import TaskGraph, NodeType
+    from taskpedia.hierarchy import NodeType, TaskGraph
 
     graph = TaskGraph(task_dir)
 
@@ -1079,10 +1163,11 @@ def cmd_diversify(args):
     import json
     import threading
     from concurrent.futures import ThreadPoolExecutor, as_completed
-    from taskpedia.hierarchy import TaskGraph, TaskNode, NodeType, SeedSource
-    from taskpedia.llm import LLMClient, LLMConfig, MockLLMClient
-    from taskpedia.verbs import get_action_categories_summary
-    from taskpedia.utils import RateLimiter, ProgressTracker
+
+    from taskpedia.core import ProgressTracker, RateLimiter
+    from taskpedia.data import get_action_categories_summary
+    from taskpedia.generation import LLMClient, LLMConfig, MockLLMClient
+    from taskpedia.hierarchy import NodeType, SeedSource, TaskGraph, TaskNode
 
     task_dir = Path(args.output)
     if not task_dir.exists():
@@ -1545,6 +1630,100 @@ Return 3-8 truly distinct missing domains."""
     print("        Run 'taskpedia generate' to decompose new tasks")
 
 
+def cmd_judge_analyze(args):
+    """Analyze reject log to identify patterns."""
+    from taskpedia.quality import get_reject_log
+
+    log = get_reject_log()
+    analysis = log.analyze()
+
+    print("\n" + "=" * 60)
+    print("  REJECT LOG ANALYSIS")
+    print("=" * 60)
+    print(f"  Total rejects: {analysis.get('total', 0):,}")
+
+    if analysis.get("total", 0) == 0:
+        print("\n  No rejections logged yet.")
+        print("  Run generation with judge enabled to collect data.")
+        return
+
+    print("\n  By Reason:")
+    for reason, count in analysis.get("by_reason", {}).items():
+        print(f"    {reason:25} {count:>8,}")
+
+    if analysis.get("top_patterns"):
+        print("\n  Top Rejection Patterns:")
+        for pattern, count in analysis["top_patterns"]:
+            print(f"    {pattern[:50]:50} {count:>8,}x")
+
+    if analysis.get("recent_samples"):
+        print("\n  Recent Rejects (sample):")
+        for sample in analysis["recent_samples"][:10]:
+            print(f"    - {sample}")
+
+    print("\n  Next: Run 'taskpedia judge improve' to get prompt suggestions")
+
+
+def cmd_judge_improve(args):
+    """Suggest prompt improvements based on reject log."""
+    from taskpedia.generation import LLMClient, LLMConfig, MockLLMClient
+    from taskpedia.generator import SYSTEM_PROMPT
+    from taskpedia.quality import PromptImprover, get_reject_log
+
+    log = get_reject_log()
+    analysis = log.analyze()
+
+    if analysis.get("total", 0) == 0:
+        print("No rejections logged yet. Run generation first.")
+        return
+
+    print("\n" + "=" * 60)
+    print("  PROMPT IMPROVEMENT ANALYSIS")
+    print("=" * 60)
+    print(f"  Analyzing {analysis['total']:,} rejections...")
+
+    # Initialize LLM
+    if args.mock:
+        client = MockLLMClient()
+    else:
+        llm_config = LLMConfig(model=args.model, thinking_budget=1024)
+        client = LLMClient(config=llm_config)
+
+    improver = PromptImprover(client, log)
+
+    print("\n  Generating suggestions (this may take a moment)...\n")
+    suggestions = improver.suggest_improvements(SYSTEM_PROMPT)
+
+    print("=" * 60)
+    print(suggestions)
+    print("=" * 60)
+
+    if args.apply:
+        print("\n  Generating improved prompt...")
+        improved = improver.generate_improved_prompt(SYSTEM_PROMPT, apply_suggestions=True)
+
+        output_file = Path(args.output) / "improved_prompt.txt"
+        output_file.write_text(improved)
+        print(f"\n  Improved prompt saved to: {output_file}")
+        print("  Review and manually update generator.py if appropriate.")
+
+
+def cmd_judge_clear(args):
+    """Clear reject log."""
+    from taskpedia.quality import get_reject_log
+
+    log = get_reject_log()
+
+    if not args.yes:
+        response = input("Clear all rejection logs? [y/N] ")
+        if response.lower() not in ("y", "yes"):
+            print("Cancelled.")
+            return
+
+    log.clear()
+    print("Reject log cleared.")
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="taskpedia",
@@ -1554,6 +1733,8 @@ def main():
 Examples:
   taskpedia init                    # Initialize from O*NET + Life Activities
   taskpedia generate -n 100000      # Generate 100K tasks with LLM
+  taskpedia judge analyze           # Analyze rejection patterns
+  taskpedia judge improve           # Get prompt improvement suggestions
   taskpedia show stats              # View statistics
   taskpedia show tree               # View as tree
   taskpedia export --format jsonl   # Export to JSONL
@@ -1621,6 +1802,16 @@ Examples:
         "--no-tui",
         action="store_true",
         help="Disable TUI, use simple progress",
+    )
+    gen_parser.add_argument(
+        "--no-judge",
+        action="store_true",
+        help="Disable quality judge (not recommended)",
+    )
+    gen_parser.add_argument(
+        "--llm-judge",
+        action="store_true",
+        help="Use LLM judge in addition to regex (slower but more accurate)",
     )
     gen_parser.set_defaults(func=cmd_generate)
 
@@ -1715,6 +1906,43 @@ Examples:
         help="Skip confirmation prompts (auto-yes)",
     )
     download_parser.set_defaults(func=cmd_download)
+
+    # ─── JUDGE (subcommands) ────────────────────────────────
+    judge_parser = subparsers.add_parser(
+        "judge",
+        help="Quality judge (analyze rejects, improve prompts)",
+    )
+    judge_sub = judge_parser.add_subparsers(dest="judge_cmd", metavar="action")
+
+    judge_analyze = judge_sub.add_parser("analyze", help="Analyze rejection patterns")
+    judge_analyze.set_defaults(func=cmd_judge_analyze)
+
+    judge_improve = judge_sub.add_parser("improve", help="Suggest prompt improvements")
+    judge_improve.add_argument(
+        "--model",
+        default="models/gemini-2.5-flash",
+        help="LLM model (default: gemini-2.5-flash)",
+    )
+    judge_improve.add_argument(
+        "--mock",
+        action="store_true",
+        help="Use mock LLM",
+    )
+    judge_improve.add_argument(
+        "--apply",
+        action="store_true",
+        help="Generate rewritten prompt (saved to improved_prompt.txt)",
+    )
+    judge_improve.set_defaults(func=cmd_judge_improve)
+
+    judge_clear = judge_sub.add_parser("clear", help="Clear reject log")
+    judge_clear.add_argument(
+        "-y",
+        "--yes",
+        action="store_true",
+        help="Skip confirmation",
+    )
+    judge_clear.set_defaults(func=cmd_judge_clear)
 
     # ─── CACHE (subcommands) ────────────────────────────────
     cache_parser = subparsers.add_parser(
@@ -1836,6 +2064,10 @@ Examples:
     if args.command == "show":
         if not args.show_cmd:
             show_parser.print_help()
+            sys.exit(0)
+    elif args.command == "judge":
+        if not args.judge_cmd:
+            judge_parser.print_help()
             sys.exit(0)
     elif args.command == "cache":
         if not args.cache_cmd:
