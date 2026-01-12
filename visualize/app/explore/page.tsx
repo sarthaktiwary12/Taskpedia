@@ -14,7 +14,19 @@ export const metadata: Metadata = {
     "Search and explore millions of atomic robot-executable actions across 35+ domains.",
 };
 
-async function getInitialData() {
+interface Node {
+  id: string;
+  name: string;
+  node_type: string;
+  parent_id?: string;
+  children_ids?: string[];
+}
+
+async function getInitialData(): Promise<{
+  domains: Node[];
+  atomicSamples: Node[];
+  totalNodes: number;
+}> {
   try {
     const manifestPath = path.join(
       process.cwd(),
@@ -23,16 +35,16 @@ async function getInitialData() {
       "manifest.json",
     );
     const data = fs.readFileSync(manifestPath, "utf-8");
-    const manifest = JSON.parse(data);
+    const manifest: Record<string, Node> = JSON.parse(data);
 
     // Get domains (top-level nodes)
     const domains = Object.values(manifest)
-      .filter((node: any) => node.node_type?.toUpperCase() === "DOMAIN")
+      .filter((node) => node.node_type?.toUpperCase() === "DOMAIN")
       .slice(0, 20);
 
     // Get sample atomic actions
     const atomicSamples = Object.values(manifest)
-      .filter((node: any) => node.node_type?.toUpperCase() === "ATOMIC")
+      .filter((node) => node.node_type?.toUpperCase() === "ATOMIC")
       .slice(0, 50);
 
     return { domains, atomicSamples, totalNodes: Object.keys(manifest).length };

@@ -1,108 +1,115 @@
 {
   "pages": {
     "/_not-found/page": [
-      "static/chunks/[root-of-the-server]__cee65653._.css",
-      "static/chunks/dbd52_269b40cf._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_components_Navigation_tsx_c6419720._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_app_layout_tsx_667adf34._.js",
-      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_946af224._.js",
-      "static/chunks/dbd52_next_dist_compiled_react-dom_1c58b53b._.js",
-      "static/chunks/dbd52_next_dist_compiled_next-devtools_index_d84e9dd8.js",
-      "static/chunks/dbd52_next_dist_compiled_b68f94a5._.js",
-      "static/chunks/dbd52_next_dist_client_98dbada1._.js",
-      "static/chunks/dbd52_next_dist_56f63f1a._.js",
-      "static/chunks/dbd52_@swc_helpers_cjs_e95da6b2._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_a0ff3932._.js",
-      "static/chunks/turbopack-Documents_Python-Things_Praxis-10M_visualize_be66fd03._.js"
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/chunks/app/_not-found/page-7db0c8744c9a6a0c.js"
+    ],
+    "/layout": [
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/css/43081a10180d4af1.css",
+      "static/chunks/619-ba102abea3e3d0e4.js",
+      "static/chunks/app/layout-ea94206300b5b398.js"
+    ],
+    "/api/nodes/[id]/route": [
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/chunks/app/api/nodes/[id]/route-8a369938d8140821.js"
+    ],
+    "/api/search/route": [
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/chunks/app/api/search/route-8a369938d8140821.js"
+    ],
+    "/sitemap.xml/route": [
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/chunks/app/sitemap.xml/route-8a369938d8140821.js"
+    ],
+    "/robots.txt/route": [
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/chunks/app/robots.txt/route-8a369938d8140821.js"
+    ],
+    "/api/stats/route": [
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/chunks/app/api/stats/route-8a369938d8140821.js"
+    ],
+    "/api/domains/route": [
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/chunks/app/api/domains/route-8a369938d8140821.js"
+    ],
+    "/download/page": [
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/chunks/619-ba102abea3e3d0e4.js",
+      "static/chunks/app/download/page-57167bfb8415eccc.js"
     ],
     "/docs/page": [
-      "static/chunks/[root-of-the-server]__fa867e6a._.css",
-      "static/chunks/dbd52_269b40cf._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_components_Navigation_tsx_c6419720._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_app_layout_tsx_667adf34._.js",
-      "static/chunks/dbd52_next_dist_client_components_builtin_global-error_f83b3403.js",
-      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_946af224._.js",
-      "static/chunks/dbd52_next_dist_compiled_react-dom_1c58b53b._.js",
-      "static/chunks/dbd52_next_dist_compiled_next-devtools_index_d84e9dd8.js",
-      "static/chunks/dbd52_next_dist_compiled_b68f94a5._.js",
-      "static/chunks/dbd52_next_dist_client_98dbada1._.js",
-      "static/chunks/dbd52_next_dist_56f63f1a._.js",
-      "static/chunks/dbd52_@swc_helpers_cjs_e95da6b2._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_a0ff3932._.js",
-      "static/chunks/turbopack-Documents_Python-Things_Praxis-10M_visualize_be66fd03._.js"
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/chunks/app/docs/page-8a369938d8140821.js"
     ],
     "/explore/page": [
-      "static/chunks/[root-of-the-server]__cee65653._.css",
-      "static/chunks/dbd52_af57bbf3._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_components_Navigation_tsx_c6419720._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_app_layout_tsx_667adf34._.js",
-      "static/chunks/dbd52_next_dist_client_components_builtin_global-error_9c773231.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_6bfbef35._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_app_explore_page_tsx_9c773231._.js",
-      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_946af224._.js",
-      "static/chunks/dbd52_next_dist_compiled_react-dom_1c58b53b._.js",
-      "static/chunks/dbd52_next_dist_compiled_next-devtools_index_d84e9dd8.js",
-      "static/chunks/dbd52_next_dist_compiled_b68f94a5._.js",
-      "static/chunks/dbd52_next_dist_client_98dbada1._.js",
-      "static/chunks/dbd52_next_dist_56f63f1a._.js",
-      "static/chunks/dbd52_@swc_helpers_cjs_e95da6b2._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_a0ff3932._.js",
-      "static/chunks/turbopack-Documents_Python-Things_Praxis-10M_visualize_be66fd03._.js"
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/chunks/619-ba102abea3e3d0e4.js",
+      "static/chunks/app/explore/page-d001831b6b9dee29.js"
     ],
-    "/node/[id]/page": [
-      "static/chunks/[root-of-the-server]__cee65653._.css",
-      "static/chunks/dbd52_af57bbf3._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_components_Navigation_tsx_c6419720._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_app_layout_tsx_667adf34._.js",
-      "static/chunks/dbd52_next_dist_client_components_builtin_global-error_9c773231.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_app_node_[id]_page_tsx_9c773231._.js",
-      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_946af224._.js",
-      "static/chunks/dbd52_next_dist_compiled_react-dom_1c58b53b._.js",
-      "static/chunks/dbd52_next_dist_compiled_next-devtools_index_d84e9dd8.js",
-      "static/chunks/dbd52_next_dist_compiled_b68f94a5._.js",
-      "static/chunks/dbd52_next_dist_client_98dbada1._.js",
-      "static/chunks/dbd52_next_dist_56f63f1a._.js",
-      "static/chunks/dbd52_@swc_helpers_cjs_e95da6b2._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_a0ff3932._.js",
-      "static/chunks/turbopack-Documents_Python-Things_Praxis-10M_visualize_be66fd03._.js"
+    "/dataset/page": [
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/chunks/app/dataset/page-8a369938d8140821.js"
     ],
     "/page": [
-      "static/chunks/[root-of-the-server]__cee65653._.css",
-      "static/chunks/dbd52_af57bbf3._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_components_Navigation_tsx_c6419720._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_app_layout_tsx_667adf34._.js",
-      "static/chunks/dbd52_next_dist_client_components_builtin_global-error_9c773231.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_app_page_tsx_9c773231._.js",
-      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_946af224._.js",
-      "static/chunks/dbd52_next_dist_compiled_react-dom_1c58b53b._.js",
-      "static/chunks/dbd52_next_dist_compiled_next-devtools_index_d84e9dd8.js",
-      "static/chunks/dbd52_next_dist_compiled_b68f94a5._.js",
-      "static/chunks/dbd52_next_dist_client_98dbada1._.js",
-      "static/chunks/dbd52_next_dist_56f63f1a._.js",
-      "static/chunks/dbd52_@swc_helpers_cjs_e95da6b2._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_a0ff3932._.js",
-      "static/chunks/turbopack-Documents_Python-Things_Praxis-10M_visualize_be66fd03._.js"
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/chunks/619-ba102abea3e3d0e4.js",
+      "static/chunks/app/page-57167bfb8415eccc.js"
+    ],
+    "/node/[id]/page": [
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/chunks/619-ba102abea3e3d0e4.js",
+      "static/chunks/app/node/[id]/page-57167bfb8415eccc.js"
     ],
     "/stats/page": [
-      "static/chunks/[root-of-the-server]__cee65653._.css",
-      "static/chunks/dbd52_af57bbf3._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_components_Navigation_tsx_c6419720._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_app_layout_tsx_667adf34._.js",
-      "static/chunks/dbd52_next_dist_client_components_builtin_global-error_9c773231.js",
-      "static/chunks/dbd52_lodash_4755c909._.js",
-      "static/chunks/dbd52_recharts_es6_4e940915._.js",
-      "static/chunks/dbd52_087a410b._.js",
-      "static/chunks/80b94_Python-Things_Praxis-10M_visualize_components_StatsDashboard_tsx_df8a8bed._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_app_stats_page_tsx_9c773231._.js",
-      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_946af224._.js",
-      "static/chunks/dbd52_next_dist_compiled_react-dom_1c58b53b._.js",
-      "static/chunks/dbd52_next_dist_compiled_next-devtools_index_d84e9dd8.js",
-      "static/chunks/dbd52_next_dist_compiled_b68f94a5._.js",
-      "static/chunks/dbd52_next_dist_client_98dbada1._.js",
-      "static/chunks/dbd52_next_dist_56f63f1a._.js",
-      "static/chunks/dbd52_@swc_helpers_cjs_e95da6b2._.js",
-      "static/chunks/Documents_Python-Things_Praxis-10M_visualize_a0ff3932._.js",
-      "static/chunks/turbopack-Documents_Python-Things_Praxis-10M_visualize_be66fd03._.js"
+      "static/chunks/webpack-4da7fac3d0307a0c.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-cb395327542b56ef.js",
+      "static/chunks/main-app-d840e0e52f08445e.js",
+      "static/chunks/app/stats/page-8a369938d8140821.js"
     ]
   }
 }
