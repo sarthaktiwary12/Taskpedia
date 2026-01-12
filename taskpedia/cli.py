@@ -1813,6 +1813,98 @@ def cmd_judge_clear(args):
     print("Reject log cleared.")
 
 
+def cmd_publish(args):
+    """Export data and deploy taskpedia-web to Vercel."""
+    import subprocess
+
+    # args.output is ./task_hierarchy, so parent is the project root
+    task_dir = Path(args.output).resolve()
+    project_root = task_dir.parent
+    web_dir = project_root / "taskpedia-web"
+
+    if not web_dir.exists():
+        print(f"Error: {web_dir} not found")
+        print("Expected taskpedia-web directory alongside task_hierarchy")
+        sys.exit(1)
+
+    print("=" * 60)
+    print("  TASKPEDIA PUBLISH")
+    print("=" * 60)
+
+    # Step 1: Export data
+    print("\n[1] Exporting data for web app...")
+    export_script = web_dir / "scripts" / "export-data.js"
+
+    if not export_script.exists():
+        print(f"Error: {export_script} not found")
+        sys.exit(1)
+
+    result = subprocess.run(
+        ["node", str(export_script)],
+        cwd=str(web_dir),
+        capture_output=True,
+        text=True,
+    )
+
+    if result.returncode != 0:
+        print(f"Error exporting data: {result.stderr}")
+        sys.exit(1)
+
+    print(result.stdout)
+
+    # Step 2: Build
+    print("\n[2] Building web app...")
+    result = subprocess.run(
+        ["yarn", "build"],
+        cwd=str(web_dir),
+        capture_output=True,
+        text=True,
+    )
+
+    if result.returncode != 0:
+        print(f"Build failed: {result.stderr}")
+        print(result.stdout)
+        sys.exit(1)
+
+    print("    Build successful!")
+
+    # Step 3: Deploy to Vercel
+    print("\n[3] Deploying to Vercel...")
+
+    deploy_cmd = ["npx", "vercel", "--prod", "--yes"]
+    if args.project:
+        deploy_cmd.extend(["--name", args.project])
+
+    result = subprocess.run(
+        deploy_cmd,
+        cwd=str(web_dir),
+        capture_output=True,
+        text=True,
+    )
+
+    if result.returncode != 0:
+        print(f"Deploy failed: {result.stderr}")
+        print("\nMake sure you're logged in to Vercel:")
+        print("  cd taskpedia-web && npx vercel login")
+        sys.exit(1)
+
+    # Extract URL from output
+    output = result.stdout.strip()
+    lines = output.split("\n")
+    url = None
+    for line in lines:
+        if "https://" in line:
+            url = line.strip()
+            break
+
+    print("\n" + "=" * 60)
+    print("  PUBLISHED SUCCESSFULLY!")
+    print("=" * 60)
+    if url:
+        print(f"\n  URL: {url}")
+    print()
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="taskpedia",
@@ -2154,6 +2246,18 @@ Examples:
         help="Show detailed progress",
     )
     diversify_parser.set_defaults(func=cmd_diversify)
+
+    # ─── PUBLISH ────────────────────────────────────────────
+    publish_parser = subparsers.add_parser(
+        "publish",
+        help="Export data and deploy taskpedia-web to Vercel",
+    )
+    publish_parser.add_argument(
+        "--project",
+        default="taskpedia",
+        help="Vercel project name (default: taskpedia)",
+    )
+    publish_parser.set_defaults(func=cmd_publish)
 
     # ─── PARSE & RUN ────────────────────────────────────────
     args = parser.parse_args()
