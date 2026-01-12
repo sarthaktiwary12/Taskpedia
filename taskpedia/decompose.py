@@ -222,16 +222,20 @@ class DecompositionEngine:
                 self._stats["nodes_from_onet"] += 1
 
                 # Add tasks for this occupation
+                # O*NET task statements are already at the right granularity for
+                # robot learning - mark them as ATOMIC to prevent over-decomposition
                 tasks = self.onet.get_tasks_for_occupation(occ.code)
                 for task in tasks:
                     task_node = TaskNode(
                         id=TaskNode.make_id(task.task[:50], occ_node.id),
                         name=task.task,
-                        node_type=NodeType.SUBTASK,
+                        node_type=NodeType.ATOMIC,  # O*NET tasks are leaf nodes
                         parent_id=occ_node.id,
                         sources=[SeedSource.ONET],
                         source_ids=[task.task_id],
-                        tags=["core"] if task.task_type == "Core" else ["supplemental"],
+                        tags=["core", "onet_task"]
+                        if task.task_type == "Core"
+                        else ["supplemental", "onet_task"],
                         confidence=1.0,
                     )
                     self.graph.add_node(task_node, save=False)

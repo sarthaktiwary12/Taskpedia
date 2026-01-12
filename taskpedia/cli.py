@@ -895,6 +895,95 @@ def cmd_qa_prune_internals(args):
     print(f"Done! Removed {len(to_remove):,} robot-internal nodes")
 
 
+def cmd_qa_fix_depth(args):
+    """Reclassify nodes at depth >= N as ATOMIC and prune their children."""
+    import json
+
+    task_dir = Path(args.output)
+    manifest_path = task_dir / "_manifest.json"
+
+    if not manifest_path.exists():
+        print(f"Error: {manifest_path} not found")
+        sys.exit(1)
+
+    max_depth = args.max_depth
+    print(f"Loading manifest from {manifest_path}...")
+    with open(manifest_path) as f:
+        data = json.load(f)
+
+    nodes = data.get("nodes", {})
+    print(f"Total nodes: {len(nodes):,}")
+
+    # Find nodes at or beyond max_depth
+    deep_nodes = []
+    for node_id, node in nodes.items():
+        depth = node_id.count("/")
+        if depth >= max_depth:
+            deep_nodes.append((depth, node_id, node))
+
+    print(f"Nodes at depth >= {max_depth}: {len(deep_nodes):,}")
+
+    if not deep_nodes:
+        print("Nothing to fix!")
+        return
+
+    # Separate: nodes exactly at max_depth (reclassify) vs deeper (prune)
+    to_reclassify = []
+    to_prune = set()
+
+    for depth, node_id, node in deep_nodes:
+        if depth == max_depth:
+            # Reclassify as ATOMIC
+            to_reclassify.append(node_id)
+        else:
+            # Prune (children of max_depth nodes)
+            to_prune.add(node_id)
+
+    print(f"  Nodes to reclassify as ATOMIC: {len(to_reclassify):,}")
+    print(f"  Nodes to prune (descendants): {len(to_prune):,}")
+
+    if args.dry_run:
+        print("\n[DRY RUN] Would reclassify as ATOMIC:")
+        for nid in sorted(to_reclassify)[:20]:
+            print(f"  {nid}")
+        if len(to_reclassify) > 20:
+            print(f"  ... and {len(to_reclassify) - 20} more")
+
+        print("\n[DRY RUN] Would prune:")
+        for nid in sorted(to_prune)[:20]:
+            print(f"  {nid}")
+        if len(to_prune) > 20:
+            print(f"  ... and {len(to_prune) - 20} more")
+
+        print(f"\nRun without --dry-run to apply changes")
+        return
+
+    # Reclassify nodes at max_depth as ATOMIC
+    for node_id in to_reclassify:
+        if node_id in nodes:
+            nodes[node_id]["node_type"] = "atomic"
+            nodes[node_id]["children_ids"] = []  # Clear children
+
+    # Remove pruned nodes
+    for node_id in to_prune:
+        if node_id in nodes:
+            del nodes[node_id]
+
+    # Update parent children_ids references
+    for node_id, node in nodes.items():
+        if "children_ids" in node:
+            node["children_ids"] = [c for c in node["children_ids"] if c not in to_prune]
+
+    data["nodes"] = nodes
+
+    print(f"Remaining nodes: {len(nodes):,}")
+    print("Saving manifest...")
+    with open(manifest_path, "w") as f:
+        json.dump(data, f)
+
+    print(f"Done! Reclassified {len(to_reclassify):,} nodes, pruned {len(to_prune):,} descendants")
+
+
 def cmd_qa_coverage(args):
     """Show detailed domain coverage."""
     from taskpedia.postprocess import check_domain_coverage
@@ -1997,6 +2086,19 @@ Examples:
     )
     qa_prune.add_argument("--dry-run", action="store_true", help="Preview without removing")
     qa_prune.set_defaults(func=cmd_qa_prune_internals)
+
+    # qa fix-depth
+    qa_fix_depth = qa_sub.add_parser(
+        "fix-depth", help="Reclassify deep nodes as ATOMIC and prune descendants"
+    )
+    qa_fix_depth.add_argument(
+        "--max-depth",
+        type=int,
+        default=5,
+        help="Max depth (nodes at this depth become ATOMIC, deeper are pruned). Default: 5",
+    )
+    qa_fix_depth.add_argument("--dry-run", action="store_true", help="Preview without changes")
+    qa_fix_depth.set_defaults(func=cmd_qa_fix_depth)
 
     # ─── DIVERSIFY ──────────────────────────────────────────
     diversify_parser = subparsers.add_parser(

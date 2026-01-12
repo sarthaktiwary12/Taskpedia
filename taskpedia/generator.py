@@ -44,11 +44,11 @@ from taskpedia.quality import HybridJudge
 SYSTEM_PROMPT = """You decompose human tasks into steps for imitation learning from video demonstrations.
 
 ## THE KEY QUESTION
-For each action, ask: "Could I record a human doing this on video?"
-- YES → Valid action (reach, grasp, walk, look, speak)
-- NO → Too low-level, stop decomposing
+For each action, ask: "Could a human demonstrate this as ONE continuous motion on video?"
+- YES → This is ATOMIC. Stop decomposing.
+- NO, it requires multiple distinct motions → Decompose into those motions.
 
-## VALID ATOMIC ACTIONS (learnable from video)
+## ATOMIC ACTIONS (single continuous motions - DO NOT DECOMPOSE FURTHER)
 
 Manipulation: reach, grasp, release, pick_up, place, push, pull, slide, rotate, twist,
 insert, pour, open, close, press, turn, flip, fold, tear, cut, spread, stir, shake, squeeze
@@ -60,23 +60,26 @@ Perception: look_at, scan, inspect, read, check, find, locate, watch, track
 
 Communication: say, ask, tell, gesture, point, wave, nod, shake_head, hand_over, receive
 
-## STOP IMMEDIATELY IF YOU SEE YOURSELF WRITING:
-- Body parts with "joint", "torque", "angle", "force", "velocity"
-- Words like: actuator, motor, servo, controller, trajectory, impedance
+## WHEN TO STOP DECOMPOSING (mark as ATOMIC)
+
+STOP if:
+1. The action is a single verb + object (e.g., "grasp cup", "press button", "walk to door")
+2. You're at depth 3+ and the action takes < 5 seconds to perform
+3. Further breakdown would describe HOW muscles/joints move, not WHAT the person does
+4. The action is already in the atomic verbs list above
+
+## NEVER GENERATE THESE (robot internals, not human actions)
+
+- Body mechanics: joint, torque, angle, force, velocity, balance, weight_shift
+- Control terms: actuator, motor, servo, controller, trajectory, impedance
 - Muscle names: bicep, tricep, deltoid, rectus, erector
-- Balance/posture internals: COM, pelvis, lumbar, girdle, bilateral
-- Anything starting with: adjust_, regulate_, stabilize_, maintain_, sense_, compute_
+- Micro-movements: adjust_, regulate_, stabilize_, maintain_, flex_, extend_
 
-These are ROBOT CONTROL INTERNALS, not human-demonstrable actions!
+## DEPTH AWARENESS
 
-## CORRECT DECOMPOSITION DEPTH
-
-"make coffee" → [walk to kitchen, approach coffee maker, pick up carafe, walk to sink,
-turn on faucet, fill carafe, turn off faucet, walk to coffee maker, pour water into reservoir,
-open coffee grounds compartment, pick up coffee scoop, scoop coffee grounds, pour into filter,
-close compartment, press start button]
-
-WRONG: "...adjust arm trajectory, regulate grip force, stabilize wrist angle..."
+At depth 0-1: Decompose into major phases (5-15 steps)
+At depth 2-3: Decompose into concrete actions (3-8 steps)
+At depth 4+: Almost everything should be ATOMIC. Only decompose if truly compound.
 
 ## OUTPUT FORMAT
 ```json
@@ -84,19 +87,25 @@ WRONG: "...adjust arm trajectory, regulate grip force, stabilize wrist angle..."
     "is_atomic": true/false,
     "subtasks": [{"name": "verb object", "is_atomic": true/false}]
 }
-```
-
-If the input task is already a single observable motion (reach, grasp, step, look),
-set is_atomic=true and return empty subtasks."""
+```"""
 
 
 def make_prompt(node: TaskNode) -> str:
     """Create the decomposition prompt for VLA training."""
-    return f"""Task: {node.name}
+    depth = node.id.count("/")
 
-Decompose into actions recordable on video.
-If already atomic (single motion like reach/grasp/walk/look), return is_atomic=true.
-STOP if you find yourself writing joint/torque/force/muscle/trajectory words.
+    if depth >= 4:
+        depth_hint = f"DEPTH {depth} - This is deep in the hierarchy. Mark as ATOMIC unless it truly contains multiple distinct physical actions."
+    elif depth >= 2:
+        depth_hint = f"DEPTH {depth} - Decompose only if this contains multiple observable actions."
+    else:
+        depth_hint = f"DEPTH {depth} - Decompose into major action phases."
+
+    return f"""Task: {node.name}
+{depth_hint}
+
+If this is a single continuous motion (grasp, press, walk, look, etc.), return is_atomic=true.
+Only decompose if it genuinely requires multiple distinct physical actions.
 
 JSON:"""
 
@@ -125,6 +134,7 @@ class FastGenConfig:
     use_judge: bool = True  # Enable quality judge (regex)
     use_llm_judge: bool = False  # Enable LLM judge (slower but more accurate)
     validate: bool = True  # Validate atomic actions against verb list
+    max_depth: int = 5  # Stop decomposing beyond this depth
 
 
 class GeneratorCore:
@@ -210,6 +220,7 @@ class GeneratorCore:
         """Rebuild the decomposable node queue. Called once at start and when queue empties."""
         with self._queue_lock:
             self._decomposable_queue = []
+            skipped_depth = 0
             for node in self.graph._nodes.values():
                 if node.id in self._processed_ids:
                     continue
@@ -219,8 +230,15 @@ class GeneratorCore:
                     continue
                 if node.node_type == NodeType.ATOMIC:
                     continue
+                # Skip nodes beyond max_depth
+                depth = node.id.count("/")
+                if depth >= self.config.max_depth:
+                    skipped_depth += 1
+                    continue
                 self._decomposable_queue.append(node)
-            self.set_status(f"Queue rebuilt: {len(self._decomposable_queue):,} nodes")
+            self.set_status(
+                f"Queue rebuilt: {len(self._decomposable_queue):,} nodes (skipped {skipped_depth} at max depth)"
+            )
 
     def set_status(self, msg: str):
         with self._status_lock:
