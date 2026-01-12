@@ -226,8 +226,10 @@ class DecompositionEngine:
                 # robot learning - mark them as ATOMIC to prevent over-decomposition
                 tasks = self.onet.get_tasks_for_occupation(occ.code)
                 for task in tasks:
+                    # Truncate slug to avoid filesystem limits (255 bytes)
+                    # but keep full name in the node
                     task_node = TaskNode(
-                        id=TaskNode.make_id(task.task[:50], occ_node.id),
+                        id=TaskNode.make_id(task.task[:200], occ_node.id),
                         name=task.task,
                         node_type=NodeType.ATOMIC,  # O*NET tasks are leaf nodes
                         parent_id=occ_node.id,

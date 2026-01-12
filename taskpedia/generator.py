@@ -15,6 +15,7 @@ import logging
 import re
 import threading
 import time
+from collections import deque
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
@@ -31,9 +32,14 @@ log.addHandler(_file_handler)
 log.propagate = False  # Don't propagate to root logger
 
 from taskpedia.core import AtomicCounter, RateLimiter
-from taskpedia.data import ATOMIC_VERBS, get_action_categories_summary, is_valid_atomic
+from taskpedia.data import (
+    ATOMIC_VERBS,
+    get_action_categories_summary,
+    is_obvious_atomic,
+    is_valid_atomic,
+)
 from taskpedia.generation import LLMClient, LLMConfig, MockLLMClient
-from taskpedia.generation.llm import _is_retryable_error
+from taskpedia.generation.llm import DEFAULT_MODEL, _is_retryable_error
 from taskpedia.hierarchy import NodeType, SeedSource, TaskGraph, TaskNode
 from taskpedia.quality import HybridJudge
 
@@ -41,53 +47,19 @@ from taskpedia.quality import HybridJudge
 # SYSTEM PROMPT - Optimized for VLA/VLN/WBC Training
 # ============================================================================
 
-SYSTEM_PROMPT = """You decompose human tasks into steps for imitation learning from video demonstrations.
+SYSTEM_PROMPT = """Decompose tasks for robot imitation learning. Output JSON only.
 
-## THE KEY QUESTION
-For each action, ask: "Could a human demonstrate this as ONE continuous motion on video?"
-- YES → This is ATOMIC. Stop decomposing.
-- NO, it requires multiple distinct motions → Decompose into those motions.
+RULES:
+1. ATOMIC = single continuous motion demonstrable on video (grasp, push, walk_to, look_at, say)
+2. Each subtask needs CLEAR COMPLETION: "open door"→door is open, NOT "handle situation"→unclear
+3. NEVER output: joint/torque/angle/actuator/motor/impedance/muscle terms
+4. Depth 3+: almost everything is ATOMIC
 
-## ATOMIC ACTIONS (single continuous motions - DO NOT DECOMPOSE FURTHER)
+ATOMIC VERBS (don't decompose): grasp, release, pick_up, place, push, pull, slide, rotate,
+press, pour, open, close, cut, fold, walk_to, approach, sit, stand, look_at, say, point, nod
 
-Manipulation: reach, grasp, release, pick_up, place, push, pull, slide, rotate, twist,
-insert, pour, open, close, press, turn, flip, fold, tear, cut, spread, stir, shake, squeeze
-
-Locomotion: walk_to, approach, step, turn, enter, exit, climb, descend, crouch, stand,
-sit, kneel, lean, reach_across
-
-Perception: look_at, scan, inspect, read, check, find, locate, watch, track
-
-Communication: say, ask, tell, gesture, point, wave, nod, shake_head, hand_over, receive
-
-## WHEN TO STOP DECOMPOSING (mark as ATOMIC)
-
-STOP if:
-1. The action is a single verb + object (e.g., "grasp cup", "press button", "walk to door")
-2. You're at depth 3+ and the action takes < 5 seconds to perform
-3. Further breakdown would describe HOW muscles/joints move, not WHAT the person does
-4. The action is already in the atomic verbs list above
-
-## NEVER GENERATE THESE (robot internals, not human actions)
-
-- Body mechanics: joint, torque, angle, force, velocity, balance, weight_shift
-- Control terms: actuator, motor, servo, controller, trajectory, impedance
-- Muscle names: bicep, tricep, deltoid, rectus, erector
-- Micro-movements: adjust_, regulate_, stabilize_, maintain_, flex_, extend_
-
-## DEPTH AWARENESS
-
-At depth 0-1: Decompose into major phases (5-15 steps)
-At depth 2-3: Decompose into concrete actions (3-8 steps)
-At depth 4+: Almost everything should be ATOMIC. Only decompose if truly compound.
-
-## OUTPUT FORMAT
-```json
-{
-    "is_atomic": true/false,
-    "subtasks": [{"name": "verb object", "is_atomic": true/false}]
-}
-```"""
+OUTPUT:
+{"is_atomic": bool, "subtasks": [{"name": "verb object", "is_atomic": bool}]}"""
 
 
 def make_prompt(node: TaskNode) -> str:
@@ -123,7 +95,8 @@ class FastGenConfig:
     """
 
     output_dir: Path
-    model: str = "models/gemini-2.5-flash"
+    model: str = ""  # Uses DEFAULT_MODEL from generation.llm if empty
+    thinking_budget: int = 1024  # Tokens for model thinking (0 = disabled)
     max_tasks: int = 100000  # New nodes to generate this session
     max_workers: int = 64  # Good for Tier 1 (1000+ RPM)
     queue_size: int = 500
@@ -172,6 +145,7 @@ class GeneratorCore:
         # Additional counters for debugging
         self.duplicates = AtomicCounter(0)
         self.empty_responses = AtomicCounter(0)
+        self.skipped_llm = AtomicCounter(0)  # Obvious atomics that skipped LLM
 
         # Status message
         self.status = "Initializing..."
@@ -192,7 +166,8 @@ class GeneratorCore:
         self._rate_limiter = RateLimiter(rpm=config.rpm_limit)
 
         # LLM client
-        llm_config = LLMConfig(model=config.model, thinking_budget=0)
+        model = config.model or DEFAULT_MODEL
+        llm_config = LLMConfig(model=model, thinking_budget=config.thinking_budget)
         if config.mock:
             self._client = MockLLMClient(config=llm_config, delay=0.05)
         else:
@@ -210,17 +185,22 @@ class GeneratorCore:
         )
 
         # Pre-build decomposable queue (avoid O(N) scans)
-        self._decomposable_queue: list[TaskNode] = []
+        # Using deque for BFS (FIFO) - process breadth-first for better coverage
+        self._decomposable_queue: deque[TaskNode] = deque()
         self._queue_lock = threading.Lock()
         self._rebuild_queue()
 
         self.set_status("Ready")
 
     def _rebuild_queue(self):
-        """Rebuild the decomposable node queue. Called once at start and when queue empties."""
+        """Rebuild the decomposable node queue. Called once at start and when queue empties.
+
+        Queue is sorted by depth (shallowest first) for BFS traversal.
+        """
         with self._queue_lock:
-            self._decomposable_queue = []
+            self._decomposable_queue = deque()
             skipped_depth = 0
+            candidates = []
             for node in self.graph._nodes.values():
                 if node.id in self._processed_ids:
                     continue
@@ -235,6 +215,10 @@ class GeneratorCore:
                 if depth >= self.config.max_depth:
                     skipped_depth += 1
                     continue
+                candidates.append((depth, node))
+            # Sort by depth (shallowest first) for BFS
+            candidates.sort(key=lambda x: x[0])
+            for _, node in candidates:
                 self._decomposable_queue.append(node)
             self.set_status(
                 f"Queue rebuilt: {len(self._decomposable_queue):,} nodes (skipped {skipped_depth} at max depth)"
@@ -283,6 +267,20 @@ class GeneratorCore:
 
     def _decompose_node(self, node: TaskNode) -> dict:
         """Decompose a single node. Thread-safe with tenacity retry."""
+        # Skip LLM call for obvious atomics (cost optimization)
+        if is_obvious_atomic(node.name):
+            log.debug(f"Skipping LLM for obvious atomic: {node.name[:50]}")
+            self.skipped_llm.increment()
+            self.atomic_found.increment()
+            return {
+                "node_id": node.id,
+                "node": node,
+                "success": True,
+                "is_atomic": True,
+                "subtasks": [],
+                "skipped_llm": True,
+            }
+
         self.in_flight.increment()
         try:
             return self._call_llm_with_retry(node)
@@ -375,6 +373,9 @@ class GeneratorCore:
         count = 0
 
         with self._pending_lock:
+            rejections_this_parent = 0
+            max_rejections = 3  # Early termination threshold
+
             for subtask in subtasks:
                 name = subtask.get("name", str(subtask))
                 if not name:
@@ -391,7 +392,15 @@ class GeneratorCore:
                     )
                     if not is_valid:
                         self.rejected.increment()
+                        rejections_this_parent += 1
                         log.debug(f"Rejected by judge ({reason}): {name}")
+
+                        # Early termination: if 3+ rejections, skip remaining
+                        if rejections_this_parent >= max_rejections:
+                            log.debug(
+                                f"Early termination for {node.id[:40]}: {rejections_this_parent} rejections"
+                            )
+                            break
                         continue
 
                 # Determine child type based on parent
@@ -452,12 +461,15 @@ class GeneratorCore:
         self.graph._save_manifest()
 
     def iter_decomposable(self, limit: int = 500):
-        """Yield nodes that need decomposition. Uses pre-built queue for O(1) access."""
+        """Yield nodes that need decomposition. Uses pre-built queue for O(1) access.
+
+        Uses popleft() for BFS (FIFO) - process shallowest nodes first.
+        """
         with self._queue_lock:
-            # Pop from queue (fast)
+            # Pop from front of queue (BFS - shallowest first)
             result = []
             while self._decomposable_queue and len(result) < limit:
-                node = self._decomposable_queue.pop()
+                node = self._decomposable_queue.popleft()
                 if node.id in self._processed_ids:
                     continue
                 if node.children_ids:

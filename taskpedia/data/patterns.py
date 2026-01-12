@@ -194,6 +194,33 @@ ROBOT_INTERNAL_PATTERNS: list[str] = [
     r"arm.?retraction",
     r"coordinated.+retraction",
     r"center.?camera.?on",
+    # === COMMUNICATION BUS / HARDWARE ===
+    r"motor.?controller",
+    r"communication.?bus",
+    r"transmit.?command",
+    r"command.?packet",
+    r"stiffness.?command",
+    r"set.?stiffness",
+    r"send.?stiffness",
+    # === JOINT ANGLES/STATES ===
+    r"joint.?angle",
+    r"ankle.?angle",
+    r"knee.?angle",
+    r"hip.?angle",
+    r"elbow.?angle",
+    r"shoulder.?angle",
+    r"wrist.?angle",
+    r"read.?joint",
+    r"monitor.?joint",
+    r"angle.?increment",
+    r"angle.?velocity",
+    # === INTERNAL PROCESSES ===
+    r"internal.?bus",
+    r"internal.?communication",
+    r"acquire.?bus",
+    r"release.?bus",
+    r"transmit.?buffer",
+    r"receive.?buffer",
 ]
 
 # Compile patterns once at module load
@@ -245,6 +272,38 @@ GENERIC_VERBS: frozenset[str] = frozenset(
     }
 )
 
+# Vague verbs with no clear completion criteria - reject when standalone
+VAGUE_VERBS: frozenset[str] = frozenset(
+    {
+        "manage",
+        "coordinate",
+        "facilitate",
+        "oversee",
+        "maintain",
+        "support",
+        "assist",
+        "help",
+        "address",
+        "deal",
+        "engage",
+        "participate",
+        "involve",
+        "consider",
+        "determine",
+        "establish",
+        "implement",
+        "develop",
+        "continue",
+        "proceed",
+        "perform",  # too vague without object
+        "conduct",  # too vague without object
+        "execute",  # too vague without object
+        "handle",  # no clear end state
+        "process",  # no clear end state
+        "ensure",  # abstract verification
+    }
+)
+
 GENERIC_NOUNS: frozenset[str] = frozenset(
     {
         "target",
@@ -281,6 +340,7 @@ def is_generic_template(name: str, description: str = "") -> bool:
     Detects:
     - "Step N:" descriptions
     - {generic_verb} {generic_noun} patterns
+    - Vague verbs with generic nouns (no clear completion criteria)
     - Descriptions that just repeat the name
     """
     name_lower = name.lower().strip()
@@ -296,6 +356,40 @@ def is_generic_template(name: str, description: str = "") -> bool:
         verb, noun = words
         if verb in GENERIC_VERBS and noun in GENERIC_NOUNS:
             return True
+        # Also reject vague verbs with generic nouns
+        if verb in VAGUE_VERBS and noun in GENERIC_NOUNS:
+            return True
+
+    # Reject vague verbs with abstract/unobservable nouns
+    if len(words) >= 2:
+        verb = words[0]
+        if verb in VAGUE_VERBS:
+            # Check if the rest contains abstract nouns
+            rest = " ".join(words[1:])
+            abstract_nouns = {
+                "situation",
+                "workflow",
+                "process",
+                "activity",
+                "task",
+                "operation",
+                "procedure",
+                "action",
+                "step",
+                "phase",
+                "information",
+                "data",
+                "status",
+                "state",
+                "condition",
+                "quality",
+                "issue",
+                "problem",
+                "matter",
+                "thing",
+            }
+            if any(noun in rest for noun in abstract_nouns):
+                return True
 
     # Reject very short descriptions that just repeat the name
     if desc_lower and len(desc_lower) < 20:
@@ -374,6 +468,121 @@ def is_valid_atomic(name: str) -> bool:
         verb_pattern = verb.replace("_", " ")
         if name_lower.startswith(verb_pattern + " ") or name_lower == verb_pattern:
             return True
+
+    return False
+
+
+# Core atomic verbs that are ALWAYS atomic - no LLM needed
+# These are single continuous motions that cannot be decomposed further
+OBVIOUS_ATOMIC_VERBS: frozenset[str] = frozenset(
+    {
+        # Manipulation primitives
+        "grasp",
+        "grip",
+        "grab",
+        "release",
+        "let go",
+        "pick up",
+        "put down",
+        "place",
+        "set down",
+        "push",
+        "pull",
+        "slide",
+        "drag",
+        "press",
+        "squeeze",
+        "pinch",
+        "turn",
+        "rotate",
+        "twist",
+        "flip",
+        "insert",
+        "remove",
+        "extract",
+        "pour",
+        "sprinkle",
+        "drizzle",
+        "stir",
+        "mix",
+        "shake",
+        "whisk",
+        "cut",
+        "slice",
+        "chop",
+        "tear",
+        "fold",
+        "unfold",
+        "roll",
+        "unroll",
+        "open",
+        "close",
+        "shut",
+        "lift",
+        "lower",
+        "raise",
+        "reach",
+        "extend",
+        "retract",
+        # Locomotion primitives
+        "step",
+        "walk to",
+        "approach",
+        "move to",
+        "sit",
+        "stand",
+        "kneel",
+        "crouch",
+        "squat",
+        "lean",
+        "bend",
+        "straighten",
+        "climb",
+        "descend",
+        "jump",
+        "hop",
+        "enter",
+        "exit",
+        # Perception primitives
+        "look at",
+        "glance at",
+        "gaze at",
+        "listen to",
+        "smell",
+        "taste",
+        "feel",
+        # Communication primitives
+        "say",
+        "speak",
+        "tell",
+        "ask",
+        "nod",
+        "shake head",
+        "wave",
+        "point at",
+        "gesture",
+        "signal",
+        "beckon",
+    }
+)
+
+
+def is_obvious_atomic(name: str) -> bool:
+    """
+    Check if this is an obvious atomic action that needs no LLM decomposition.
+
+    These are simple verb+object patterns that are definitionally atomic.
+    Returns True if we can skip the LLM call entirely.
+    """
+    name_lower = name.lower().replace("_", " ").replace("-", " ").strip()
+
+    # Check if it starts with an obvious atomic verb
+    for verb in OBVIOUS_ATOMIC_VERBS:
+        if name_lower.startswith(verb + " ") or name_lower == verb:
+            # Additional check: should be short (verb + 1-3 words)
+            word_count = len(name_lower.split())
+            if word_count <= 4:
+                return True
 
     return False
 

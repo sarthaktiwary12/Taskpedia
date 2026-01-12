@@ -193,11 +193,12 @@ def get_cache(enabled: bool = True) -> LLMCache:
     return _global_cache
 
 
-# Default model - Gemini 2.5 Flash
+# Default model - Gemini 2.5 Flash (stable)
 DEFAULT_MODEL = "models/gemini-2.5-flash"
 
 # Fallback models
 GEMINI_25_FLASH = "models/gemini-2.5-flash"
+GEMINI_30_FLASH = "models/gemini-3.0-flash"
 
 # Gemini pricing (as of Jan 2025)
 PRICING = {
@@ -215,6 +216,11 @@ PRICING = {
         "input_per_1m": 1.25,
         "output_per_1m": 10.00,
         "thinking_per_1m": 1.25,
+    },
+    "models/gemini-3.0-flash": {
+        "input_per_1m": 0.10,
+        "output_per_1m": 0.40,
+        "thinking_per_1m": 0.10,
     },
 }
 

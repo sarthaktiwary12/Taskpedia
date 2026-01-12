@@ -1861,8 +1861,8 @@ Examples:
     )
     gen_parser.add_argument(
         "--model",
-        default="models/gemini-2.5-flash",
-        help="LLM model (default: gemini-2.5-flash)",
+        default="",
+        help="LLM model (default: from generation.llm.DEFAULT_MODEL)",
     )
     gen_parser.add_argument(
         "--workers",
@@ -2009,8 +2009,8 @@ Examples:
     judge_improve = judge_sub.add_parser("improve", help="Suggest prompt improvements")
     judge_improve.add_argument(
         "--model",
-        default="models/gemini-2.5-flash",
-        help="LLM model (default: gemini-2.5-flash)",
+        default="",
+        help="LLM model (default: from generation.llm.DEFAULT_MODEL)",
     )
     judge_improve.add_argument(
         "--mock",
@@ -2117,8 +2117,8 @@ Examples:
     )
     diversify_parser.add_argument(
         "--model",
-        default="models/gemini-2.5-flash",
-        help="LLM model (default: gemini-2.5-flash)",
+        default="",
+        help="LLM model (default: from generation.llm.DEFAULT_MODEL)",
     )
     diversify_parser.add_argument(
         "--workers",
