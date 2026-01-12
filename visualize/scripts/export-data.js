@@ -2,143 +2,154 @@
 
 /**
  * Export TASKPEDIA data for the web app
- *
- * This script exports data from the taskpedia CLI to the visualize's public/data directory.
- * Run this before building the web app to ensure it has the latest data.
- *
- * Usage:
- *   node scripts/export-data.js
- *   npm run export-data
+ * Reads real data from task_hierarchy/_manifest.json
  */
 
-const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
 const DATA_DIR = path.join(__dirname, "..", "public", "data");
+const TASK_HIERARCHY_DIR = path.join(__dirname, "..", "..", "task_hierarchy");
+const MANIFEST_PATH = path.join(TASK_HIERARCHY_DIR, "_manifest.json");
 
-console.log("📦 Exporting TASKPEDIA data for visualize...\n");
+console.log("Exporting TASKPEDIA data for webapp...\n");
 
-// Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
-  console.log("✓ Created data directory");
 }
 
-try {
-  // Check if taskpedia CLI is available
-  execSync("taskpedia --version", { stdio: "pipe" });
-  console.log("✓ Found taskpedia CLI\n");
-
-  // Export manifest as JSON
-  console.log("Exporting manifest...");
-  const manifestPath = path.join(DATA_DIR, "manifest.json");
-
-  // This assumes task_hierarchy/_manifest.json exists
-  const sourceManifest = path.join(
-    __dirname,
-    "..",
-    "..",
-    "task_hierarchy",
-    "_manifest.json",
-  );
-
-  if (fs.existsSync(sourceManifest)) {
-    fs.copyFileSync(sourceManifest, manifestPath);
-    console.log("✓ Copied manifest.json");
-  } else {
-    console.log("⚠ Warning: No manifest found. Run taskpedia init first.");
-    // Create empty manifest
-    fs.writeFileSync(manifestPath, JSON.stringify({}));
-  }
-
-  // Generate statistics
-  console.log("\nGenerating statistics...");
-  try {
-    const statsOutput = execSync("taskpedia show stats --json", {
-      encoding: "utf-8",
-      stdio: ["pipe", "pipe", "ignore"],
-    });
-
-    const stats = parseStatsOutput(statsOutput);
-    fs.writeFileSync(
-      path.join(DATA_DIR, "stats.json"),
-      JSON.stringify(stats, null, 2),
-    );
-    console.log("✓ Generated stats.json");
-  } catch (error) {
-    console.log("⚠ Warning: Could not generate stats, using mock data");
-    generateMockStats();
-  }
-
-  console.log("\n✅ Data export complete!");
-  console.log(`   Data available in: ${DATA_DIR}`);
-} catch (error) {
-  console.error("❌ Error: taskpedia CLI not found");
-  console.error("   Please install taskpedia first:");
-  console.error("   cd .. && uv pip install -e .\n");
-
-  console.log("📝 Generating mock data for development...");
-  generateMockStats();
-
-  console.log("\n⚠ Using mock data. Install taskpedia for real data.");
+// Check if real manifest exists
+if (!fs.existsSync(MANIFEST_PATH)) {
+  console.error("Error: task_hierarchy/_manifest.json not found!");
+  console.error("Run 'taskpedia init' first to generate the hierarchy.");
+  process.exit(1);
 }
 
-function parseStatsOutput(output) {
-  // Parse taskpedia stats output
-  // This is a placeholder - adjust based on actual output format
-  try {
-    return JSON.parse(output);
-  } catch {
-    // Fallback to mock if parsing fails
-    return generateMockStats();
+console.log("Loading manifest from:", MANIFEST_PATH);
+const rawManifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, "utf-8"));
+
+// Handle nested structure: { version, node_count, nodes: {...} }
+const manifestData = rawManifest.nodes || rawManifest;
+const nodes = Object.values(manifestData);
+
+console.log(`Found ${nodes.length} nodes\n`);
+
+// Compute real statistics
+const stats = {
+  totalNodes: nodes.length,
+  atomicActions: 0,
+  domains: 0,
+  verbs: 0,
+  avgDepth: 0,
+  maxDepth: 0,
+  nodesByType: {
+    DOMAIN: 0,
+    TASK: 0,
+    SUBTASK: 0,
+    ATOMIC: 0,
+  },
+  nodesByDomain: {},
+  topVerbs: [],
+};
+
+const verbCounts = {};
+let totalDepth = 0;
+
+for (const node of nodes) {
+  // Count by type (handle both uppercase and lowercase)
+  const nodeType = (node.node_type || "UNKNOWN").toUpperCase();
+  if (stats.nodesByType[nodeType] !== undefined) {
+    stats.nodesByType[nodeType]++;
+  }
+
+  if (nodeType === "ATOMIC") {
+    stats.atomicActions++;
+  }
+
+  if (nodeType === "DOMAIN") {
+    stats.domains++;
+  }
+
+  // Count by domain (first part of id)
+  const domain = node.id ? node.id.split("/")[0] : "unknown";
+  stats.nodesByDomain[domain] = (stats.nodesByDomain[domain] || 0) + 1;
+
+  // Extract verb from name (first word)
+  if (nodeType === "ATOMIC" && node.name) {
+    const verb = node.name.split(/[\s_]/)[0].toLowerCase();
+    if (verb && verb.length > 1) {
+      verbCounts[verb] = (verbCounts[verb] || 0) + 1;
+    }
+  }
+
+  // Calculate depth from id path
+  if (node.id) {
+    const depth = node.id.split("/").length;
+    totalDepth += depth;
+    if (depth > stats.maxDepth) {
+      stats.maxDepth = depth;
+    }
   }
 }
 
-function generateMockStats() {
-  const mockStats = {
-    totalNodes: 1000000,
-    atomicActions: 750000,
-    domains: 35,
-    verbs: 3479,
-    avgDepth: 4.2,
-    maxDepth: 8,
-    nodesByType: {
-      DOMAIN: 35,
-      TASK: 50000,
-      SUBTASK: 200000,
-      ATOMIC: 750000,
-    },
-    nodesByDomain: {
-      work_healthcare: 120000,
-      work_manufacturing: 95000,
-      work_construction: 88000,
-      work_logistics: 92000,
-      work_retail: 72000,
-      work_education: 68000,
-      life_household: 150000,
-      life_food_prep: 85000,
-      life_personal_care: 75000,
-      work_agriculture: 65000,
-    },
-    topVerbs: [
-      { verb: "grasp", count: 45000 },
-      { verb: "move_to", count: 42000 },
-      { verb: "release", count: 38000 },
-      { verb: "inspect", count: 35000 },
-      { verb: "clean", count: 32000 },
-      { verb: "position", count: 28000 },
-      { verb: "measure", count: 25000 },
-      { verb: "cut", count: 22000 },
-      { verb: "assemble", count: 20000 },
-      { verb: "pour", count: 18000 },
-    ],
-  };
+// Calculate average depth
+stats.avgDepth = nodes.length > 0 ? (totalDepth / nodes.length).toFixed(2) : 0;
+stats.avgDepth = parseFloat(stats.avgDepth);
 
+// Get unique verbs count and top verbs
+const sortedVerbs = Object.entries(verbCounts).sort(([, a], [, b]) => b - a);
+
+stats.verbs = sortedVerbs.length;
+stats.topVerbs = sortedVerbs
+  .slice(0, 20)
+  .map(([verb, count]) => ({ verb, count }));
+
+// Sort domains by count (top 15)
+const sortedDomains = Object.entries(stats.nodesByDomain)
+  .sort(([, a], [, b]) => b - a)
+  .slice(0, 15);
+stats.nodesByDomain = Object.fromEntries(sortedDomains);
+
+// Write stats
+fs.writeFileSync(
+  path.join(DATA_DIR, "stats.json"),
+  JSON.stringify(stats, null, 2),
+);
+console.log("Generated stats.json");
+
+// Copy manifest (or create a smaller version for web)
+// For large datasets, we might want to create an index instead
+const manifestSize = Buffer.byteLength(JSON.stringify(manifestData));
+console.log(`Manifest size: ${(manifestSize / 1024 / 1024).toFixed(2)} MB`);
+
+if (manifestSize > 10 * 1024 * 1024) {
+  // If > 10MB, create a lighter version with just essential fields
+  console.log("Creating optimized manifest for web...");
+  const lightManifest = {};
+  for (const [id, node] of Object.entries(manifestData)) {
+    lightManifest[id] = {
+      id: node.id,
+      name: node.name,
+      node_type: node.node_type,
+      parent_id: node.parent_id,
+      children_ids: node.children_ids || [],
+    };
+  }
   fs.writeFileSync(
-    path.join(DATA_DIR, "stats.json"),
-    JSON.stringify(mockStats, null, 2),
+    path.join(DATA_DIR, "manifest.json"),
+    JSON.stringify(lightManifest),
   );
-
-  return mockStats;
+} else {
+  fs.copyFileSync(MANIFEST_PATH, path.join(DATA_DIR, "manifest.json"));
 }
+console.log("Generated manifest.json");
+
+console.log("\n✅ Data export complete!");
+console.log(`   Data available in: ${DATA_DIR}`);
+console.log(`\nStatistics:`);
+console.log(`   Total nodes: ${stats.totalNodes.toLocaleString()}`);
+console.log(`   Atomic actions: ${stats.atomicActions.toLocaleString()}`);
+console.log(`   Domains: ${stats.domains}`);
+console.log(`   Unique verbs: ${stats.verbs}`);
+console.log(`   Max depth: ${stats.maxDepth}`);
+console.log(`   Avg depth: ${stats.avgDepth}`);

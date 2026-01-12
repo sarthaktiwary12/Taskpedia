@@ -1,61 +1,53 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState } from 'react';
-import { Menu, X, Search, Database, TrendingUp, BookOpen, Github } from 'lucide-react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { Menu, X, Sparkles } from "lucide-react";
+
+const navLinks = [
+  { href: "/explore", label: "Explore" },
+  { href: "/stats", label: "Statistics" },
+  { href: "/docs", label: "Docs" },
+];
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
-
-  const navigation = [
-    { name: 'Explore', href: '/explore', icon: Search },
-    { name: 'Dataset', href: '/dataset', icon: Database },
-    { name: 'Statistics', href: '/stats', icon: TrendingUp },
-    { name: 'Documentation', href: '/docs', icon: BookOpen },
-  ];
+  const pathname = usePathname();
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
+    <nav className="sticky top-0 z-50 glass border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
-                <Database className="w-6 h-6 text-white" />
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center glow-sm group-hover:glow transition-all duration-300">
+                <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
-                TASKPEDIA
+              <span className="text-xl font-bold tracking-tight">
+                <span className="gradient-text">TASKPEDIA</span>
               </span>
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="flex items-center space-x-1 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200"
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="font-medium">{item.name}</span>
-                </Link>
-              );
-            })}
-            <a
-              href="https://github.com/anthropics/taskpedia"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center space-x-1 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200"
-            >
-              <Github className="w-4 h-4" />
-              <span className="font-medium">GitHub</span>
-            </a>
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  pathname === link.href
+                    ? "text-white bg-white/10"
+                    : "text-white/60 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
             <Link
               href="/download"
-              className="ml-4 px-6 py-2 bg-gradient-to-r from-primary-500 to-primary-700 text-white rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all duration-200"
+              className="ml-4 px-5 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white hover:opacity-90 transition-opacity glow-sm"
             >
               Download
             </Link>
@@ -65,47 +57,42 @@ export function Navigation() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-lg text-gray-700 hover:bg-gray-100"
+              className="p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/5"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile nav */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
-          <div className="px-4 pt-2 pb-3 space-y-1">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-700 hover:bg-primary-50 hover:text-primary-600"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="font-medium">{item.name}</span>
-                </Link>
-              );
-            })}
-            <a
-              href="https://github.com/anthropics/taskpedia"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-700 hover:bg-primary-50 hover:text-primary-600"
-            >
-              <Github className="w-4 h-4" />
-              <span className="font-medium">GitHub</span>
-            </a>
+        <div className="md:hidden glass-strong border-t border-white/5">
+          <div className="px-4 py-3 space-y-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                  pathname === link.href
+                    ? "text-white bg-white/10"
+                    : "text-white/60 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
             <Link
               href="/download"
-              className="flex items-center justify-center px-3 py-2 mt-2 bg-gradient-to-r from-primary-500 to-primary-700 text-white rounded-lg font-medium"
               onClick={() => setIsOpen(false)}
+              className="block px-4 py-3 rounded-lg text-sm font-semibold text-center bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white mt-2"
             >
-              Download Dataset
+              Download
             </Link>
           </div>
         </div>

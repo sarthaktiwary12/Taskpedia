@@ -1,0 +1,113 @@
+{
+  "totalNodes": 45365,
+  "atomicActions": 38397,
+  "domains": 35,
+  "verbs": 1322,
+  "avgDepth": 4.45,
+  "maxDepth": 8,
+  "nodesByType": {
+    "DOMAIN": 35,
+    "TASK": 1055,
+    "SUBTASK": 5878,
+    "ATOMIC": 38397
+  },
+  "nodesByDomain": {
+    "work_healthcare_practitioners": 3453,
+    "work_education": 3286,
+    "life_household": 3277,
+    "work_production": 2698,
+    "work_science": 2104,
+    "life_caregiving": 1962,
+    "work_management": 1658,
+    "work_construction": 1621,
+    "work_architecture_engineering": 1610,
+    "work_military": 1584,
+    "work_office_admin": 1583,
+    "work_arts_media": 1493,
+    "work_business_financial": 1352,
+    "work_transportation": 1302,
+    "life_healthcare_personal": 1230
+  },
+  "topVerbs": [
+    {
+      "verb": "walk",
+      "count": 2405
+    },
+    {
+      "verb": "place",
+      "count": 2060
+    },
+    {
+      "verb": "pick",
+      "count": 1928
+    },
+    {
+      "verb": "press",
+      "count": 1588
+    },
+    {
+      "verb": "look",
+      "count": 1572
+    },
+    {
+      "verb": "grasp",
+      "count": 1282
+    },
+    {
+      "verb": "open",
+      "count": 926
+    },
+    {
+      "verb": "say",
+      "count": 714
+    },
+    {
+      "verb": "close",
+      "count": 697
+    },
+    {
+      "verb": "prepare",
+      "count": 691
+    },
+    {
+      "verb": "release",
+      "count": 668
+    },
+    {
+      "verb": "pull",
+      "count": 642
+    },
+    {
+      "verb": "approach",
+      "count": 637
+    },
+    {
+      "verb": "develop",
+      "count": 529
+    },
+    {
+      "verb": "push",
+      "count": 520
+    },
+    {
+      "verb": "perform",
+      "count": 512
+    },
+    {
+      "verb": "provide",
+      "count": 480
+    },
+    {
+      "verb": "maintain",
+      "count": 438
+    },
+    {
+      "verb": "conduct",
+      "count": 407
+    },
+    {
+      "verb": "rotate",
+      "count": 353
+    }
+  ]
+}

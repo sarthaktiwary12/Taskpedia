@@ -1,187 +1,160 @@
-import type { Metadata } from 'next';
-import { Download, Github, Terminal, FileJson, Database } from 'lucide-react';
-import Link from 'next/link';
+import type { Metadata } from "next";
+import Link from "next/link";
+import {
+  Download,
+  Github,
+  Terminal,
+  Database,
+  FileJson,
+  Sparkles,
+} from "lucide-react";
+
+export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: 'Download',
-  description: 'Download the TASKPEDIA dataset in multiple formats. Access via HuggingFace, CLI, or direct download.',
-  openGraph: {
-    title: 'Download - TASKPEDIA',
-    description: 'Download the TASKPEDIA dataset in multiple formats',
-  },
+  title: "Download",
+  description:
+    "Download the TASKPEDIA dataset. Access via HuggingFace, CLI, or direct download.",
 };
 
 export default function DownloadPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen py-12 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Download TASKPEDIA
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <span className="gradient-text">Download Dataset</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Access the complete hierarchical task decomposition dataset
+          <p className="text-lg text-white/50">
+            Multiple ways to access TASKPEDIA
           </p>
         </div>
 
         <div className="space-y-6">
           {/* HuggingFace */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
-            <div className="flex items-start space-x-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-                <Database className="w-8 h-8 text-white" />
+          <div className="glass rounded-2xl p-8 hover:bg-white/10 transition-all">
+            <div className="flex items-start gap-6">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center flex-shrink-0 glow-sm">
+                <Database className="w-7 h-7 text-white" />
               </div>
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  HuggingFace Hub (Recommended)
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  HuggingFace Hub
                 </h2>
-                <p className="text-gray-600 mb-4">
-                  The easiest way to access TASKPEDIA. Integrates seamlessly with Python workflows.
+                <p className="text-white/50 mb-4">
+                  Recommended for Python workflows
                 </p>
-                <div className="bg-gray-900 rounded-lg p-4 mb-4">
-                  <code className="text-green-400 text-sm font-mono">
-                    pip install datasets<br/>
-                    <br/>
-                    from datasets import load_dataset<br/>
-                    dataset = load_dataset("Sentient-x/taskpedia")
+                <div className="bg-black/40 rounded-xl p-4 mb-4 font-mono text-sm overflow-x-auto">
+                  <code className="text-emerald-400">
+                    <span className="text-white/50">from</span> datasets{" "}
+                    <span className="text-white/50">import</span> load_dataset
+                    {"\n"}
+                    dataset = load_dataset(
+                    <span className="text-amber-400">
+                      "Sentient-x/taskpedia"
+                    </span>
+                    )
                   </code>
                 </div>
                 <a
                   href="https://huggingface.co/datasets/Sentient-x/taskpedia"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-semibold hover:opacity-90 transition-opacity"
                 >
-                  <span>View on HuggingFace</span>
-                  <span>→</span>
+                  View on HuggingFace
+                  <Sparkles className="w-4 h-4" />
                 </a>
               </div>
             </div>
           </div>
 
           {/* CLI */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
-            <div className="flex items-start space-x-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-                <Terminal className="w-8 h-8 text-white" />
+          <div className="glass rounded-2xl p-8 hover:bg-white/10 transition-all">
+            <div className="flex items-start gap-6">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center flex-shrink-0 glow-sm">
+                <Terminal className="w-7 h-7 text-white" />
               </div>
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                <h2 className="text-2xl font-bold text-white mb-2">
                   TASKPEDIA CLI
                 </h2>
-                <p className="text-gray-600 mb-4">
-                  Install the official CLI to download, explore, and generate tasks locally.
+                <p className="text-white/50 mb-4">
+                  Full control with command-line tools
                 </p>
-                <div className="bg-gray-900 rounded-lg p-4 mb-4">
-                  <code className="text-green-400 text-sm font-mono">
-                    # Install CLI<br/>
-                    uv pip install -e .<br/>
-                    <br/>
-                    # Download dataset<br/>
-                    taskpedia download --repo Sentient-x/taskpedia<br/>
-                    <br/>
-                    # Explore<br/>
-                    taskpedia show stats<br/>
+                <div className="bg-black/40 rounded-xl p-4 mb-4 font-mono text-sm overflow-x-auto">
+                  <code className="text-emerald-400">
+                    <span className="text-white/50"># Install</span>
+                    {"\n"}
+                    uv pip install -e .{"\n\n"}
+                    <span className="text-white/50"># Download</span>
+                    {"\n"}
+                    taskpedia download --repo Sentient-x/taskpedia{"\n\n"}
+                    <span className="text-white/50"># Explore</span>
+                    {"\n"}
+                    taskpedia show stats{"\n"}
                     taskpedia show tree -d 4
                   </code>
                 </div>
                 <Link
                   href="/docs"
-                  className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-white font-semibold hover:opacity-90 transition-opacity"
                 >
-                  <span>View Documentation</span>
-                  <span>→</span>
+                  View Documentation
                 </Link>
               </div>
             </div>
           </div>
 
-          {/* Direct Download */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
-            <div className="flex items-start space-x-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-                <FileJson className="w-8 h-8 text-white" />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Direct Download
-                </h2>
-                <p className="text-gray-600 mb-4">
-                  Download the dataset in various formats for offline use.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <p className="font-semibold text-gray-900 mb-2">JSON</p>
-                    <p className="text-sm text-gray-600 mb-3">Complete hierarchy</p>
-                    <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                      Download →
-                    </button>
-                  </div>
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <p className="font-semibold text-gray-900 mb-2">JSONL</p>
-                    <p className="text-sm text-gray-600 mb-3">Line-delimited</p>
-                    <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                      Download →
-                    </button>
-                  </div>
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <p className="font-semibold text-gray-900 mb-2">CSV</p>
-                    <p className="text-sm text-gray-600 mb-3">Flat format</p>
-                    <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                      Download →
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* GitHub */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
-            <div className="flex items-start space-x-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-                <Github className="w-8 h-8 text-white" />
+          <div className="glass rounded-2xl p-8 hover:bg-white/10 transition-all">
+            <div className="flex items-start gap-6">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center flex-shrink-0">
+                <Github className="w-7 h-7 text-white" />
               </div>
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                <h2 className="text-2xl font-bold text-white mb-2">
                   Source Code
                 </h2>
-                <p className="text-gray-600 mb-4">
-                  Access the full source code, contribute, or generate your own dataset.
+                <p className="text-white/50 mb-4">
+                  Generate your own dataset or contribute
                 </p>
                 <a
                   href="https://github.com/anthropics/taskpedia"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-900 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl glass text-white font-semibold hover:bg-white/10 transition-colors"
                 >
                   <Github className="w-5 h-5" />
-                  <span>View on GitHub</span>
+                  View on GitHub
                 </a>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Info Section */}
-        <div className="mt-12 bg-gradient-to-br from-primary-600 to-indigo-700 rounded-2xl shadow-lg p-8 text-white">
-          <h3 className="text-2xl font-bold mb-4">Dataset Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+        {/* Info */}
+        <div className="mt-12 glass rounded-2xl p-8">
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Dataset Information
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
             <div>
-              <p className="font-semibold mb-2">License</p>
-              <p className="text-blue-100">CC BY 4.0 - Free for research and commercial use</p>
+              <p className="text-white/40 mb-1">License</p>
+              <p className="text-white">CC BY 4.0</p>
             </div>
             <div>
-              <p className="font-semibold mb-2">Size</p>
-              <p className="text-blue-100">~500MB compressed, ~2GB uncompressed</p>
+              <p className="text-white/40 mb-1">Size</p>
+              <p className="text-white">~50MB compressed</p>
             </div>
             <div>
-              <p className="font-semibold mb-2">Format</p>
-              <p className="text-blue-100">JSON, JSONL, CSV, YAML</p>
+              <p className="text-white/40 mb-1">Format</p>
+              <p className="text-white">JSON, JSONL</p>
             </div>
             <div>
-              <p className="font-semibold mb-2">Updates</p>
-              <p className="text-blue-100">Regular updates with new tasks and domains</p>
+              <p className="text-white/40 mb-1">Updates</p>
+              <p className="text-white">Regular</p>
             </div>
           </div>
         </div>
