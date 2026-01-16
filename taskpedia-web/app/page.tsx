@@ -1,257 +1,234 @@
-import Link from "next/link";
-import {
-  ArrowRight,
-  Zap,
-  Database,
-  GitBranch,
-  Cpu,
-  ChevronRight,
-} from "lucide-react";
-import fs from "fs";
-import path from "path";
+"use client";
 
-// SSG - generate at build time
-export const dynamic = "force-static";
-export const revalidate = 3600;
+import { useState, useEffect, useMemo } from "react";
 
-async function getStats() {
-  try {
-    const statsPath = path.join(process.cwd(), "public", "data", "stats.json");
-    const data = fs.readFileSync(statsPath, "utf-8");
-    return JSON.parse(data);
-  } catch {
-    return {
-      totalNodes: 45365,
-      atomicActions: 38397,
-      domains: 35,
-      verbs: 1322,
-      avgDepth: 4.45,
-      maxDepth: 8,
-    };
-  }
+interface Node {
+  id: string;
+  name: string;
+  node_type: "domain" | "task" | "subtask" | "atomic";
+  parent_id?: string;
+  children_ids?: string[];
 }
 
-export default async function HomePage() {
-  const stats = await getStats();
+type Manifest = Record<string, Node>;
+
+function TreeNode({
+  node,
+  manifest,
+  depth = 0
+}: {
+  node: Node;
+  manifest: Manifest;
+  depth?: number;
+}) {
+  const [expanded, setExpanded] = useState(depth < 1);
+  const children = (node.children_ids || [])
+    .map(id => manifest[id])
+    .filter(Boolean)
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const hasChildren = children.length > 0;
+
+  const typeStyles: Record<string, string> = {
+    domain: "font-medium",
+    task: "text-gray-800",
+    subtask: "text-gray-600",
+    atomic: "text-gray-500 text-xs",
+  };
+
+  const typeBadge: Record<string, string> = {
+    domain: "bg-black text-white",
+    task: "bg-gray-200",
+    subtask: "bg-gray-100",
+    atomic: "bg-gray-50 text-gray-400",
+  };
 
   return (
-    <div className="relative">
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center px-4 overflow-hidden">
-        {/* Floating orbs */}
-        <div
-          className="absolute top-20 left-20 w-2 h-2 bg-violet-400 rounded-full animate-float"
-          style={{ animationDelay: "0s" }}
-        />
-        <div
-          className="absolute top-40 right-32 w-3 h-3 bg-fuchsia-400 rounded-full animate-float"
-          style={{ animationDelay: "1s" }}
-        />
-        <div
-          className="absolute bottom-32 left-1/4 w-2 h-2 bg-purple-400 rounded-full animate-float"
-          style={{ animationDelay: "2s" }}
-        />
+    <div className={depth > 0 ? "border-l border-gray-200 ml-2" : ""}>
+      <div
+        className={`flex items-start gap-2 py-1 px-2 hover:bg-gray-50 cursor-pointer ${typeStyles[node.node_type]}`}
+        onClick={() => hasChildren && setExpanded(!expanded)}
+      >
+        {/* Expand/collapse indicator */}
+        <span className="w-4 text-gray-300 select-none flex-shrink-0">
+          {hasChildren ? (expanded ? "−" : "+") : "·"}
+        </span>
 
-        <div className="max-w-5xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8">
-            <Zap className="w-4 h-4 text-violet-400" />
-            <span className="text-sm text-white/80">
-              {stats.totalNodes.toLocaleString()}+ hierarchical task nodes
-            </span>
+        {/* Node name */}
+        <span className="flex-1 break-words">{node.name}</span>
+
+        {/* Type badge */}
+        <span className={`text-[10px] px-1.5 py-0.5 rounded flex-shrink-0 ${typeBadge[node.node_type]}`}>
+          {node.node_type}
+        </span>
+
+        {/* Child count */}
+        {hasChildren && (
+          <span className="text-[10px] text-gray-400 flex-shrink-0">
+            {children.length}
+          </span>
+        )}
+      </div>
+
+      {/* Children */}
+      {expanded && hasChildren && (
+        <div className="pl-2">
+          {children.map(child => (
+            <TreeNode
+              key={child.id}
+              node={child}
+              manifest={manifest}
+              depth={depth + 1}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function Home() {
+  const [manifest, setManifest] = useState<Manifest | null>(null);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/data/manifest.json")
+      .then(r => r.json())
+      .then(data => {
+        setManifest(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
+
+  const domains = useMemo(() => {
+    if (!manifest) return [];
+    return Object.values(manifest)
+      .filter(n => n.node_type === "domain")
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [manifest]);
+
+  const stats = useMemo(() => {
+    if (!manifest) return { total: 0, domains: 0, tasks: 0, subtasks: 0, atomic: 0 };
+    const nodes = Object.values(manifest);
+    return {
+      total: nodes.length,
+      domains: nodes.filter(n => n.node_type === "domain").length,
+      tasks: nodes.filter(n => n.node_type === "task").length,
+      subtasks: nodes.filter(n => n.node_type === "subtask").length,
+      atomic: nodes.filter(n => n.node_type === "atomic").length,
+    };
+  }, [manifest]);
+
+  const searchResults = useMemo(() => {
+    if (!manifest || !search || search.length < 2) return null;
+    const query = search.toLowerCase();
+    return Object.values(manifest)
+      .filter(n => n.name.toLowerCase().includes(query))
+      .slice(0, 100);
+  }, [manifest, search]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center font-mono text-sm text-gray-500">
+        loading...
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-white font-mono text-sm">
+      {/* Header */}
+      <header className="border-b border-gray-200 px-6 py-4">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <div>
+            <h1 className="text-lg font-medium">taskpedia</h1>
+            <p className="text-xs text-gray-400">robot task taxonomy</p>
           </div>
-
-          {/* Main title */}
-          <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-6">
-            <span className="gradient-text animate-gradient bg-gradient-to-r from-violet-400 via-fuchsia-400 to-violet-400">
-              TASKPEDIA
-            </span>
-          </h1>
-
-          <p className="text-xl md:text-2xl text-white/60 max-w-3xl mx-auto mb-4">
-            Hierarchical Task Decomposition for Embodied AI
-          </p>
-
-          <p className="text-lg text-white/40 max-w-2xl mx-auto mb-12">
-            Decompose human activities into atomic robot-executable actions.
-            Built for VLA/VLN training with {stats.verbs.toLocaleString()}+
-            verbs across {stats.domains} domains.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
-            <Link
-              href="/explore"
-              className="group flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-semibold text-lg glow hover:opacity-90 transition-all"
-            >
-              Explore Dataset
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link
-              href="/download"
-              className="flex items-center gap-2 px-8 py-4 rounded-xl glass text-white font-semibold text-lg hover:bg-white/10 transition-colors"
-            >
-              <Database className="w-5 h-5" />
-              Download
-            </Link>
-          </div>
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            {[
-              {
-                label: "Total Nodes",
-                value: stats.totalNodes.toLocaleString(),
-                icon: Database,
-              },
-              {
-                label: "Atomic Actions",
-                value: stats.atomicActions.toLocaleString(),
-                icon: Zap,
-              },
-              {
-                label: "Unique Verbs",
-                value: stats.verbs.toLocaleString(),
-                icon: Cpu,
-              },
-              { label: "Max Depth", value: stats.maxDepth, icon: GitBranch },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className="glass rounded-2xl p-6 text-center hover:bg-white/10 transition-colors group"
-              >
-                <stat.icon className="w-6 h-6 text-violet-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
-                <div className="text-3xl font-bold text-white mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-white/50">{stat.label}</div>
-              </div>
-            ))}
+          <div className="text-xs text-gray-400 text-right">
+            <div>{stats.total.toLocaleString()} nodes</div>
+            <div>{stats.atomic.toLocaleString()} atomic tasks</div>
           </div>
         </div>
-      </section>
+      </header>
 
-      {/* Features Section */}
-      <section className="py-32 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="gradient-text">Built for Robot Learning</span>
-            </h2>
-            <p className="text-lg text-white/50 max-w-2xl mx-auto">
-              Every task decomposed into atomic, robot-executable primitives
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                title: "Hierarchical Structure",
-                description:
-                  "Domain → Task → Subtask → Atomic. Navigate from high-level goals to executable primitives.",
-                gradient: "from-violet-500 to-purple-500",
-              },
-              {
-                title: "Atomic Actions",
-                description:
-                  "grasp, move_to, release, inspect, pour, cut. Every action a robot can physically execute.",
-                gradient: "from-purple-500 to-fuchsia-500",
-              },
-              {
-                title: "35+ Domains",
-                description:
-                  "Healthcare, manufacturing, household, food prep. Real-world tasks from O*NET and life activities.",
-                gradient: "from-fuchsia-500 to-pink-500",
-              },
-            ].map((feature) => (
-              <div
-                key={feature.title}
-                className="glass rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 group"
-              >
-                <div
-                  className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform glow-sm`}
-                >
-                  <Zap className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-white/50 leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-32 px-4">
+      {/* Search */}
+      <div className="border-b border-gray-200 px-6 py-3">
         <div className="max-w-4xl mx-auto">
-          <div className="glass rounded-3xl p-12 md:p-16 text-center relative overflow-hidden">
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-600/20 to-fuchsia-600/20 pointer-events-none" />
+          <input
+            type="text"
+            placeholder="search tasks..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-200 rounded text-sm focus:outline-none focus:border-gray-400"
+          />
+        </div>
+      </div>
 
-            <div className="relative z-10">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                <span className="gradient-text">Start Building</span>
-              </h2>
-              <p className="text-lg text-white/60 mb-8 max-w-xl mx-auto">
-                Download the dataset and accelerate your embodied AI research
-                today.
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link
-                  href="/download"
-                  className="px-8 py-4 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-colors"
-                >
-                  Get Started
-                </Link>
-                <a
-                  href="https://huggingface.co/datasets/Sentient-x/taskpedia"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-8 py-4 rounded-xl glass text-white font-semibold hover:bg-white/10 transition-colors"
-                >
-                  HuggingFace
-                  <ChevronRight className="w-4 h-4" />
-                </a>
+      {/* Stats bar */}
+      <div className="border-b border-gray-100 px-6 py-2 bg-gray-50">
+        <div className="max-w-4xl mx-auto flex gap-6 text-xs text-gray-500">
+          <span>domains: {stats.domains}</span>
+          <span>tasks: {stats.tasks}</span>
+          <span>subtasks: {stats.subtasks}</span>
+          <span>atomic: {stats.atomic}</span>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <main className="px-6 py-4">
+        <div className="max-w-4xl mx-auto">
+          {/* Search results */}
+          {searchResults ? (
+            <div>
+              <div className="text-xs text-gray-400 mb-2">
+                {searchResults.length} results {searchResults.length === 100 && "(showing first 100)"}
+              </div>
+              <div className="border border-gray-200 rounded">
+                {searchResults.map(node => (
+                  <div
+                    key={node.id}
+                    className="px-3 py-2 border-b border-gray-100 last:border-0 hover:bg-gray-50"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded ${
+                        node.node_type === "atomic" ? "bg-gray-50 text-gray-400" :
+                        node.node_type === "subtask" ? "bg-gray-100" :
+                        node.node_type === "task" ? "bg-gray-200" : "bg-black text-white"
+                      }`}>
+                        {node.node_type}
+                      </span>
+                      <span>{node.name}</span>
+                    </div>
+                    <div className="text-[10px] text-gray-400 mt-1 truncate">
+                      {node.id}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
+          ) : (
+            /* Tree view */
+            <div className="border border-gray-200 rounded">
+              {domains.map(domain => (
+                <div key={domain.id} className="border-b border-gray-100 last:border-0">
+                  <TreeNode node={domain} manifest={manifest!} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      </section>
+      </main>
 
       {/* Footer */}
-      <footer className="py-12 px-4 border-t border-white/5">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-white/40 text-sm">
-            © {new Date().getFullYear()} TASKPEDIA. Licensed under CC BY 4.0.
-          </div>
-          <div className="flex items-center gap-6">
-            <a
-              href="https://github.com/anthropics/taskpedia"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white/40 hover:text-white transition-colors text-sm"
-            >
-              GitHub
-            </a>
-            <a
-              href="https://huggingface.co/datasets/Sentient-x/taskpedia"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white/40 hover:text-white transition-colors text-sm"
-            >
-              HuggingFace
-            </a>
-            <Link
-              href="/docs"
-              className="text-white/40 hover:text-white transition-colors text-sm"
-            >
-              Documentation
-            </Link>
-          </div>
+      <footer className="border-t border-gray-200 px-6 py-4 mt-8">
+        <div className="max-w-4xl mx-auto text-xs text-gray-400 flex gap-6">
+          <a href="/data-overview" className="hover:text-gray-600 underline">data overview</a>
+          <a href="/curate-verbs" className="hover:text-gray-600 underline">curate</a>
         </div>
       </footer>
     </div>
