@@ -1,10 +1,10 @@
 {
   "trainable": {
-    "total": 26850,
+    "total": 30347,
     "by_type": {
-      "domain": 874,
-      "task": 11471,
-      "subtask": 2383,
+      "domain": 884,
+      "task": 11563,
+      "subtask": 5778,
       "atomic": 12122
     }
   },
