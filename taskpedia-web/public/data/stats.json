@@ -1,44 +1,17 @@
 {
   "trainable": {
-    "total": 15287,
+    "total": 26850,
     "by_type": {
-      "domain": 35,
-      "task": 1052,
-      "atomic": 12058,
-      "subtask": 2142
+      "domain": 874,
+      "task": 11471,
+      "subtask": 2383,
+      "atomic": 12122
     }
   },
   "non_trainable": {
-    "total": 1609,
-    "by_verb": {
-      "perform": 392,
-      "conduct": 120,
-      "provide": 273,
-      "receive": 52,
-      "participate": 128,
-      "obtain": 38,
-      "keep": 44,
-      "take": 68,
-      "notify": 23,
-      "attend": 23,
-      "meet": 6,
-      "assist": 94,
-      "contact": 18,
-      "work": 14,
-      "use": 46,
-      "make": 47,
-      "demonstrate": 30,
-      "follow": 18,
-      "serve": 48,
-      "help": 13,
-      "give": 15,
-      "show": 6,
-      "communicate": 23,
-      "get": 70
-    }
+    "total": 1609
   },
   "ambiguous": {
     "total": 484
-  },
-  "updated_at": "2026-01-16T06:28:44.015276"
+  }
 }
