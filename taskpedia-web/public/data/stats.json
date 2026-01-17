@@ -1,17 +1,11 @@
 {
   "trainable": {
-    "total": 30347,
+    "total": 24189,
     "by_type": {
-      "domain": 884,
-      "task": 11563,
-      "subtask": 5778,
-      "atomic": 12122
+      "domain": 883,
+      "task": 11423,
+      "atomic": 6162,
+      "subtask": 5721
     }
-  },
-  "non_trainable": {
-    "total": 1609
-  },
-  "ambiguous": {
-    "total": 484
   }
 }

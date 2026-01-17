@@ -20,6 +20,11 @@ VAGUE_PATTERNS = [
     r"manage.*appropriately",
     r"handle.*as needed",
     r"process.*accordingly",
+    # NEW: From user feedback - vague actions without clear substance/tool
+    r"^spray\s+\w+$",  # "spray X" without specifying what to spray
+    r"^apply\s+to\s+",  # "apply to X" without specifying what to apply
+    r"^treat\s+\w+$",   # "treat X" without specifying how
+    r"^coat\s+\w+$",    # "coat X" without specifying with what
 ]
 
 # Locomotion/navigation primitives (built into the platform, not trainable)
@@ -34,6 +39,12 @@ LOCOMOTION_PATTERNS = [
     r"change.*direction",
     r"follow.*path",
     r"stop.*when",
+    # NEW: From user feedback - non-physical/cognitive tasks (just locomotion)
+    r"^attending\s+",
+    r"^observing\s+",
+    r"^participating\s+in\s+",
+    r"^joining\s+",
+    r"^watching\s+",
 ]
 
 # Calibration/setup/internal system tasks (not physically trainable)
@@ -79,13 +90,31 @@ GENERIC_CROSS_DOMAIN = [
     r"pause.*operation",
 ]
 
+# NEW: From user feedback - over-specific equipment modifiers
+OVERSPECIFIC_PATTERNS = [
+    r"\bcommercial\b",
+    r"\bindustrial\b",
+    r"\bprofessional-grade\b",
+    r"\benterprise\b",
+    r"\bheavy-duty\b",
+    r"\bhospital-grade\b",
+]
+
+# NEW: From user feedback - confusing language patterns
+CONFUSING_LANGUAGE = [
+    r"over\s+\w+'s\s+",  # "over passenger's seat" - nested possessives
+    r"\w+'s\s+\w+\s+of\s+",  # Overly complex possessive chains
+]
+
 # Combine all bad patterns
 ALL_BAD_PATTERNS = (
     VAGUE_PATTERNS +
     LOCOMOTION_PATTERNS +
     INTERNAL_PATTERNS +
     PERCEPTION_ONLY_PATTERNS +
-    GENERIC_CROSS_DOMAIN
+    GENERIC_CROSS_DOMAIN +
+    OVERSPECIFIC_PATTERNS +
+    CONFUSING_LANGUAGE
 )
 
 # =============================================================================

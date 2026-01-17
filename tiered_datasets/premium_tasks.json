@@ -1,0 +1,3419 @@
+[
+  {
+    "task_id": "work_arts_media/fine_artists_including_painters_sculptors_and_illustrators",
+    "name": "Fine Artists, Including Painters, Sculptors, and Illustrators",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_arts_media",
+    "domain": "work_arts_media",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_arts_media/fine_artists_including_painters_sculptors_and_illustrators/apply_solvents_and_cleaning_agents_to_clean_surfaces_of_paintings_and_to_remove_accretions_discolorations_and_deteriorated_varnish",
+    "name": "Apply solvents and cleaning agents to clean surfaces of paintings, and to remove accretions, discolorations, and deteriorated varnish.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_arts_media/fine_artists_including_painters_sculptors_and_illustrators",
+    "domain": "work_arts_media",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_construction/construction_laborers/spray_materials_such_as_water_sand_steam_vinyl_paint_or_stucco_through_hoses_to_clean_coat_or_seal_surfaces",
+    "name": "Spray materials, such as water, sand, steam, vinyl, paint, or stucco, through hoses to clean, coat, or seal surfaces.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_construction/construction_laborers",
+    "domain": "work_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_construction/painters_construction_and_maintenance",
+    "name": "Painters, Construction and Maintenance",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_construction",
+    "domain": "work_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_construction/painters_construction_and_maintenance/apply_paint_stain_varnish_enamel_or_other_finishes_to_equipment_buildings_bridges_or_other_structures_using_brushes_spray_guns_or_rollers",
+    "name": "Apply paint, stain, varnish, enamel, or other finishes to equipment, buildings, bridges, or other structures, using brushes, spray guns, or rollers.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_construction/painters_construction_and_maintenance",
+    "domain": "work_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_construction/roofers/waterproof_or_damp_proof_walls_floors_roofs_foundations_or_basements_by_painting_or_spraying_surfaces_with_waterproof_coatings_or_by_attaching_waterproofing_membranes_to_surfaces",
+    "name": "Waterproof or damp-proof walls, floors, roofs, foundations, or basements by painting or spraying surfaces with waterproof coatings or by attaching waterproofing membranes to surfaces.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_construction/roofers",
+    "domain": "work_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_construction/roofers/apply_reflective_roof_coatings_such_as_special_paints_or_single_ply_roofing_sheets_to_existing_roofs_to_reduce_solar_heat_absorption",
+    "name": "Apply reflective roof coatings, such as special paints or single-ply roofing sheets, to existing roofs to reduce solar heat absorption.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_construction/roofers",
+    "domain": "work_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_construction/helpers_painters_paperhangers_plasterers_and_stucco_masons",
+    "name": "Helpers--Painters, Paperhangers, Plasterers, and Stucco Masons",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_construction",
+    "domain": "work_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_construction/highway_maintenance_workers/paint_traffic_control_lines_and_place_pavement_traffic_messages_by_hand_or_using_machines",
+    "name": "Paint traffic control lines and place pavement traffic messages, by hand or using machines.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_construction/highway_maintenance_workers",
+    "domain": "work_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_installation_repair/automotive_body_and_related_repairers/prime_and_paint_repaired_surfaces_using_paint_sprayguns_and_motorized_sanders",
+    "name": "Prime and paint repaired surfaces, using paint sprayguns and motorized sanders.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_installation_repair/automotive_body_and_related_repairers",
+    "domain": "work_installation_repair",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_installation_repair/recreational_vehicle_service_technicians/refinish_wood_surfaces_on_cabinets_doors_moldings_or_floors_using_power_sanders_putty_spray_equipment_brushes_paints_or_varnishes",
+    "name": "Refinish wood surfaces on cabinets, doors, moldings, or floors, using power sanders, putty, spray equipment, brushes, paints, or varnishes.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_installation_repair/recreational_vehicle_service_technicians",
+    "domain": "work_installation_repair",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_installation_repair/manufactured_building_and_mobile_home_installers/refinish_wood_surfaces_on_cabinets_doors_moldings_and_floors_using_power_sanders_putty_spray_equipment_brushes_paints_or_varnishes",
+    "name": "Refinish wood surfaces on cabinets, doors, moldings, and floors, using power sanders, putty, spray equipment, brushes, paints, or varnishes.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_installation_repair/manufactured_building_and_mobile_home_installers",
+    "domain": "work_installation_repair",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_production/coil_winders_tapers_and_finishers/apply_solutions_or_paints_to_wired_electrical_components_using_hand_tools_and_bake_components",
+    "name": "Apply solutions or paints to wired electrical components, using hand tools, and bake components.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_production/coil_winders_tapers_and_finishers",
+    "domain": "work_production",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_production/layout_workers_metal_and_plastic/apply_pigment_to_layout_surfaces_using_paint_brushes",
+    "name": "Apply pigment to layout surfaces, using paint brushes.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_production/layout_workers_metal_and_plastic",
+    "domain": "work_production",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_production/shoe_and_leather_workers_and_repairers/dye_soak_polish_paint_stamp_stitch_stain_buff_or_engrave_leather_or_other_materials_to_obtain_desired_effects_decorations_or_shapes",
+    "name": "Dye, soak, polish, paint, stamp, stitch, stain, buff, or engrave leather or other materials to obtain desired effects, decorations, or shapes.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_production/shoe_and_leather_workers_and_repairers",
+    "domain": "work_production",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_production/furniture_finishers/brush_spray_or_hand_rub_finishing_ingredients_such_as_paint_oil_stain_or_wax_onto_and_into_wood_grain_and_apply_lacquer_or_other_sealers",
+    "name": "Brush, spray, or hand-rub finishing ingredients, such as paint, oil, stain, or wax, onto and into wood grain and apply lacquer or other sealers.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_production/furniture_finishers",
+    "domain": "work_production",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_production/furniture_finishers/remove_excess_solvent_using_cloths_soaked_in_paint_thinner",
+    "name": "Remove excess solvent, using cloths soaked in paint thinner.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_production/furniture_finishers",
+    "domain": "work_production",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_production/furniture_finishers/paint_metal_surfaces_electrostatically_or_by_using_a_spray_gun_or_other_painting_equipment",
+    "name": "Paint metal surfaces electrostatically, or by using a spray gun or other painting equipment.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_production/furniture_finishers",
+    "domain": "work_production",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_production/painting_coating_and_decorating_workers",
+    "name": "Painting, Coating, and Decorating Workers",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_production",
+    "domain": "work_production",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_production/painting_coating_and_decorating_workers/apply_coatings_such_as_paint_ink_or_lacquer_to_protect_or_decorate_workpiece_surfaces_using_spray_guns_pens_or_brushes",
+    "name": "Apply coatings, such as paint, ink, or lacquer, to protect or decorate workpiece surfaces, using spray guns, pens, or brushes.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_production/painting_coating_and_decorating_workers",
+    "domain": "work_production",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_production/coating_painting_and_spraying_machine_setters_operators_and_tenders",
+    "name": "Coating, Painting, and Spraying Machine Setters, Operators, and Tenders",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_production",
+    "domain": "work_production",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_production/coating_painting_and_spraying_machine_setters_operators_and_tenders/fill_hoppers_reservoirs_troughs_or_pans_with_material_used_to_coat_paint_or_spray_using_conveyors_or_pails",
+    "name": "Fill hoppers, reservoirs, troughs, or pans with material used to coat, paint, or spray, using conveyors or pails.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_production/coating_painting_and_spraying_machine_setters_operators_and_tenders",
+    "domain": "work_production",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_production/coating_painting_and_spraying_machine_setters_operators_and_tenders/turn_dials_handwheels_valves_or_switches_to_regulate_conveyor_speeds_machine_temperature_air_pressure_and_circulation_and_the_flow_or_spray_of_coatings_or_paints",
+    "name": "Turn dials, handwheels, valves, or switches to regulate conveyor speeds, machine temperature, air pressure and circulation, and the flow or spray of coatings or paints.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_production/coating_painting_and_spraying_machine_setters_operators_and_tenders",
+    "domain": "work_production",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_production/coating_painting_and_spraying_machine_setters_operators_and_tenders/remove_grease_dirt_paint_or_rust_from_surfaces_in_preparation_for_paint_application_using_abrasives_solvents_brushes_blowtorches_washing_tanks_or_sandblasters",
+    "name": "Remove grease, dirt, paint, or rust from surfaces in preparation for paint application, using abrasives, solvents, brushes, blowtorches, washing tanks, or sandblasters.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_production/coating_painting_and_spraying_machine_setters_operators_and_tenders",
+    "domain": "work_production",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_transportation/motorboat_operators/clean_boats_and_repair_hulls_and_superstructures_using_hand_tools_paint_and_brushes",
+    "name": "Clean boats and repair hulls and superstructures, using hand tools, paint, and brushes.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_transportation/motorboat_operators",
+    "domain": "work_transportation",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_transportation/cleaners_of_vehicles_and_equipment/apply_paints_dyes_polishes_reconditioners_waxes_or_masking_materials_to_vehicles_to_preserve_protect_or_restore_color_or_condition",
+    "name": "Apply paints, dyes, polishes, reconditioners, waxes, or masking materials to vehicles to preserve, protect, or restore color or condition.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_transportation/cleaners_of_vehicles_and_equipment",
+    "domain": "work_transportation",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "work_transportation/cleaners_of_vehicles_and_equipment/clean_the_plastic_work_inside_cars_using_paintbrushes",
+    "name": "Clean the plastic work inside cars, using paintbrushes.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "work_transportation/cleaners_of_vehicles_and_equipment",
+    "domain": "work_transportation",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_household/home_maintenance/painting_wall",
+    "name": "painting wall",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_household/home_maintenance",
+    "domain": "life_household",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_arts_entertainment/creating_art/painting",
+    "name": "painting",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_arts_entertainment/creating_art",
+    "domain": "life_arts_entertainment",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_household/home_maintenance/painting_wall/load_paint_onto_roller",
+    "name": "load paint onto roller",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_household/home_maintenance/painting_wall",
+    "domain": "life_household",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_household/home_maintenance/painting_wall/apply_paint_to_wall",
+    "name": "apply paint to wall",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_household/home_maintenance/painting_wall",
+    "domain": "life_household",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_arts_entertainment/creating_art/painting/apply_paint_to_surface",
+    "name": "apply paint to surface",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_arts_entertainment/creating_art/painting",
+    "domain": "life_arts_entertainment",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_arts_entertainment/creating_art/painting/clean_up_painting_area",
+    "name": "clean up painting area",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_arts_entertainment/creating_art/painting",
+    "domain": "life_arts_entertainment",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_arts_entertainment/creating_art/playing_musical_instrument/play_instrument",
+    "name": "play instrument",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_arts_entertainment/creating_art/playing_musical_instrument",
+    "domain": "life_arts_entertainment",
+    "value_reasoning": "Impressive demo: play instrument"
+  },
+  {
+    "task_id": "life_household/home_maintenance/painting_wall/load_paint_onto_roller/dip_roller_into_paint",
+    "name": "dip roller into paint",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_household/home_maintenance/painting_wall/load_paint_onto_roller",
+    "domain": "life_household",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_household/home_maintenance/painting_wall/apply_paint_to_wall/pick_up_paint_roller",
+    "name": "pick_up paint roller",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_household/home_maintenance/painting_wall/apply_paint_to_wall",
+    "domain": "life_household",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_household/home_maintenance/painting_wall/apply_paint_to_wall/place_paint_roller_into_paint_tray",
+    "name": "place paint roller into paint tray",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_household/home_maintenance/painting_wall/apply_paint_to_wall",
+    "domain": "life_household",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_household/home_maintenance/painting_wall/apply_paint_to_wall/pull_paint_roller_out_of_paint_tray",
+    "name": "pull paint roller out of paint tray",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_household/home_maintenance/painting_wall/apply_paint_to_wall",
+    "domain": "life_household",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_household/home_maintenance/painting_wall/apply_paint_to_wall/push_paint_roller_onto_wall",
+    "name": "push paint roller onto wall",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_household/home_maintenance/painting_wall/apply_paint_to_wall",
+    "domain": "life_household",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_household/home_maintenance/painting_wall/apply_paint_to_wall/slide_paint_roller_across_wall",
+    "name": "slide paint roller across wall",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_household/home_maintenance/painting_wall/apply_paint_to_wall",
+    "domain": "life_household",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_education_personal/self_education/musical_instrument_practice/practice_instrument/play_instrument",
+    "name": "play instrument",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_education_personal/self_education/musical_instrument_practice/practice_instrument",
+    "domain": "life_education_personal",
+    "value_reasoning": "Impressive demo: play instrument"
+  },
+  {
+    "task_id": "life_arts_entertainment/creating_art/painting/clean_up_painting_area/put_away_paints",
+    "name": "put away paints",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_arts_entertainment/creating_art/painting/clean_up_painting_area",
+    "domain": "life_arts_entertainment",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_arts_entertainment/creating_art/painting/apply_paint_to_surface/load_paint_onto_applicator",
+    "name": "load paint onto applicator",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_arts_entertainment/creating_art/painting/apply_paint_to_surface",
+    "domain": "life_arts_entertainment",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_arts_entertainment/creating_art/painting/apply_paint_to_surface/apply_a_paint_stroke_to_surface",
+    "name": "apply a paint stroke to surface",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_arts_entertainment/creating_art/painting/apply_paint_to_surface",
+    "domain": "life_arts_entertainment",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_arts_entertainment/creating_art/painting/clean_up_painting_area/put_away_paints/pick_up_paints",
+    "name": "pick_up paints",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_arts_entertainment/creating_art/painting/clean_up_painting_area/put_away_paints",
+    "domain": "life_arts_entertainment",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_arts_entertainment/creating_art/painting/clean_up_painting_area/put_away_paints/place_paints",
+    "name": "place paints",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_arts_entertainment/creating_art/painting/clean_up_painting_area/put_away_paints",
+    "domain": "life_arts_entertainment",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_arts_entertainment/creating_art/painting/apply_paint_to_surface/load_paint_onto_applicator/press_applicator_into_paint",
+    "name": "press applicator into paint",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_arts_entertainment/creating_art/painting/apply_paint_to_surface/load_paint_onto_applicator",
+    "domain": "life_arts_entertainment",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "life_arts_entertainment/creating_art/painting/apply_paint_to_surface/load_paint_onto_applicator/pull_applicator_from_paint",
+    "name": "pull applicator from paint",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "life_arts_entertainment/creating_art/painting/apply_paint_to_surface/load_paint_onto_applicator",
+    "domain": "life_arts_entertainment",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_industrial/painting_and_coating/load_unpainted_component_onto_a_fixture",
+    "name": "Load unpainted component onto a fixture",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_industrial/painting_and_coating",
+    "domain": "new_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_industrial/painting_and_coating/spray_a_uniform_layer_of_paint_onto_a_product_surface",
+    "name": "Spray a uniform layer of paint onto a product surface",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_industrial/painting_and_coating",
+    "domain": "new_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_industrial/painting_and_coating/unload_a_cured_and_painted_part_from_the_production_line",
+    "name": "Unload a cured and painted part from the production line",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_industrial/painting_and_coating",
+    "domain": "new_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_industrial/painting_and_coating/change_a_worn_out_spray_nozzle_on_the_paint_gun",
+    "name": "Change a worn-out spray nozzle on the paint gun",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_industrial/painting_and_coating",
+    "domain": "new_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_industrial/painting_and_coating/refill_the_paint_reservoir_with_a_new_batch_of_paint",
+    "name": "Refill the paint reservoir with a new batch of paint",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_industrial/painting_and_coating",
+    "domain": "new_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_industrial/painting_and_coating/stir_paint_components_in_a_mixing_tank",
+    "name": "Stir paint components in a mixing tank",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_industrial/painting_and_coating",
+    "domain": "new_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_industrial/painting_and_coating/wipe_down_a_component_surface_to_remove_dust_before_painting",
+    "name": "Wipe down a component surface to remove dust before painting",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_industrial/painting_and_coating",
+    "domain": "new_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_industrial/painting_and_coating/place_a_protective_cover_over_a_painted_surface_for_transpor",
+    "name": "Place a protective cover over a painted surface for transport",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_industrial/painting_and_coating",
+    "domain": "new_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_industrial/automotive_manufacturing/paint_vehicle_body_panels",
+    "name": "Paint vehicle body panels",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_industrial/automotive_manufacturing",
+    "domain": "new_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_food_service/food_prep_stations/flip_pancakes_on_a_hot_griddle",
+    "name": "Flip pancakes on a hot griddle",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_food_service/food_prep_stations",
+    "domain": "new_food_service",
+    "value_reasoning": "Impressive demo: flip pancake"
+  },
+  {
+    "task_id": "new_construction/painting_walls_and_ceilings/apply_painter's_tape_along_baseboards_and_window_frames",
+    "name": "Apply painter's tape along baseboards and window frames",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_construction/painting_walls_and_ceilings",
+    "domain": "new_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_construction/painting_walls_and_ceilings/open_paint_cans_using_a_can_opener",
+    "name": "Open paint cans using a can opener",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_construction/painting_walls_and_ceilings",
+    "domain": "new_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_construction/painting_walls_and_ceilings/stir_paint_thoroughly_using_a_mixing_stick",
+    "name": "Stir paint thoroughly using a mixing stick",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_construction/painting_walls_and_ceilings",
+    "domain": "new_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_construction/painting_walls_and_ceilings/pour_paint_into_a_roller_tray",
+    "name": "Pour paint into a roller tray",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_construction/painting_walls_and_ceilings",
+    "domain": "new_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_construction/painting_walls_and_ceilings/dip_roller_into_paint_tray,_loading_paint",
+    "name": "Dip roller into paint tray, loading paint",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_construction/painting_walls_and_ceilings",
+    "domain": "new_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_construction/painting_walls_and_ceilings/roll_paint_onto_a_wall_section_in_even_strokes",
+    "name": "Roll paint onto a wall section in even strokes",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_construction/painting_walls_and_ceilings",
+    "domain": "new_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_construction/painting_walls_and_ceilings/spray_paint_onto_the_ceiling_using_a_high_pressure_sprayer",
+    "name": "Spray paint onto the ceiling using a high-pressure sprayer",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_construction/painting_walls_and_ceilings",
+    "domain": "new_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_construction/painting_walls_and_ceilings/brush_paint_along_ceiling_edges_and_corners",
+    "name": "Brush paint along ceiling edges and corners",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_construction/painting_walls_and_ceilings",
+    "domain": "new_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_construction/painting_walls_and_ceilings/remove_painter's_tape_from_trim_and_fixtures",
+    "name": "Remove painter's tape from trim and fixtures",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_construction/painting_walls_and_ceilings",
+    "domain": "new_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_construction/painting_walls_and_ceilings/clean_paint_rollers_and_brushes_with_water",
+    "name": "Clean paint rollers and brushes with water",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_construction/painting_walls_and_ceilings",
+    "domain": "new_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_automotive/vehicle_detailing/scrub_exterior_paint_surfaces_with_a_wash_mitt",
+    "name": "scrub exterior paint surfaces with a wash mitt",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_automotive/vehicle_detailing",
+    "domain": "new_automotive",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_automotive/vehicle_detailing/polish_exterior_paint_surfaces_using_an_orbital_buffer",
+    "name": "polish exterior paint surfaces using an orbital buffer",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_automotive/vehicle_detailing",
+    "domain": "new_automotive",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_automotive/paint_touch_up/pick_up_the_correct_color_paint_cartridge_from_a_storage_rac",
+    "name": "pick up the correct color paint cartridge from a storage rack",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_automotive/paint_touch_up",
+    "domain": "new_automotive",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_automotive/paint_touch_up/load_the_paint_cartridge_into_the_robotic_paint_applicator",
+    "name": "load the paint cartridge into the robotic paint applicator",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_automotive/paint_touch_up",
+    "domain": "new_automotive",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_automotive/paint_touch_up/shake_the_paint_applicator_to_ensure_proper_paint_mixing",
+    "name": "shake the paint applicator to ensure proper paint mixing",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_automotive/paint_touch_up",
+    "domain": "new_automotive",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_automotive/paint_touch_up/apply_a_precise_amount_of_base_coat_paint_to_the_scratch",
+    "name": "apply a precise amount of base coat paint to the scratch",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_automotive/paint_touch_up",
+    "domain": "new_automotive",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_automotive/paint_touch_up/blend_the_edges_of_the_applied_paint_with_a_small_brush",
+    "name": "blend the edges of the applied paint with a small brush",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_automotive/paint_touch_up",
+    "domain": "new_automotive",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_automotive/paint_touch_up/cure_the_painted_surface_using_a_uv_lamp",
+    "name": "cure the painted surface using a UV lamp",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_automotive/paint_touch_up",
+    "domain": "new_automotive",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "new_automotive/paint_touch_up/sand_the_dried_paint_patch_with_fine_grit_abrasive",
+    "name": "sand the dried paint patch with fine-grit abrasive",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "new_automotive/paint_touch_up",
+    "domain": "new_automotive",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_maritime/ship_deck_operations/apply_anticorrosion_paint_to_a_deck_fixture",
+    "name": "Apply anti-corrosion paint to a deck fixture.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_maritime/ship_deck_operations",
+    "domain": "exp_maritime",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_maritime/marine_equipment_maintenance/apply_antifouling_paint_to_a_hull_section",
+    "name": "Apply anti-fouling paint to a hull section",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_maritime/marine_equipment_maintenance",
+    "domain": "exp_maritime",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_maritime/lifeboat_maintenance/uncoil_the_lifeboats_painter_rope_from_its_storage",
+    "name": "Uncoil the lifeboat's painter rope from its storage.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_maritime/lifeboat_maintenance",
+    "domain": "exp_maritime",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_maritime/ship_painting/load_a_paint_drum_onto_the_mixing_station",
+    "name": "Load a paint drum onto the mixing station.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_maritime/ship_painting",
+    "domain": "exp_maritime",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_maritime/ship_painting/stir_paint_thoroughly_inside_a_large_container",
+    "name": "Stir paint thoroughly inside a large container.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_maritime/ship_painting",
+    "domain": "exp_maritime",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_maritime/ship_painting/attach_a_spray_gun_to_the_paint_hose",
+    "name": "Attach a spray gun to the paint hose.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_maritime/ship_painting",
+    "domain": "exp_maritime",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_maritime/ship_painting/lift_a_paint_bucket_to_an_elevated_work_area",
+    "name": "Lift a paint bucket to an elevated work area.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_maritime/ship_painting",
+    "domain": "exp_maritime",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_aviation/aircraft_cleaning_exterior/buff_minor_scuff_marks_from_the_aircrafts_painted_surface",
+    "name": "Buff minor scuff marks from the aircraft's painted surface.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_aviation/aircraft_cleaning_exterior",
+    "domain": "exp_aviation",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_wind_energy/bolt_tightening_turbine/mark_the_tightened_bolt_with_a_uvreactive_paint_dab",
+    "name": "Mark the tightened bolt with a UV-reactive paint dab.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_wind_energy/bolt_tightening_turbine",
+    "domain": "exp_wind_energy",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_museum_detailed/artifact_handling/place_a_framed_canvas_painting_onto_a_padded_art_cart",
+    "name": "Place a framed canvas painting onto a padded art cart.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_museum_detailed/artifact_handling",
+    "domain": "exp_museum_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_museum_detailed/storage_organization_museum/shelve_a_rolled_painting_into_its_designated_slot",
+    "name": "Shelve a rolled painting into its designated slot",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_museum_detailed/storage_organization_museum",
+    "domain": "exp_museum_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_theater_detailed/set_construction/apply_primer_paint_evenly_onto_a_large_wall_section_using_an_automated_roller",
+    "name": "Apply primer paint evenly onto a large wall section using an automated roller.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_theater_detailed/set_construction",
+    "domain": "exp_theater_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_theater_detailed/set_painting/unload_paint_cans_from_a_delivery_palette",
+    "name": "Unload paint cans from a delivery palette",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_theater_detailed/set_painting",
+    "domain": "exp_theater_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_theater_detailed/set_painting/open_a_gallon_can_of_scenic_paint",
+    "name": "Open a gallon can of scenic paint",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_theater_detailed/set_painting",
+    "domain": "exp_theater_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_theater_detailed/set_painting/load_a_paint_roller_onto_a_roller_frame",
+    "name": "Load a paint roller onto a roller frame",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_theater_detailed/set_painting",
+    "domain": "exp_theater_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_theater_detailed/set_painting/apply_a_base_coat_of_paint_onto_a_4x8_scenic_flat",
+    "name": "Apply a base coat of paint onto a 4x8 scenic flat",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_theater_detailed/set_painting",
+    "domain": "exp_theater_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_theater_detailed/set_painting/mask_off_a_specific_architectural_detail_on_a_prop_with_painters_tape",
+    "name": "Mask off a specific architectural detail on a prop with painter's tape",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_theater_detailed/set_painting",
+    "domain": "exp_theater_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_theater_detailed/set_painting/position_a_large_stencil_onto_a_painted_wall_section",
+    "name": "Position a large stencil onto a painted wall section",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_theater_detailed/set_painting",
+    "domain": "exp_theater_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_theater_detailed/set_painting/paint_intricate_scrollwork_onto_a_prop_with_a_finetipped_brush",
+    "name": "Paint intricate scrollwork onto a prop with a fine-tipped brush",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_theater_detailed/set_painting",
+    "domain": "exp_theater_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_theater_detailed/set_painting/clean_a_used_paintbrush_in_a_solvent_bath",
+    "name": "Clean a used paintbrush in a solvent bath",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_theater_detailed/set_painting",
+    "domain": "exp_theater_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_theater_detailed/set_painting/move_a_freshly_painted_scenic_flat_to_a_drying_rack",
+    "name": "Move a freshly painted scenic flat to a drying rack",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_theater_detailed/set_painting",
+    "domain": "exp_theater_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_theater_detailed/set_painting/wipe_spilled_paint_from_the_workshop_floor_with_a_rag",
+    "name": "Wipe spilled paint from the workshop floor with a rag",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_theater_detailed/set_painting",
+    "domain": "exp_theater_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_theater_detailed/prop_handling/adjust_the_angle_of_a_prop_painting_hanging_on_a_set_wall",
+    "name": "Adjust the angle of a prop painting hanging on a set wall.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_theater_detailed/prop_handling",
+    "domain": "exp_theater_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_sports_facility/field_marking/load_paint_container_into_dispenser",
+    "name": "Load paint container into dispenser",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_sports_facility/field_marking",
+    "domain": "exp_sports_facility",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_sports_facility/field_marking/attach_marking_nozzle_to_paint_dispenser",
+    "name": "Attach marking nozzle to paint dispenser",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_sports_facility/field_marking",
+    "domain": "exp_sports_facility",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_sports_facility/field_marking/spray_liquid_paint_onto_the_grass_surface",
+    "name": "Spray liquid paint onto the grass surface",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_sports_facility/field_marking",
+    "domain": "exp_sports_facility",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_sports_facility/field_marking/clean_residual_paint_from_the_marking_nozzle",
+    "name": "Clean residual paint from the marking nozzle",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_sports_facility/field_marking",
+    "domain": "exp_sports_facility",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_sports_facility/field_marking/refill_paint_reservoir_from_a_supply_tank",
+    "name": "Refill paint reservoir from a supply tank",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_sports_facility/field_marking",
+    "domain": "exp_sports_facility",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_school_detailed/art_supply_organization/pick_up_a_dropped_paintbrush_from_the_floor",
+    "name": "Pick up a dropped paintbrush from the floor.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_school_detailed/art_supply_organization",
+    "domain": "exp_school_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_school_detailed/art_supply_organization/close_the_cap_on_a_tube_of_acrylic_paint",
+    "name": "Close the cap on a tube of acrylic paint.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_school_detailed/art_supply_organization",
+    "domain": "exp_school_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_school_detailed/art_supply_organization/wipe_spilled_paint_from_a_workbench_surface",
+    "name": "Wipe spilled paint from a workbench surface.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_school_detailed/art_supply_organization",
+    "domain": "exp_school_detailed",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_prison_facility/common_area_cleaning_prison/clean_graffiti_markings_from_painted_concrete_walls_using_a_specialized_brush",
+    "name": "Clean graffiti markings from painted concrete walls using a specialized brush.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_prison_facility/common_area_cleaning_prison",
+    "domain": "exp_prison_facility",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_maritime/ship_deck_operations/apply_anticorrosion_paint_to_a_deck_fixture/grind_fixture_surface_to_remove_rust_and_old_paint",
+    "name": "Grind fixture surface to remove rust and old paint",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_maritime/ship_deck_operations/apply_anticorrosion_paint_to_a_deck_fixture",
+    "domain": "exp_maritime",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_maritime/ship_deck_operations/apply_anticorrosion_paint_to_a_deck_fixture/retrieve_paint_spray_gun_from_storage",
+    "name": "Retrieve paint spray gun from storage",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_maritime/ship_deck_operations/apply_anticorrosion_paint_to_a_deck_fixture",
+    "domain": "exp_maritime",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_maritime/ship_deck_operations/apply_anticorrosion_paint_to_a_deck_fixture/fill_spray_gun_reservoir_with_anticorrosion_paint",
+    "name": "Fill spray gun reservoir with anti-corrosion paint",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_maritime/ship_deck_operations/apply_anticorrosion_paint_to_a_deck_fixture",
+    "domain": "exp_maritime",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_maritime/ship_deck_operations/apply_anticorrosion_paint_to_a_deck_fixture/spray_anticorrosion_paint_onto_the_fixture_surface",
+    "name": "Spray anti-corrosion paint onto the fixture surface",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_maritime/ship_deck_operations/apply_anticorrosion_paint_to_a_deck_fixture",
+    "domain": "exp_maritime",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_maritime/ship_deck_operations/apply_anticorrosion_paint_to_a_deck_fixture/clean_the_paint_spray_gun_with_solvent",
+    "name": "Clean the paint spray gun with solvent",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_maritime/ship_deck_operations/apply_anticorrosion_paint_to_a_deck_fixture",
+    "domain": "exp_maritime",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "exp_maritime/ship_deck_operations/apply_anticorrosion_paint_to_a_deck_fixture/stow_the_cleaned_paint_spray_gun_in_its_designated_storage",
+    "name": "Stow the cleaned paint spray gun in its designated storage",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "exp_maritime/ship_deck_operations/apply_anticorrosion_paint_to_a_deck_fixture",
+    "domain": "exp_maritime",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "track_inspection/mark_defect_areas_on_the_rail_with_paint_or_a_flag",
+    "name": "mark defect areas on the rail with paint or a flag",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "track_inspection",
+    "domain": "track_inspection",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "graffiti_removal/spray_graffiti_removal_solution_evenly_onto_the_pa",
+    "name": "Spray graffiti removal solution evenly onto the painted surface",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "graffiti_removal",
+    "domain": "graffiti_removal",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "graffiti_removal/wipe_off_dissolved_paint_and_cleaner_residue_using",
+    "name": "Wipe off dissolved paint and cleaner residue using an absorbent pad",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "graffiti_removal",
+    "domain": "graffiti_removal",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "bus_stop_maintenance/apply_paint_to_faded_sections_of_the_bus_stop_benc",
+    "name": "Apply paint to faded sections of the bus stop bench",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "bus_stop_maintenance",
+    "domain": "bus_stop_maintenance",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "set_decoration/hang_a_framed_painting_onto_a_pre-installed_wall_h",
+    "name": "hang a framed painting onto a pre-installed wall hook",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "set_decoration",
+    "domain": "set_decoration",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_application_toys/load_unpainted_toy_figures_onto_a_conveyor_for_pri",
+    "name": "Load unpainted toy figures onto a conveyor for primer application",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_application_toys",
+    "domain": "paint_application_toys",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_application_toys/spray_a_base_coat_of_paint_onto_a_toy_vehicle_body",
+    "name": "Spray a base coat of paint onto a toy vehicle body",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_application_toys",
+    "domain": "paint_application_toys",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_application_toys/dip_small_toy_accessories_into_a_paint_vat_for_ful",
+    "name": "Dip small toy accessories into a paint vat for full coverage",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_application_toys",
+    "domain": "paint_application_toys",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_application_toys/transfer_freshly_painted_toy_components_to_a_dryin",
+    "name": "Transfer freshly painted toy components to a drying rack",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_application_toys",
+    "domain": "paint_application_toys",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_application_toys/unscrew_caps_from_bulk_paint_containers_for_refill",
+    "name": "Unscrew caps from bulk paint containers for refilling",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_application_toys",
+    "domain": "paint_application_toys",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_application_toys/fill_individual_mini_paint_pots_for_a_toy_craft_ki",
+    "name": "Fill individual mini paint pots for a toy craft kit",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_application_toys",
+    "domain": "paint_application_toys",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_application_toys/grasp_a_small_paintbrush_and_place_it_into_a_kit_b",
+    "name": "Grasp a small paintbrush and place it into a kit box",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_application_toys",
+    "domain": "paint_application_toys",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_application_toys/place_a_completed_paint-by-numbers_canvas_into_its",
+    "name": "Place a completed paint-by-numbers canvas into its retail packaging",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_application_toys",
+    "domain": "paint_application_toys",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_application_toys/inspect_a_painted_toy's_surface_for_defects_by_rot",
+    "name": "Inspect a painted toy's surface for defects by rotating it under a camera",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_application_toys",
+    "domain": "paint_application_toys",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "antifouling_application/sand_entire_hull_surface_to_prepare_for_new_paint_",
+    "name": "Sand entire hull surface to prepare for new paint adhesion",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "antifouling_application",
+    "domain": "antifouling_application",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "antifouling_application/open_lid_of_antifouling_paint_can",
+    "name": "Open lid of antifouling paint can",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "antifouling_application",
+    "domain": "antifouling_application",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "antifouling_application/stir_paint_thoroughly_using_a_mixing_paddle_to_ens",
+    "name": "Stir paint thoroughly using a mixing paddle to ensure consistent mixture",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "antifouling_application",
+    "domain": "antifouling_application",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "antifouling_application/pour_mixed_antifouling_paint_into_a_paint_tray",
+    "name": "Pour mixed antifouling paint into a paint tray",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "antifouling_application",
+    "domain": "antifouling_application",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "antifouling_application/load_paint_onto_a_roller_applicator",
+    "name": "Load paint onto a roller applicator",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "antifouling_application",
+    "domain": "antifouling_application",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "antifouling_application/roll_antifouling_paint_evenly_onto_the_boat's_hull",
+    "name": "Roll antifouling paint evenly onto the boat's hull",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "antifouling_application",
+    "domain": "antifouling_application",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "antifouling_application/spray_antifouling_paint_into_tight_areas_like_keel",
+    "name": "Spray antifouling paint into tight areas like keel recesses and rudder",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "antifouling_application",
+    "domain": "antifouling_application",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "antifouling_application/remove_masking_tape_from_the_boat's_waterline_afte",
+    "name": "Remove masking tape from the boat's waterline after paint has dried",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "antifouling_application",
+    "domain": "antifouling_application",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "pipe_inspection_refinery/mark_a_detected_defect_area_on_the_pipe_with_a_pai",
+    "name": "mark a detected defect area on the pipe with a paint sprayer or marker",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "pipe_inspection_refinery",
+    "domain": "pipe_inspection_refinery",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "trail_marking/spray-paint_directional_arrows_onto_specific_snow_",
+    "name": "spray-paint directional arrows onto specific snow patches",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "trail_marking",
+    "domain": "trail_marking",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "dock_maintenance_marina/apply_anti-fouling_paint_to_submerged_dock_structu",
+    "name": "Apply anti-fouling paint to submerged dock structures",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "dock_maintenance_marina",
+    "domain": "dock_maintenance_marina",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "site_marker_maintenance/apply_fresh_paint_to_faded_numbers_on_a_concrete_m",
+    "name": "apply fresh paint to faded numbers on a concrete marker",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "site_marker_maintenance",
+    "domain": "site_marker_maintenance",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "rinse_cycle_operation/sweep_de-ionized_water_across_all_painted_surfaces",
+    "name": "Sweep de-ionized water across all painted surfaces in overlapping passes",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "rinse_cycle_operation",
+    "domain": "rinse_cycle_operation",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "space_marking_painting/load_paint_canisters_onto_the_automated_line-paint",
+    "name": "Load paint canisters onto the automated line-painting machine",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "space_marking_painting",
+    "domain": "space_marking_painting",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "space_marking_painting/drive_the_line-painting_machine_to_the_designated_",
+    "name": "Drive the line-painting machine to the designated section of the parking garage",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "space_marking_painting",
+    "domain": "space_marking_painting",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "space_marking_painting/activate_the_paint_sprayer_on_the_line-painting_ma",
+    "name": "Activate the paint sprayer on the line-painting machine to apply floor markings",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "space_marking_painting",
+    "domain": "space_marking_painting",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "space_marking_painting/maneuver_the_painting_machine_along_the_pre-progra",
+    "name": "Maneuver the painting machine along the pre-programmed path for straight lines",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "space_marking_painting",
+    "domain": "space_marking_painting",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "space_marking_painting/spray_paint_through_a_number_stencil_to_label_a_pa",
+    "name": "Spray paint through a number stencil to label a parking spot",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "space_marking_painting",
+    "domain": "space_marking_painting",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "space_marking_painting/lift_the_painted_stencil_from_the_floor_without_sm",
+    "name": "Lift the painted stencil from the floor without smudging the fresh paint",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "space_marking_painting",
+    "domain": "space_marking_painting",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "space_marking_painting/place_safety_cones_around_freshly_painted_lines_to",
+    "name": "Place safety cones around freshly painted lines to prevent disturbance",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "space_marking_painting",
+    "domain": "space_marking_painting",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "space_marking_painting/refill_the_paint_reservoir_on_the_machine_from_a_l",
+    "name": "Refill the paint reservoir on the machine from a large supply drum",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "space_marking_painting",
+    "domain": "space_marking_painting",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "space_marking_painting/clean_the_paint_spray_nozzles_and_machine_brushes_",
+    "name": "Clean the paint spray nozzles and machine brushes with solvent after use",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "space_marking_painting",
+    "domain": "space_marking_painting",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_mixing/locate_specific_paint_base_can_on_shelf",
+    "name": "locate specific paint base can on shelf",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_mixing",
+    "domain": "paint_mixing",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_mixing/grasp_selected_paint_base_can_from_shelf",
+    "name": "grasp selected paint base can from shelf",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_mixing",
+    "domain": "paint_mixing",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_mixing/transport_paint_base_can_to_mixing_station",
+    "name": "transport paint base can to mixing station",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_mixing",
+    "domain": "paint_mixing",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_mixing/remove_paint_can_lid_using_a_can_opener_tool",
+    "name": "remove paint can lid using a can opener tool",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_mixing",
+    "domain": "paint_mixing",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_mixing/position_paint_can_under_colorant_dispenser_nozzle",
+    "name": "position paint can under colorant dispenser nozzles",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_mixing",
+    "domain": "paint_mixing",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_mixing/replace_paint_can_lid_securely_onto_the_can",
+    "name": "replace paint can lid securely onto the can",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_mixing",
+    "domain": "paint_mixing",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_mixing/load_sealed_paint_can_into_the_paint_shaker_machin",
+    "name": "load sealed paint can into the paint shaker machine",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_mixing",
+    "domain": "paint_mixing",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_mixing/initiate_paint_shaker_cycle_for_a_specified_durati",
+    "name": "initiate paint shaker cycle for a specified duration",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_mixing",
+    "domain": "paint_mixing",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_mixing/unload_mixed_paint_can_from_the_shaker_machine",
+    "name": "unload mixed paint can from the shaker machine",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_mixing",
+    "domain": "paint_mixing",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_mixing/apply_custom_label_to_the_mixed_paint_can",
+    "name": "apply custom label to the mixed paint can",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_mixing",
+    "domain": "paint_mixing",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "paint_mixing/clean_spilled_paint_from_workstation_surface",
+    "name": "clean spilled paint from workstation surface",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "paint_mixing",
+    "domain": "paint_mixing",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "shelf_stocking_hardware/place_a_paint_can_onto_an_empty_shelf_slot",
+    "name": "place a paint can onto an empty shelf slot",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "shelf_stocking_hardware",
+    "domain": "shelf_stocking_hardware",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_household/outdoor_home_tasks/paint_exterior_trim_of_the_house",
+    "name": "Paint exterior trim of the house",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_household/outdoor_home_tasks",
+    "domain": "robotics_household",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_household/elderly_care_tasks/tie_shoelaces_on_elderly_person's_shoes",
+    "name": "Tie shoelaces on elderly person's shoes.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_household/elderly_care_tasks",
+    "domain": "robotics_household",
+    "value_reasoning": "Impressive demo: tie shoelace"
+  },
+  {
+    "task_id": "robotics_industrial/welding_tasks/apply_a_defect_marker_(paint,_stamp)_to_a_faulty_w",
+    "name": "Apply a defect marker (paint, stamp) to a faulty weld",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial/welding_tasks",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_industrial/machine_tending/mark_rejected_parts_with_a_paint_dabber",
+    "name": "Mark rejected parts with a paint dabber.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial/machine_tending",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_industrial/painting_coating/orient_part_for_painting",
+    "name": "Orient part for painting.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial/painting_coating",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_industrial/painting_coating/pick_up_new_paint_cartridge",
+    "name": "Pick up new paint cartridge.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial/painting_coating",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_industrial/painting_coating/insert_paint_cartridge_into_dispenser",
+    "name": "Insert paint cartridge into dispenser.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial/painting_coating",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_industrial/painting_coating/remove_empty_paint_cartridge_from_dispenser",
+    "name": "Remove empty paint cartridge from dispenser.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial/painting_coating",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_industrial/painting_coating/open_paint_can_lid",
+    "name": "Open paint can lid.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial/painting_coating",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_industrial/painting_coating/close_paint_can_lid",
+    "name": "Close paint can lid.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial/painting_coating",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_industrial/painting_coating/stir_paint_in_vat_with_mixer",
+    "name": "Stir paint in vat with mixer.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial/painting_coating",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_industrial/painting_coating/load_powder_paint_hopper",
+    "name": "Load powder paint hopper.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial/painting_coating",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_industrial/painting_coating/connect_paint_hose_to_spray_gun",
+    "name": "Connect paint hose to spray gun.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial/painting_coating",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_industrial/painting_coating",
+    "name": "Painting Coating",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_hospitality/cooking_tasks/crack_egg_into_a_bowl",
+    "name": "Crack egg into a bowl.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_hospitality/cooking_tasks",
+    "domain": "robotics_hospitality",
+    "value_reasoning": "Impressive demo: crack egg"
+  },
+  {
+    "task_id": "robotics_hospitality/cooking_tasks/flip_pancake_with_a_spatula",
+    "name": "Flip pancake with a spatula.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_hospitality/cooking_tasks",
+    "domain": "robotics_hospitality",
+    "value_reasoning": "Impressive demo: flip pancake"
+  },
+  {
+    "task_id": "robotics_construction/painting_construction/unload_paint_cans_from_transport_vehicle",
+    "name": "Unload paint cans from transport vehicle",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/painting_construction",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/painting_construction/unload_paint_rollers_from_transport_vehicle",
+    "name": "Unload paint rollers from transport vehicle",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/painting_construction",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/painting_construction/unload_paint_brushes_from_transport_vehicle",
+    "name": "Unload paint brushes from transport vehicle",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/painting_construction",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/painting_construction/unload_painter's_tape_rolls_from_transport_vehicle",
+    "name": "Unload painter's tape rolls from transport vehicle",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/painting_construction",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/painting_construction/unload_paint_sprayer_from_transport_vehicle",
+    "name": "Unload paint sprayer from transport vehicle",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/painting_construction",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/painting_construction",
+    "name": "Painting Construction",
+    "node_type": "task",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_industrial/assembly_operations_quality/apply_a_bright_yellow_paint_dot_with_a_fine-tip_pa",
+    "name": "Apply a bright yellow paint dot with a fine-tip paint pen onto a specific torque-marked bolt head to indicate assembly completion.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial/assembly_operations_quality",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_industrial/tool_handling_quality/carefully_apply_a_protective_tape_strip_along_a_sp",
+    "name": "Carefully apply a protective tape strip along a specific edge of a freshly painted part.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial/tool_handling_quality",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_industrial/quality_inspection_quality/apply_a_small_dot_of_removable_paint_to_a_surface_",
+    "name": "Apply a small dot of removable paint to a surface imperfection on a painted panel.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_industrial/quality_inspection_quality",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/tool_operations_quality/dip_a_paintbrush_into_a_paint_can_loading_bristles",
+    "name": "Dip a paintbrush into a paint can, loading bristles, and wipe excess paint on the rim.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/tool_operations_quality",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/measuring_marking_quality/secure_a_plastic_stencil_of_a_'no_parking'_symbol_",
+    "name": "Secure a plastic stencil of a 'No Parking' symbol onto an asphalt surface using painter's tape.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/measuring_marking_quality",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/surface_finishing_quality/scrape_a_dried_paint_drip_from_a_finished_baseboar",
+    "name": "Scrape a dried paint drip from a finished baseboard using a small, sharp utility knife without damaging the surface.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/surface_finishing_quality",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/surface_finishing_quality/swap_a_9-inch_medium-nap_roller_cover_onto_an_exis",
+    "name": "Swap a 9-inch medium-nap roller cover onto an existing paint roller frame.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/surface_finishing_quality",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/surface_finishing_quality/twist_a_1-gallon_paint_can_lid_tightly_back_onto_a",
+    "name": "Twist a 1-gallon paint can lid tightly back onto a can of latex paint, ensuring a secure seal.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/surface_finishing_quality",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/surface_finishing_quality/secure_the_edge_of_a_plastic_drop_cloth_to_the_flo",
+    "name": "Secure the edge of a plastic drop cloth to the floor using a strip of painter's tape, minimizing gaps.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/surface_finishing_quality",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/surface_finishing_quality/remove_dust_and_fine_debris_from_a_specific_recess",
+    "name": "Remove dust and fine debris from a specific recessed corner of a wall using a stiff-bristled detailing brush before painting.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/surface_finishing_quality",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/surface_finishing_quality/carefully_remove_a_paint_stir_stick_from_a_5-gallo",
+    "name": "Carefully remove a paint stir stick from a 5-gallon bucket and scrape all excess paint back into the bucket.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/surface_finishing_quality",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/surface_finishing_quality/hang_an_empty_1-quart_paint_can_by_its_wire_handle",
+    "name": "Hang an empty 1-quart paint can by its wire handle onto a hook on a painter's ladder rung.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/surface_finishing_quality",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/surface_finishing_quality/peel_a_specific_strip_of_masking_tape_from_a_fresh",
+    "name": "Peel a specific strip of masking tape from a freshly painted wall without lifting or marring the paint.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/surface_finishing_quality",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/surface_finishing_quality/assemble_a_three-section_paint_roller_extension_po",
+    "name": "Assemble a three-section paint roller extension pole by screwing the segments together firmly.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/surface_finishing_quality",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/surface_finishing_quality/unscrew_the_fluid_cap_and_air_cap_from_a_paint_spr",
+    "name": "Unscrew the fluid cap and air cap from a paint spray gun for routine cleaning.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/surface_finishing_quality",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  },
+  {
+    "task_id": "robotics_construction/surface_finishing_quality/pour_a_specific_measured_volume_of_paint_thinner_f",
+    "name": "Pour a specific, measured volume of paint thinner from its container into a cleaning reservoir.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 9,
+      "impressiveness": 10,
+      "practical_utility": 5,
+      "technical_difficulty": 8,
+      "generalizability": 6
+    },
+    "total_score": 81,
+    "tier": "PREMIUM",
+    "parent_id": "robotics_construction/surface_finishing_quality",
+    "domain": "robotics_construction",
+    "value_reasoning": "Impressive demo: paint"
+  }
+]

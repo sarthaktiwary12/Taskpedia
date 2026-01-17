@@ -1,0 +1,2212 @@
+[
+  {
+    "task_id": "work_architecture_engineering/nanotechnology_engineering_technologists_and_technicians/assemble_components_using_techniques_such_as_interference_fitting_solvent_bonding_adhesive_bonding_heat_sealing_or_ultrasonic_welding",
+    "name": "Assemble components, using techniques such as interference fitting, solvent bonding, adhesive bonding, heat sealing, or ultrasonic welding.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_architecture_engineering/nanotechnology_engineering_technologists_and_technicians",
+    "domain": "work_architecture_engineering",
+    "value_reasoning": "Premium: assembly - assemble component"
+  },
+  {
+    "task_id": "work_healthcare_practitioners/magnetic_resonance_imaging_technologists/position_patients_on_cradle_attaching_immobilization_devices_if_needed_to_ensure_appropriate_placement_for_imaging",
+    "name": "Position patients on cradle, attaching immobilization devices, if needed, to ensure appropriate placement for imaging.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_healthcare_practitioners/magnetic_resonance_imaging_technologists",
+    "domain": "work_healthcare_practitioners",
+    "value_reasoning": "Premium: patient_care - position patient"
+  },
+  {
+    "task_id": "work_food_service/cooks_short_order/grill_and_garnish_hamburgers_or_other_meats_such_as_steaks_and_chops",
+    "name": "Grill and garnish hamburgers or other meats, such as steaks and chops.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_food_service/cooks_short_order",
+    "domain": "work_food_service",
+    "value_reasoning": "Premium: cooking - garnish"
+  },
+  {
+    "task_id": "work_food_service/bartenders/slice_and_pit_fruit_for_garnishing_drinks",
+    "name": "Slice and pit fruit for garnishing drinks.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_food_service/bartenders",
+    "domain": "work_food_service",
+    "value_reasoning": "Premium: cooking - garnish"
+  },
+  {
+    "task_id": "work_food_service/dining_room_and_cafeteria_attendants_and_bartender_helpers/slice_and_pit_fruit_used_to_garnish_drinks",
+    "name": "Slice and pit fruit used to garnish drinks.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_food_service/dining_room_and_cafeteria_attendants_and_bartender_helpers",
+    "domain": "work_food_service",
+    "value_reasoning": "Premium: cooking - garnish"
+  },
+  {
+    "task_id": "work_construction/sheet_metal_workers/fasten_seams_or_joints_together_with_welds_bolts_cement_rivets_solder_caulks_metal_drive_clips_or_bonds_to_assemble_components_into_products_or_to_repair_sheet_metal_items",
+    "name": "Fasten seams or joints together with welds, bolts, cement, rivets, solder, caulks, metal drive clips, or bonds to assemble components into products or to repair sheet metal items.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_construction/sheet_metal_workers",
+    "domain": "work_construction",
+    "value_reasoning": "Premium: assembly - assemble component"
+  },
+  {
+    "task_id": "work_construction/roustabouts_oil_and_gas/dig_holes_set_forms_and_mix_and_pour_concrete_into_forms_to_make_foundations_for_wood_or_steel_derricks",
+    "name": "Dig holes, set forms, and mix and pour concrete into forms to make foundations for wood or steel derricks.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_construction/roustabouts_oil_and_gas",
+    "domain": "work_construction",
+    "value_reasoning": "Premium: planting - dig hole"
+  },
+  {
+    "task_id": "work_installation_repair/telecommunications_line_installers_and_repairers/dig_holes_for_power_poles_using_power_augers_or_shovels_set_poles_in_place_with_cranes_and_hoist_poles_upright_using_winches",
+    "name": "Dig holes for power poles, using power augers or shovels, set poles in place with cranes, and hoist poles upright, using winches.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_installation_repair/telecommunications_line_installers_and_repairers",
+    "domain": "work_installation_repair",
+    "value_reasoning": "Premium: planting - dig hole"
+  },
+  {
+    "task_id": "work_production/food_batchmakers/mix_or_blend_ingredients_according_to_recipes_using_a_paddle_or_an_agitator_or_by_controlling_vats_that_heat_and_mix_ingredients",
+    "name": "Mix or blend ingredients, according to recipes, using a paddle or an agitator, or by controlling vats that heat and mix ingredients.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_production/food_batchmakers",
+    "domain": "work_production",
+    "value_reasoning": "Premium: food_prep - mix ingredients"
+  },
+  {
+    "task_id": "work_production/rolling_machine_setters_operators_and_tenders_metal_and_plastic/start_operation_of_rolling_and_milling_machines_to_flatten_temper_form_and_reduce_sheet_metal_sections_and_to_produce_steel_strips",
+    "name": "Start operation of rolling and milling machines to flatten, temper, form, and reduce sheet metal sections and to produce steel strips.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_production/rolling_machine_setters_operators_and_tenders_metal_and_plastic",
+    "domain": "work_production",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "work_production/heat_treating_equipment_setters_operators_and_tenders_metal_and_plastic/load_parts_into_containers_and_place_containers_on_conveyors_to_be_inserted_into_furnaces_or_insert_parts_into_furnaces",
+    "name": "Load parts into containers and place containers on conveyors to be inserted into furnaces, or insert parts into furnaces.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_production/heat_treating_equipment_setters_operators_and_tenders_metal_and_plastic",
+    "domain": "work_production",
+    "value_reasoning": "Premium: assembly - insert part"
+  },
+  {
+    "task_id": "work_production/glass_blowers_molders_benders_and_finishers/shape_bend_or_join_sections_of_glass_using_paddles_pressing_and_flattening_hand_tools_or_cork",
+    "name": "Shape, bend, or join sections of glass, using paddles, pressing and flattening hand tools, or cork.",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_production/glass_blowers_molders_benders_and_finishers",
+    "domain": "work_production",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "work_production/assemblers_and_fabricators_all_other/assemble_components",
+    "name": "assemble components",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_production/assemblers_and_fabricators_all_other",
+    "domain": "work_production",
+    "value_reasoning": "Premium: assembly - assemble component"
+  },
+  {
+    "task_id": "work_food_service/food_preparation_and_serving_related_workers_all_other/plate_food",
+    "name": "plate food",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_food_service/food_preparation_and_serving_related_workers_all_other",
+    "domain": "work_food_service",
+    "value_reasoning": "Premium: cooking - plate food"
+  },
+  {
+    "task_id": "work_production/metal_workers_and_plastic_workers_all_other/assemble_components",
+    "name": "assemble components",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_production/metal_workers_and_plastic_workers_all_other",
+    "domain": "work_production",
+    "value_reasoning": "Premium: assembly - assemble component"
+  },
+  {
+    "task_id": "life_household/housework/cleaning_kitchen/wash_dishes",
+    "name": "wash dishes",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_household/housework/cleaning_kitchen",
+    "domain": "life_household",
+    "value_reasoning": "Premium: dishes - wash dishes"
+  },
+  {
+    "task_id": "life_household/housework/mopping_floors/mop_floor_area",
+    "name": "mop floor area",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_household/housework/mopping_floors",
+    "domain": "life_household",
+    "value_reasoning": "Premium: cleaning_impressive - mop floor"
+  },
+  {
+    "task_id": "life_household/food_preparation/making_salad/chop_vegetables",
+    "name": "chop vegetables",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_household/food_preparation/making_salad",
+    "domain": "life_household",
+    "value_reasoning": "Premium: food_prep - chop vegetable"
+  },
+  {
+    "task_id": "life_household/food_preparation/plating_food/add_garnish_to_plate",
+    "name": "add garnish to plate",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_household/food_preparation/plating_food",
+    "domain": "life_household",
+    "value_reasoning": "Premium: cooking - garnish"
+  },
+  {
+    "task_id": "life_household/laundry/putting_away_clothes/fold_clothes",
+    "name": "fold clothes",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_household/laundry/putting_away_clothes",
+    "domain": "life_household",
+    "value_reasoning": "Premium: laundry - fold clothes"
+  },
+  {
+    "task_id": "life_caregiving/eldercare/preparing_meals_for_elder/cook_meal",
+    "name": "cook meal",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_caregiving/eldercare/preparing_meals_for_elder",
+    "domain": "life_caregiving",
+    "value_reasoning": "Premium: cooking - cook meal"
+  },
+  {
+    "task_id": "work_food_service/cooks_all_other/clean_up_kitchen/wash_dishes",
+    "name": "wash dishes",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_food_service/cooks_all_other/clean_up_kitchen",
+    "domain": "work_food_service",
+    "value_reasoning": "Premium: dishes - wash dishes"
+  },
+  {
+    "task_id": "work_healthcare_practitioners/surgeons_all_other/conclude_surgery/transfer_patient",
+    "name": "transfer patient",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_healthcare_practitioners/surgeons_all_other/conclude_surgery",
+    "domain": "work_healthcare_practitioners",
+    "value_reasoning": "Premium: patient_care - transfer patient"
+  },
+  {
+    "task_id": "work_food_service/food_preparation_and_serving_related_workers_all_other/clean_up_workstation/organize_items_on_workstation",
+    "name": "organize items on workstation",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_food_service/food_preparation_and_serving_related_workers_all_other/clean_up_workstation",
+    "domain": "work_food_service",
+    "value_reasoning": "Premium: sorting - organize items"
+  },
+  {
+    "task_id": "life_household/food_preparation/plating_food/add_garnish_to_plate/pick_up_garnish",
+    "name": "pick_up garnish",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_household/food_preparation/plating_food/add_garnish_to_plate",
+    "domain": "life_household",
+    "value_reasoning": "Premium: cooking - garnish"
+  },
+  {
+    "task_id": "life_household/food_preparation/plating_food/add_garnish_to_plate/place_garnish_on_plate",
+    "name": "place garnish on plate",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_household/food_preparation/plating_food/add_garnish_to_plate",
+    "domain": "life_household",
+    "value_reasoning": "Premium: cooking - garnish"
+  },
+  {
+    "task_id": "life_caregiving/eldercare/preparing_meals_for_elder/clean_kitchen/wash_dishes",
+    "name": "wash dishes",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_caregiving/eldercare/preparing_meals_for_elder/clean_kitchen",
+    "domain": "life_caregiving",
+    "value_reasoning": "Premium: dishes - wash dishes"
+  },
+  {
+    "task_id": "life_social_leisure/socializing/having_guests_over/clean_up_after_guests/load_dishwasher",
+    "name": "load dishwasher",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_social_leisure/socializing/having_guests_over/clean_up_after_guests",
+    "domain": "life_social_leisure",
+    "value_reasoning": "Premium: dishes - load dishwasher"
+  },
+  {
+    "task_id": "life_education_personal/formal_education/preparing_for_exam/arrange_study_space/organize_items",
+    "name": "organize items",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_education_personal/formal_education/preparing_for_exam/arrange_study_space",
+    "domain": "life_education_personal",
+    "value_reasoning": "Premium: sorting - organize items"
+  },
+  {
+    "task_id": "life_social_leisure/socializing/family_gathering/clean_up/organize_items",
+    "name": "organize items",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_social_leisure/socializing/family_gathering/clean_up",
+    "domain": "life_social_leisure",
+    "value_reasoning": "Premium: sorting - organize items"
+  },
+  {
+    "task_id": "work_personal_service/personal_care_and_service_workers_all_other/assist_client_with_daily_living_activities/help_with_meals/wash_dishes",
+    "name": "wash dishes",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_personal_service/personal_care_and_service_workers_all_other/assist_client_with_daily_living_activities/help_with_meals",
+    "domain": "work_personal_service",
+    "value_reasoning": "Premium: dishes - wash dishes"
+  },
+  {
+    "task_id": "work_personal_service/personal_care_and_service_workers_all_other/assist_client_with_daily_living_activities/help_with_medication/dispense_medication_dose",
+    "name": "Dispense medication dose",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_personal_service/personal_care_and_service_workers_all_other/assist_client_with_daily_living_activities/help_with_medication",
+    "domain": "work_personal_service",
+    "value_reasoning": "Premium: medication - dispense medication"
+  },
+  {
+    "task_id": "work_personal_service/personal_care_and_service_workers_all_other/assist_client_with_daily_living_activities/help_with_medication/deliver_medication_to_patient",
+    "name": "Deliver medication to patient",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_personal_service/personal_care_and_service_workers_all_other/assist_client_with_daily_living_activities/help_with_medication",
+    "domain": "work_personal_service",
+    "value_reasoning": "Premium: medication - deliver medication"
+  },
+  {
+    "task_id": "life_caregiving/eldercare/preparing_meals_for_elder/clean_kitchen/clean_floor/mop_floor",
+    "name": "mop floor",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_caregiving/eldercare/preparing_meals_for_elder/clean_kitchen/clean_floor",
+    "domain": "life_caregiving",
+    "value_reasoning": "Premium: cleaning_impressive - mop floor"
+  },
+  {
+    "task_id": "life_social_leisure/socializing/family_gathering/clean_up/clean_floor/mop_floor",
+    "name": "mop floor",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_social_leisure/socializing/family_gathering/clean_up/clean_floor",
+    "domain": "life_social_leisure",
+    "value_reasoning": "Premium: cleaning_impressive - mop floor"
+  },
+  {
+    "task_id": "work_farming_fishing/logging_workers_all_other/perform_site_cleanup_and_equipment_maintenance/perform_equipment_maintenance/reassemble_and_secure_equipment/tighten_fastener",
+    "name": "tighten fastener",
+    "node_type": "atomic",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_farming_fishing/logging_workers_all_other/perform_site_cleanup_and_equipment_maintenance/perform_equipment_maintenance/reassemble_and_secure_equipment",
+    "domain": "work_farming_fishing",
+    "value_reasoning": "Premium: assembly - tighten fastener"
+  },
+  {
+    "task_id": "work_education/social_sciences_teachers_postsecondary_all_other/deliver_classroom_instruction/conclude_lesson/tidy_up_teaching_area/organize_items",
+    "name": "organize items",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "work_education/social_sciences_teachers_postsecondary_all_other/deliver_classroom_instruction/conclude_lesson/tidy_up_teaching_area",
+    "domain": "work_education",
+    "value_reasoning": "Premium: sorting - organize items"
+  },
+  {
+    "task_id": "life_sports_exercise/outdoor_recreation/camping/set_up_camp/pitch_tent/lay_out_tent_body/flatten_tent_body",
+    "name": "flatten tent_body",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "life_sports_exercise/outdoor_recreation/camping/set_up_camp/pitch_tent/lay_out_tent_body",
+    "domain": "life_sports_exercise",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "new_industrial/quality_inspection/measure_dimensions_of_a_part_with_a_digital_caliper",
+    "name": "measure dimensions of a part with a digital caliper",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_industrial/quality_inspection",
+    "domain": "new_industrial",
+    "value_reasoning": "Premium: quality_inspection - measure dimension"
+  },
+  {
+    "task_id": "new_industrial/food_processing_plants/sort_packaged_snack_bags_by_weight_onto_different_output_con",
+    "name": "sort packaged snack bags by weight onto different output conveyors",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_industrial/food_processing_plants",
+    "domain": "new_industrial",
+    "value_reasoning": "Premium: sorting - sort package"
+  },
+  {
+    "task_id": "new_warehouse/packing_stations/select_a_correctly_sized_flat_pack_box_from_a_stack",
+    "name": "select a correctly sized flat-pack box from a stack",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_warehouse/packing_stations",
+    "domain": "new_warehouse",
+    "value_reasoning": "Premium: packaging - pack box"
+  },
+  {
+    "task_id": "new_warehouse/inventory_management/count_items_in_a_bin_by_physically_manipulating_and_scanning",
+    "name": "count items in a bin by physically manipulating and scanning each one",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_warehouse/inventory_management",
+    "domain": "new_warehouse",
+    "value_reasoning": "Premium: inventory - count items"
+  },
+  {
+    "task_id": "new_warehouse/goods_receiving/scan_barcode_on_incoming_package",
+    "name": "Scan barcode on incoming package",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_warehouse/goods_receiving",
+    "domain": "new_warehouse",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "new_warehouse/shipping_and_dispatch/sort_packages_by_carrier_into_designated_bins",
+    "name": "sort packages by carrier into designated bins",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_warehouse/shipping_and_dispatch",
+    "domain": "new_warehouse",
+    "value_reasoning": "Premium: sorting - sort package"
+  },
+  {
+    "task_id": "new_warehouse/cold_storage_handling/scan_barcodes_on_frozen_product_cases_using_a_mounted_scanne",
+    "name": "scan barcodes on frozen product cases using a mounted scanner",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_warehouse/cold_storage_handling",
+    "domain": "new_warehouse",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "new_warehouse/cross_docking/scan_barcode_on_received_carton",
+    "name": "scan barcode on received carton",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_warehouse/cross_docking",
+    "domain": "new_warehouse",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "new_warehouse/cross_docking/sort_package_onto_designated_outbound_chute",
+    "name": "sort package onto designated outbound chute",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_warehouse/cross_docking",
+    "domain": "new_warehouse",
+    "value_reasoning": "Premium: sorting - sort package"
+  },
+  {
+    "task_id": "new_retail/inventory_counting/lift_lightweight_products_to_scan_items_beneath_them",
+    "name": "lift lightweight products to scan items beneath them",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_retail/inventory_counting",
+    "domain": "new_retail",
+    "value_reasoning": "Premium: checkout - scan item"
+  },
+  {
+    "task_id": "new_retail/backroom_organization/dispose_of_flattened_cardboard_boxes_into_a_compactor",
+    "name": "dispose of flattened cardboard boxes into a compactor",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_retail/backroom_organization",
+    "domain": "new_retail",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "new_retail/checkout_assistance/scan_item_by_passing_it_over_a_barcode_reader",
+    "name": "scan item by passing it over a barcode reader",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_retail/checkout_assistance",
+    "domain": "new_retail",
+    "value_reasoning": "Premium: checkout - scan item"
+  },
+  {
+    "task_id": "new_retail/display_setup/assemble_components_of_a_display_table",
+    "name": "assemble components of a display table",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_retail/display_setup",
+    "domain": "new_retail",
+    "value_reasoning": "Premium: assembly - assemble component"
+  },
+  {
+    "task_id": "new_food_service/commercial_kitchen_cooking/garnish_a_plated_meal_with_a_sprig_of_parsley",
+    "name": "garnish a plated meal with a sprig of parsley",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_food_service/commercial_kitchen_cooking",
+    "domain": "new_food_service",
+    "value_reasoning": "Premium: cooking - garnish"
+  },
+  {
+    "task_id": "new_food_service/bar_beverage_preparation/garnish_drink_with_a_pre_sliced_lime_wedge",
+    "name": "Garnish drink with a pre-sliced lime wedge",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_food_service/bar_beverage_preparation",
+    "domain": "new_food_service",
+    "value_reasoning": "Premium: cooking - garnish"
+  },
+  {
+    "task_id": "new_food_service/pizza_making/knead_dough_on_a_preparation_surface",
+    "name": "Knead dough on a preparation surface",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_food_service/pizza_making",
+    "domain": "new_food_service",
+    "value_reasoning": "Premium: food_prep - knead dough"
+  },
+  {
+    "task_id": "new_food_service/coffee_and_barista/attach_portafilter_to_espresso_machine_group_head",
+    "name": "Attach portafilter to espresso machine group head",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_food_service/coffee_and_barista",
+    "domain": "new_food_service",
+    "value_reasoning": "Premium: coffee - espresso"
+  },
+  {
+    "task_id": "new_food_service/coffee_and_barista/press_brew_button_on_espresso_machine",
+    "name": "Press brew button on espresso machine",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_food_service/coffee_and_barista",
+    "domain": "new_food_service",
+    "value_reasoning": "Premium: coffee - espresso"
+  },
+  {
+    "task_id": "new_food_service/coffee_and_barista/remove_portafilter_from_espresso_machine_group_head",
+    "name": "Remove portafilter from espresso machine group head",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_food_service/coffee_and_barista",
+    "domain": "new_food_service",
+    "value_reasoning": "Premium: coffee - espresso"
+  },
+  {
+    "task_id": "new_food_service/coffee_and_barista/place_cup_under_espresso_machine_spout",
+    "name": "Place cup under espresso machine spout",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_food_service/coffee_and_barista",
+    "domain": "new_food_service",
+    "value_reasoning": "Premium: coffee - espresso"
+  },
+  {
+    "task_id": "new_food_service/buffet_management/clean_food_splatter_from_sneeze_guard_panels",
+    "name": "Clean food splatter from sneeze guard panels",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_food_service/buffet_management",
+    "domain": "new_food_service",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "new_hospitality/hotel_room_cleaning/vacuum_carpeted_floor_area",
+    "name": "Vacuum carpeted floor area",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_hospitality/hotel_room_cleaning",
+    "domain": "new_hospitality",
+    "value_reasoning": "Premium: cleaning_impressive - vacuum carpet"
+  },
+  {
+    "task_id": "new_healthcare/pharmacy_dispensing/scan_barcode_on_incoming_medication_package",
+    "name": "scan barcode on incoming medication package",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_healthcare/pharmacy_dispensing",
+    "domain": "new_healthcare",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "new_residential/trash_and_recycling/flatten_cardboard_box_for_recycling",
+    "name": "Flatten cardboard box for recycling",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_residential/trash_and_recycling",
+    "domain": "new_residential",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "new_agriculture/irrigation_management/remove_weeds_growing_around_an_irrigation_emitter",
+    "name": "remove weeds growing around an irrigation emitter",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_agriculture/irrigation_management",
+    "domain": "new_agriculture",
+    "value_reasoning": "Premium: crop_care - remove weeds"
+  },
+  {
+    "task_id": "new_logistics/truck_unloading/scan_barcode_on_a_package_inside_the_trailer",
+    "name": "scan barcode on a package inside the trailer",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_logistics/truck_unloading",
+    "domain": "new_logistics",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "new_maintenance/plumbing_repairs/clean_up_spilled_water_with_a_mop",
+    "name": "clean up spilled water with a mop",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_maintenance/plumbing_repairs",
+    "domain": "new_maintenance",
+    "value_reasoning": "Premium: cleaning_impressive - clean up spill"
+  },
+  {
+    "task_id": "new_laboratory/centrifuge_loading/scan_barcode_on_sample_tube",
+    "name": "scan barcode on sample tube",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_laboratory/centrifuge_loading",
+    "domain": "new_laboratory",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "new_office/mail_and_package_delivery/scan_barcode_labels_on_received_mail_items",
+    "name": "scan barcode labels on received mail items",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_office/mail_and_package_delivery",
+    "domain": "new_office",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "new_office/supply_restocking/scan_barcode_on_each_individual_supply_item",
+    "name": "Scan barcode on each individual supply item",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_office/supply_restocking",
+    "domain": "new_office",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "new_office/supply_restocking/flatten_empty_cardboard_boxes_for_recycling",
+    "name": "Flatten empty cardboard boxes for recycling",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_office/supply_restocking",
+    "domain": "new_office",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "new_office/office_cleaning/vacuum_carpeted_office_floors",
+    "name": "vacuum carpeted office floors",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "new_office/office_cleaning",
+    "domain": "new_office",
+    "value_reasoning": "Premium: cleaning_impressive - vacuum carpet"
+  },
+  {
+    "task_id": "exp_meat_processing/quality_inspection_meat/clean_a_grease_splatter_from_a_vision_system_camera_lens",
+    "name": "Clean a grease splatter from a vision system camera lens.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "exp_meat_processing/quality_inspection_meat",
+    "domain": "exp_meat_processing",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "exp_bakery_detailed/dough_shaping/push_a_rolling_pin_across_the_dough_to_flatten_it_into_a_sheet",
+    "name": "Push a rolling pin across the dough to flatten it into a sheet.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "exp_bakery_detailed/dough_shaping",
+    "domain": "exp_bakery_detailed",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "exp_bakery_detailed/dough_shaping/cut_specific_shapes_eg_circles_rectangles_from_the_flattened_dough_sheet",
+    "name": "Cut specific shapes (e.g., circles, rectangles) from the flattened dough sheet.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "exp_bakery_detailed/dough_shaping",
+    "domain": "exp_bakery_detailed",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "exp_ceramics/clay_preparation/fold_a_flattened_clay_slab_over_itself_repeatedly",
+    "name": "Fold a flattened clay slab over itself repeatedly",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "exp_ceramics/clay_preparation",
+    "domain": "exp_ceramics",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "exp_recycling/sorting_recyclables/remove_a_flattened_cardboard_box_from_other_paper_waste",
+    "name": "Remove a flattened cardboard box from other paper waste.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "exp_recycling/sorting_recyclables",
+    "domain": "exp_recycling",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "exp_recycling/sorting_recyclables/stack_the_flattened_cardboard_boxes_onto_a_pallet",
+    "name": "Stack the flattened cardboard boxes onto a pallet.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "exp_recycling/sorting_recyclables",
+    "domain": "exp_recycling",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "exp_recycling/loading_recycled_materials/load_a_stack_of_flattened_metal_sheets_into_a_shipping_container",
+    "name": "Load a stack of flattened metal sheets into a shipping container",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "exp_recycling/loading_recycled_materials",
+    "domain": "exp_recycling",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "exp_laundromat/folding_laundry_commercial/shake_out_a_crumpled_garment_to_prepare_for_flattening",
+    "name": "Shake out a crumpled garment to prepare for flattening",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "exp_laundromat/folding_laundry_commercial",
+    "domain": "exp_laundromat",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "exp_library/shelf_reading/scan_barcodes_on_book_spines_sequentially",
+    "name": "Scan barcodes on book spines sequentially.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "exp_library/shelf_reading",
+    "domain": "exp_library",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "train_car_cleaning/vacuum_carpeted_aisles_and_under_seats",
+    "name": "vacuum carpeted aisles and under seats",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "train_car_cleaning",
+    "domain": "train_car_cleaning",
+    "value_reasoning": "Premium: cleaning_impressive - vacuum carpet"
+  },
+  {
+    "task_id": "luggage_handling_station/scan_barcode_on_luggage_tag_using_integrated_scann",
+    "name": "Scan barcode on luggage tag using integrated scanner.",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "luggage_handling_station",
+    "domain": "luggage_handling_station",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "parcel_weighing_measuring/scan_barcode_on_parcel_using_an_integrated_scanner",
+    "name": "scan barcode on parcel using an integrated scanner",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "parcel_weighing_measuring",
+    "domain": "parcel_weighing_measuring",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "craft_services_setup/arrange_various_snack_items_from_bulk_containers_o",
+    "name": "arrange various snack items from bulk containers onto serving platters",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "craft_services_setup",
+    "domain": "craft_services_setup",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "packaging_shoes/scan_barcode_on_packaged_shoe_box",
+    "name": "Scan barcode on packaged shoe box",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "packaging_shoes",
+    "domain": "packaging_shoes",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "irrigation_system_garden/remove_weeds_growing_over_irrigation_components",
+    "name": "remove weeds growing over irrigation components",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "irrigation_system_garden",
+    "domain": "irrigation_system_garden",
+    "value_reasoning": "Premium: crop_care - remove weeds"
+  },
+  {
+    "task_id": "station_cleaning_fire/vacuum_carpets_in_administrative_offices",
+    "name": "vacuum carpets in administrative offices",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "station_cleaning_fire",
+    "domain": "station_cleaning_fire",
+    "value_reasoning": "Premium: cleaning_impressive - vacuum carpet"
+  },
+  {
+    "task_id": "equipment_inventory_fire/scan_barcode_labels_on_each_scba_tank",
+    "name": "scan barcode labels on each SCBA tank",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "equipment_inventory_fire",
+    "domain": "equipment_inventory_fire",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "evidence_room_organization/scan_barcode_on_evidence_bag",
+    "name": "Scan barcode on evidence bag",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "evidence_room_organization",
+    "domain": "evidence_room_organization",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "medical_equipment_check/scan_barcode_labels_on_medication_vials",
+    "name": "Scan barcode labels on medication vials",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "medical_equipment_check",
+    "domain": "medical_equipment_check",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "defibrillator_check/scan_barcode_on_electrode_pad_package",
+    "name": "Scan barcode on electrode pad package",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "defibrillator_check",
+    "domain": "defibrillator_check",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "supply_inventory_ems/scan_barcodes_on_individual_medical_supplies",
+    "name": "Scan barcodes on individual medical supplies",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "supply_inventory_ems",
+    "domain": "supply_inventory_ems",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "lodge_cleaning/vacuum_carpets_in_guest_rooms",
+    "name": "Vacuum carpets in guest rooms",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "lodge_cleaning",
+    "domain": "lodge_cleaning",
+    "value_reasoning": "Premium: cleaning_impressive - vacuum carpet"
+  },
+  {
+    "task_id": "cooler_organization_flowers/unpack_boxes_of_delivered_flowers",
+    "name": "unpack boxes of delivered flowers",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "cooler_organization_flowers",
+    "domain": "cooler_organization_flowers",
+    "value_reasoning": "Premium: packaging - pack box"
+  },
+  {
+    "task_id": "glass_cutting_hardware/unpack_box_of_assorted_glass_cutters",
+    "name": "Unpack box of assorted glass cutters",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "glass_cutting_hardware",
+    "domain": "glass_cutting_hardware",
+    "value_reasoning": "Premium: packaging - pack box"
+  },
+  {
+    "task_id": "glass_cutting_hardware/scan_barcode_on_a_glass_cutting_oil_bottle",
+    "name": "Scan barcode on a glass cutting oil bottle",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "glass_cutting_hardware",
+    "domain": "glass_cutting_hardware",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "appliance_unboxing/fold_flattened_cardboard_for_recycling",
+    "name": "Fold flattened cardboard for recycling",
+    "node_type": "task",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "appliance_unboxing",
+    "domain": "appliance_unboxing",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "robotics_industrial/machine_tending/scan_barcode_on_raw_material_container",
+    "name": "Scan barcode on raw material container.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_industrial/machine_tending",
+    "domain": "robotics_industrial",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "robotics_warehouse/picking_tasks/scan_item_barcode_by_moving_scanner_over_it",
+    "name": "Scan item barcode by moving scanner over it.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_warehouse/picking_tasks",
+    "domain": "robotics_warehouse",
+    "value_reasoning": "Premium: checkout - scan item"
+  },
+  {
+    "task_id": "robotics_warehouse/picking_tasks/unfold_a_flattened_box_before_picking_contents",
+    "name": "Unfold a flattened box before picking contents.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_warehouse/picking_tasks",
+    "domain": "robotics_warehouse",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "robotics_warehouse/palletizing_tasks/re-grasp_product_if_initial_grasp_is_unstable_or_m",
+    "name": "Re-grasp product if initial grasp is unstable or misaligned.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_warehouse/palletizing_tasks",
+    "domain": "robotics_warehouse",
+    "value_reasoning": "Premium: picking - grasp product"
+  },
+  {
+    "task_id": "robotics_warehouse/palletizing_tasks/apply_label_to_the_completed_pallet",
+    "name": "Apply label to the completed pallet.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_warehouse/palletizing_tasks",
+    "domain": "robotics_warehouse",
+    "value_reasoning": "Premium: packaging - apply label"
+  },
+  {
+    "task_id": "robotics_warehouse/inventory_tasks/scan_barcode_on_individual_product_package",
+    "name": "Scan barcode on individual product package.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_warehouse/inventory_tasks",
+    "domain": "robotics_warehouse",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "robotics_hospitality/cooking_tasks/mix_ingredients_in_a_bowl_with_a_whisk",
+    "name": "Mix ingredients in a bowl with a whisk.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_hospitality/cooking_tasks",
+    "domain": "robotics_hospitality",
+    "value_reasoning": "Premium: food_prep - mix ingredients"
+  },
+  {
+    "task_id": "robotics_hospitality/cooking_tasks/knead_dough_on_a_countertop",
+    "name": "Knead dough on a countertop.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_hospitality/cooking_tasks",
+    "domain": "robotics_hospitality",
+    "value_reasoning": "Premium: food_prep - knead dough"
+  },
+  {
+    "task_id": "robotics_hospitality/cooking_tasks/place_cooked_meat_onto_a_serving_platter",
+    "name": "Place cooked meat onto a serving platter.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_hospitality/cooking_tasks",
+    "domain": "robotics_hospitality",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "robotics_hospitality/cooking_tasks/garnish_dish_with_fresh_parsley_sprigs",
+    "name": "Garnish dish with fresh parsley sprigs.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_hospitality/cooking_tasks",
+    "domain": "robotics_hospitality",
+    "value_reasoning": "Premium: cooking - garnish"
+  },
+  {
+    "task_id": "robotics_hospitality/cooking_tasks/pour_drink_into_a_glass",
+    "name": "Pour drink into a glass.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_hospitality/cooking_tasks",
+    "domain": "robotics_hospitality",
+    "value_reasoning": "Premium: serving - pour drink"
+  },
+  {
+    "task_id": "robotics_healthcare/patient_care_tasks/reposition_patient's_torso_in_bed_to_prevent_bedso",
+    "name": "Reposition patient's torso in bed to prevent bedsores.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_healthcare/patient_care_tasks",
+    "domain": "robotics_healthcare",
+    "value_reasoning": "Premium: patient_care - position patient"
+  },
+  {
+    "task_id": "robotics_healthcare/patient_care_tasks/clean_up_spilled_liquid_from_a_table_surface",
+    "name": "Clean up spilled liquid from a table surface.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_healthcare/patient_care_tasks",
+    "domain": "robotics_healthcare",
+    "value_reasoning": "Premium: cleaning_impressive - clean up spill"
+  },
+  {
+    "task_id": "robotics_healthcare/rehabilitation_tasks/reposition_patient's_foot_on_a_rehabilitation_peda",
+    "name": "Reposition patient's foot on a rehabilitation pedal exerciser.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_healthcare/rehabilitation_tasks",
+    "domain": "robotics_healthcare",
+    "value_reasoning": "Premium: patient_care - position patient"
+  },
+  {
+    "task_id": "robotics_retail/inventory_retail/scan_barcode_on_product_item",
+    "name": "Scan barcode on product item.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_retail/inventory_retail",
+    "domain": "robotics_retail",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "robotics_retail/inventory_retail/grasp_product_item_from_sorting_bin",
+    "name": "Grasp product item from sorting bin.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_retail/inventory_retail",
+    "domain": "robotics_retail",
+    "value_reasoning": "Premium: picking - grasp product"
+  },
+  {
+    "task_id": "robotics_retail/inventory_retail/scan_barcode_on_product_item_on_a_shelf",
+    "name": "Scan barcode on product item on a shelf.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_retail/inventory_retail",
+    "domain": "robotics_retail",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "robotics_retail/inventory_retail/grasp_product_item_from_order_fulfillment_bin",
+    "name": "Grasp product item from order fulfillment bin.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_retail/inventory_retail",
+    "domain": "robotics_retail",
+    "value_reasoning": "Premium: picking - grasp product"
+  },
+  {
+    "task_id": "robotics_retail/inventory_retail/scan_barcode_on_returned_product_item",
+    "name": "Scan barcode on returned product item.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_retail/inventory_retail",
+    "domain": "robotics_retail",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "robotics_retail/checkout_tasks/scan_barcode_on_an_oversized_item_in_situ",
+    "name": "Scan barcode on an oversized item in situ.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_retail/checkout_tasks",
+    "domain": "robotics_retail",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "robotics_retail/store_cleaning/mop_floor_surface_with_microfiber_pad",
+    "name": "Mop floor surface with microfiber pad",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_retail/store_cleaning",
+    "domain": "robotics_retail",
+    "value_reasoning": "Premium: cleaning_impressive - mop floor"
+  },
+  {
+    "task_id": "robotics_delivery/package_delivery/scan_barcode_on_package_label_(by_orienting_scanne",
+    "name": "Scan barcode on package label (by orienting scanner)",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_delivery/package_delivery",
+    "domain": "robotics_delivery",
+    "value_reasoning": "Premium: inventory - scan barcode"
+  },
+  {
+    "task_id": "robotics_household/cleaning_tasks_quality/disassemble_and_clean_the_mesh_filter_from_an_espr",
+    "name": "Disassemble and clean the mesh filter from an espresso machine's portafilter, then reassemble it.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_household/cleaning_tasks_quality",
+    "domain": "robotics_household",
+    "value_reasoning": "Premium: coffee - espresso"
+  },
+  {
+    "task_id": "robotics_warehouse/packing_tasks_quality/grasp_a_flattened_air_pillow_from_a_stack_inflate_",
+    "name": "Grasp a flattened air pillow from a stack, inflate it using a nozzle, and place it into a box with a fragile item.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_warehouse/packing_tasks_quality",
+    "domain": "robotics_warehouse",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "robotics_warehouse/box_assembly_quality/unroll_and_flatten_a_large_poly-bag_liner_against_",
+    "name": "Unroll and flatten a large poly-bag liner against the interior walls of an empty gaylord container.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_warehouse/box_assembly_quality",
+    "domain": "robotics_warehouse",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "robotics_food_service_v2/cooking_operations_quality/garnish_a_serving_plate_with_microgreens_using_kit",
+    "name": "Garnish a serving plate with microgreens using kitchen tweezers.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_food_service_v2/cooking_operations_quality",
+    "domain": "robotics_food_service_v2",
+    "value_reasoning": "Premium: cooking - garnish"
+  },
+  {
+    "task_id": "robotics_food_service_v2/cooking_operations_quality/wind_the_crank_handle_of_a_manual_pasta_maker_to_f",
+    "name": "Wind the crank handle of a manual pasta maker to flatten a sheet of dough.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_food_service_v2/cooking_operations_quality",
+    "domain": "robotics_food_service_v2",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "robotics_food_service_v2/cooking_operations_quality/dust_cocoa_powder_through_a_specific_stencil_onto_",
+    "name": "Dust cocoa powder through a specific stencil onto the foam of a latte.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_food_service_v2/cooking_operations_quality",
+    "domain": "robotics_food_service_v2",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "robotics_food_service_v2/plating_quality/segment_a_cooked_orange_into_membrane-free_supreme",
+    "name": "Segment a cooked orange into membrane-free supremes for a fruit salad garnish.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_food_service_v2/plating_quality",
+    "domain": "robotics_food_service_v2",
+    "value_reasoning": "Premium: cooking - garnish"
+  },
+  {
+    "task_id": "robotics_food_service_v2/plating_quality/garnish_the_rim_of_a_cocktail_glass_with_a_twisted",
+    "name": "Garnish the rim of a cocktail glass with a twisted lemon peel held by tongs.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_food_service_v2/plating_quality",
+    "domain": "robotics_food_service_v2",
+    "value_reasoning": "Premium: cooking - garnish"
+  },
+  {
+    "task_id": "robotics_food_service_v2/plating_quality/use_a_melon_baller_to_scoop_perfect_spheres_of_can",
+    "name": "Use a melon baller to scoop perfect spheres of cantaloupe onto a breakfast platter.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_food_service_v2/plating_quality",
+    "domain": "robotics_food_service_v2",
+    "value_reasoning": "Premium: coffee - latte"
+  },
+  {
+    "task_id": "robotics_food_service_v2/equipment_cleaning_quality/twist_and_pull_out_the_removable_brew_group_from_a",
+    "name": "Twist and pull out the removable brew group from an espresso machine for rinsing.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_food_service_v2/equipment_cleaning_quality",
+    "domain": "robotics_food_service_v2",
+    "value_reasoning": "Premium: coffee - espresso"
+  },
+  {
+    "task_id": "robotics_food_service_v2/food_assembly_quality/using_kitchen_shears_to_snip_fresh_cilantro_sprigs",
+    "name": "Using kitchen shears to snip fresh cilantro sprigs directly over a bowl of soup for garnish.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_food_service_v2/food_assembly_quality",
+    "domain": "robotics_food_service_v2",
+    "value_reasoning": "Premium: cooking - garnish"
+  },
+  {
+    "task_id": "robotics_retail/inventory_handling_quality/tear_along_the_perforated_lines_of_an_empty_cereal",
+    "name": "Tear along the perforated lines of an empty cereal box to flatten it for recycling.",
+    "node_type": "subtask",
+    "scores": {
+      "market_value": 8,
+      "impressiveness": 7,
+      "practical_utility": 8,
+      "technical_difficulty": 6,
+      "generalizability": 7
+    },
+    "total_score": 74,
+    "tier": "HIGH",
+    "parent_id": "robotics_retail/inventory_handling_quality",
+    "domain": "robotics_retail",
+    "value_reasoning": "Premium: coffee - latte"
+  }
+]

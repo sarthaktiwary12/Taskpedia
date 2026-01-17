@@ -1,0 +1,65 @@
+usage: taskpedia [-h] [-o OUTPUT] command ...
+taskpedia: error: unrecognized arguments: -o task_hierarchy
+
+================================================================================
+🚀 TASKPEDIA COMPREHENSIVE IMPROVEMENT PIPELINE
+================================================================================
+
+================================================================================
+PHASE 1: QUALITY ASSESSMENT
+================================================================================
+
+📊 Total tasks analyzed: 30,347
+
+📈 Breakdown by type:
+   atomic      : 12,122
+   domain      : 884
+   subtask     : 5,778
+   task        : 11,563
+
+⚠️  Quality issues found: 6,158 tasks (20.3%)
+
+🔍 Top issues:
+   5,947x  Atomic task lacks manipulation verb
+      76x  Matches bad pattern: ^navigate.*to
+      51x  Matches bad pattern: ^scan.*for
+      42x  Matches bad pattern: ^travel.*to
+      30x  Matches bad pattern: calibrate
+      22x  Matches bad pattern: ^move.*to.*location
+      19x  Matches bad pattern: adjust.*speed
+      11x  Matches bad pattern: configure
+       9x  Matches bad pattern: stop.*when
+       7x  Matches bad pattern: log.*data
+
+💾 Bad tasks saved to: bad_tasks_identified.json
+
+================================================================================
+PHASE 2: DATASET CLEANING
+================================================================================
+
+🗑️  Found 6,158 tasks to remove
+💾 Backup saved to: taskpedia-web/public/data/manifest.backup.json
+✅ Cleaned manifest saved: 24,189 tasks remaining
+📊 Stats updated: taskpedia-web/public/data/stats.json
+
+================================================================================
+PHASE 3: DATASET EXPANSION
+================================================================================
+
+📈 Current tasks: 30,347
+🎯 Target tasks: 100,000
+➕ Need to generate: 69,653
+
+🚀 Initializing task hierarchy...
+Traceback (most recent call last):
+  File "/workspaces/Taskpedia/comprehensive_improvement.py", line 310, in <module>
+    main()
+  File "/workspaces/Taskpedia/comprehensive_improvement.py", line 302, in main
+    improver.run_full_pipeline(clean=args.clean, expand=args.expand, target=args.target)
+  File "/workspaces/Taskpedia/comprehensive_improvement.py", line 263, in run_full_pipeline
+    self.expand_dataset(target_tasks=target)
+  File "/workspaces/Taskpedia/comprehensive_improvement.py", line 183, in expand_dataset
+    subprocess.run(["taskpedia", "init", "-o", str(hierarchy_dir)], check=True)
+  File "/usr/local/python/3.12.1/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['taskpedia', 'init', '-o', 'task_hierarchy']' returned non-zero exit status 2.

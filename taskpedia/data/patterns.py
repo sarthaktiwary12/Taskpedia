@@ -329,6 +329,46 @@ GENERIC_NOUNS: frozenset[str] = frozenset(
     }
 )
 
+# NEW: User feedback patterns (91.3% approval rate, 46 reviews)
+# Over-specific equipment modifiers that make tasks too narrow
+OVERSPECIFIC_MODIFIERS: frozenset[str] = frozenset(
+    {
+        "commercial",
+        "industrial",
+        "professional-grade",
+        "enterprise",
+        "heavy-duty",
+        "hospital-grade",
+        "medical-grade",
+        "laboratory-grade",
+    }
+)
+
+# Non-physical/cognitive-only tasks (just locomotion + being present)
+NON_PHYSICAL_VERBS: frozenset[str] = frozenset(
+    {
+        "attending",
+        "observing",
+        "participating",
+        "joining",
+        "watching",
+    }
+)
+
+# Vague action patterns (missing critical context about substance/tool)
+VAGUE_ACTION_PATTERNS: list[str] = [
+    r"^spray\s+\w+$",  # "spray X" without specifying what to spray
+    r"^apply\s+to\s+\w+$",  # "apply to X" without specifying what to apply
+    r"^treat\s+\w+$",  # "treat X" without specifying how
+    r"^coat\s+\w+$",  # "coat X" without specifying with what
+]
+
+# Confusing language patterns (nested possessives, contradictory structure)
+CONFUSING_LANGUAGE_PATTERNS: list[str] = [
+    r"over\s+\w+'s\s+",  # "over passenger's seat" - nested possessives
+    r"\w+'s\s+\w+\s+of\s+",  # Overly complex possessive chains
+]
+
 # Pattern for "Step N:" descriptions
 _STEP_PATTERN = re.compile(r"^step\s+\d+\s*:", re.IGNORECASE)
 
@@ -342,6 +382,10 @@ def is_generic_template(name: str, description: str = "") -> bool:
     - {generic_verb} {generic_noun} patterns
     - Vague verbs with generic nouns (no clear completion criteria)
     - Descriptions that just repeat the name
+    - NEW: Vague actions without clear substance/tool
+    - NEW: Over-specific equipment modifiers
+    - NEW: Non-physical tasks (attending, observing)
+    - NEW: Confusing language patterns
     """
     name_lower = name.lower().strip()
     desc_lower = description.lower().strip()
@@ -350,8 +394,29 @@ def is_generic_template(name: str, description: str = "") -> bool:
     if _STEP_PATTERN.match(desc_lower):
         return True
 
-    # Reject {generic_verb} {generic_noun} patterns
+    # NEW: Check vague action patterns
+    for pattern in VAGUE_ACTION_PATTERNS:
+        if re.search(pattern, name_lower):
+            return True
+
+    # NEW: Check confusing language patterns
+    for pattern in CONFUSING_LANGUAGE_PATTERNS:
+        if re.search(pattern, name_lower):
+            return True
+
+    # NEW: Check non-physical verbs (attending, observing, etc.)
     words = name_lower.replace("_", " ").replace("-", " ").split()
+    if len(words) >= 1:
+        first_word = words[0]
+        if first_word in NON_PHYSICAL_VERBS:
+            return True
+
+    # NEW: Check over-specific modifiers
+    for modifier in OVERSPECIFIC_MODIFIERS:
+        if modifier in name_lower:
+            return True
+
+    # Reject {generic_verb} {generic_noun} patterns
     if len(words) == 2:
         verb, noun = words
         if verb in GENERIC_VERBS and noun in GENERIC_NOUNS:

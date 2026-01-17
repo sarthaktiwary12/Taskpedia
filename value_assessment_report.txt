@@ -1,0 +1,428 @@
+================================================================================
+TASKPEDIA VALUE ASSESSMENT REPORT
+================================================================================
+
+
+PREMIUM TIER: 201 tasks
+--------------------------------------------------------------------------------
+
+  [ 81] Fine Artists, Including Painters, Sculptors, and Illustrators
+       Type: task | Domain: work_arts_media
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Apply solvents and cleaning agents to clean surfaces of paintings, and to remove accretions, discolorations, and deteriorated varnish.
+       Type: atomic | Domain: work_arts_media
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Spray materials, such as water, sand, steam, vinyl, paint, or stucco, through hoses to clean, coat, or seal surfaces.
+       Type: atomic | Domain: work_construction
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Painters, Construction and Maintenance
+       Type: task | Domain: work_construction
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Apply paint, stain, varnish, enamel, or other finishes to equipment, buildings, bridges, or other structures, using brushes, spray guns, or rollers.
+       Type: atomic | Domain: work_construction
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Waterproof or damp-proof walls, floors, roofs, foundations, or basements by painting or spraying surfaces with waterproof coatings or by attaching waterproofing membranes to surfaces.
+       Type: atomic | Domain: work_construction
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Apply reflective roof coatings, such as special paints or single-ply roofing sheets, to existing roofs to reduce solar heat absorption.
+       Type: atomic | Domain: work_construction
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Helpers--Painters, Paperhangers, Plasterers, and Stucco Masons
+       Type: task | Domain: work_construction
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Paint traffic control lines and place pavement traffic messages, by hand or using machines.
+       Type: atomic | Domain: work_construction
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Prime and paint repaired surfaces, using paint sprayguns and motorized sanders.
+       Type: atomic | Domain: work_installation_repair
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Refinish wood surfaces on cabinets, doors, moldings, or floors, using power sanders, putty, spray equipment, brushes, paints, or varnishes.
+       Type: atomic | Domain: work_installation_repair
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Refinish wood surfaces on cabinets, doors, moldings, and floors, using power sanders, putty, spray equipment, brushes, paints, or varnishes.
+       Type: atomic | Domain: work_installation_repair
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Apply solutions or paints to wired electrical components, using hand tools, and bake components.
+       Type: atomic | Domain: work_production
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Apply pigment to layout surfaces, using paint brushes.
+       Type: atomic | Domain: work_production
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Dye, soak, polish, paint, stamp, stitch, stain, buff, or engrave leather or other materials to obtain desired effects, decorations, or shapes.
+       Type: atomic | Domain: work_production
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Brush, spray, or hand-rub finishing ingredients, such as paint, oil, stain, or wax, onto and into wood grain and apply lacquer or other sealers.
+       Type: atomic | Domain: work_production
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Remove excess solvent, using cloths soaked in paint thinner.
+       Type: atomic | Domain: work_production
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Paint metal surfaces electrostatically, or by using a spray gun or other painting equipment.
+       Type: atomic | Domain: work_production
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Painting, Coating, and Decorating Workers
+       Type: task | Domain: work_production
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+  [ 81] Apply coatings, such as paint, ink, or lacquer, to protect or decorate workpiece surfaces, using spray guns, pens, or brushes.
+       Type: atomic | Domain: work_production
+       Market:9 Impress:10 Utility:5 Difficulty:8 General:6
+       Reasoning: Impressive demo: paint
+
+HIGH TIER: 130 tasks
+--------------------------------------------------------------------------------
+
+  [ 74] Assemble components, using techniques such as interference fitting, solvent bonding, adhesive bonding, heat sealing, or ultrasonic welding.
+       Type: atomic | Domain: work_architecture_engineering
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: assembly - assemble component
+
+  [ 74] Position patients on cradle, attaching immobilization devices, if needed, to ensure appropriate placement for imaging.
+       Type: atomic | Domain: work_healthcare_practitioners
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: patient_care - position patient
+
+  [ 74] Grill and garnish hamburgers or other meats, such as steaks and chops.
+       Type: atomic | Domain: work_food_service
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: cooking - garnish
+
+  [ 74] Slice and pit fruit for garnishing drinks.
+       Type: atomic | Domain: work_food_service
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: cooking - garnish
+
+  [ 74] Slice and pit fruit used to garnish drinks.
+       Type: atomic | Domain: work_food_service
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: cooking - garnish
+
+  [ 74] Fasten seams or joints together with welds, bolts, cement, rivets, solder, caulks, metal drive clips, or bonds to assemble components into products or to repair sheet metal items.
+       Type: atomic | Domain: work_construction
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: assembly - assemble component
+
+  [ 74] Dig holes, set forms, and mix and pour concrete into forms to make foundations for wood or steel derricks.
+       Type: atomic | Domain: work_construction
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: planting - dig hole
+
+  [ 74] Dig holes for power poles, using power augers or shovels, set poles in place with cranes, and hoist poles upright, using winches.
+       Type: atomic | Domain: work_installation_repair
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: planting - dig hole
+
+  [ 74] Mix or blend ingredients, according to recipes, using a paddle or an agitator, or by controlling vats that heat and mix ingredients.
+       Type: atomic | Domain: work_production
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: food_prep - mix ingredients
+
+  [ 74] Start operation of rolling and milling machines to flatten, temper, form, and reduce sheet metal sections and to produce steel strips.
+       Type: atomic | Domain: work_production
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: coffee - latte
+
+  [ 74] Load parts into containers and place containers on conveyors to be inserted into furnaces, or insert parts into furnaces.
+       Type: atomic | Domain: work_production
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: assembly - insert part
+
+  [ 74] Shape, bend, or join sections of glass, using paddles, pressing and flattening hand tools, or cork.
+       Type: atomic | Domain: work_production
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: coffee - latte
+
+  [ 74] assemble components
+       Type: subtask | Domain: work_production
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: assembly - assemble component
+
+  [ 74] plate food
+       Type: subtask | Domain: work_food_service
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: cooking - plate food
+
+  [ 74] assemble components
+       Type: subtask | Domain: work_production
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: assembly - assemble component
+
+  [ 74] wash dishes
+       Type: subtask | Domain: life_household
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: dishes - wash dishes
+
+  [ 74] mop floor area
+       Type: subtask | Domain: life_household
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: cleaning_impressive - mop floor
+
+  [ 74] chop vegetables
+       Type: atomic | Domain: life_household
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: food_prep - chop vegetable
+
+  [ 74] add garnish to plate
+       Type: subtask | Domain: life_household
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: cooking - garnish
+
+  [ 74] fold clothes
+       Type: atomic | Domain: life_household
+       Market:8 Impress:7 Utility:8 Difficulty:6 General:7
+       Reasoning: Premium: laundry - fold clothes
+
+MEDIUM TIER: 22322 tasks
+--------------------------------------------------------------------------------
+
+  [ 50] Chief Executives
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Chief Sustainability Officers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] General and Operations Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Legislators
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Advertising and Promotions Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Marketing Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Sales Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Public Relations Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Fundraising Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Administrative Services Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Facilities Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Security Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Computer and Information Systems Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Financial Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Treasurers and Controllers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Investment Fund Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Industrial Production Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Quality Control Systems Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Geothermal Production Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+  [ 50] Biofuels Production Managers
+       Type: task | Domain: work_management
+       Market:5 Impress:5 Utility:5 Difficulty:5 General:5
+       Reasoning: Needs manual review
+
+LOW TIER: 0 tasks
+--------------------------------------------------------------------------------
+
+TRASH TIER: 653 tasks
+--------------------------------------------------------------------------------
+
+  [  0] Biomass Power Plant Managers
+       Type: task | Domain: work_management
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'plan'
+
+  [  0] Biofuels/Biodiesel Technology and Product Development Managers
+       Type: task | Domain: work_management
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'log'
+
+  [  0] Logisticians
+       Type: task | Domain: work_business_financial
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'log'
+
+  [  0] Logistics Engineers
+       Type: task | Domain: work_business_financial
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'log'
+
+  [  0] Apply logistics modeling techniques to address issues, such as operational process improvement or facility design or layout.
+       Type: atomic | Domain: work_business_financial
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'log'
+
+  [  0] Logistics Analysts
+       Type: task | Domain: work_business_financial
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'log'
+
+  [  0] Meeting, Convention, and Event Planners
+       Type: task | Domain: work_business_financial
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'plan'
+
+  [  0] Business Continuity Planners
+       Type: task | Domain: work_business_financial
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'plan'
+
+  [  0] Appraisers and Assessors of Real Estate
+       Type: task | Domain: work_business_financial
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'assess'
+
+  [  0] Apply theoretical expertise and innovation to create or apply new technology, such as adapting principles for applying computers to new uses.
+       Type: atomic | Domain: work_computer_mathematical
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'log'
+
+  [  0] Troubleshoot network or connectivity problems for users or user groups.
+       Type: atomic | Domain: work_computer_mathematical
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'troubleshoot'
+
+  [  0] Diagnose, troubleshoot, and resolve hardware, software, or other network and system problems, and replace defective components when necessary.
+       Type: atomic | Domain: work_computer_mathematical
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'troubleshoot'
+
+  [  0] Software Quality Assurance Analysts and Testers
+       Type: task | Domain: work_computer_mathematical
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'test'
+
+  [  0] Geographic Information Systems Technologists and Technicians
+       Type: task | Domain: work_computer_mathematical
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'log'
+
+  [  0] Penetration Testers
+       Type: task | Domain: work_computer_mathematical
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'test'
+
+  [  0] Information Technology Project Managers
+       Type: task | Domain: work_computer_mathematical
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'log'
+
+  [  0] Mining and Geological Engineers, Including Mining Safety Engineers
+       Type: task | Domain: work_architecture_engineering
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'log'
+
+  [  0] Integrate nanotechnology with antimicrobial properties into products, such as household or medical appliances, to reduce the development of bacteria or other microbes.
+       Type: atomic | Domain: work_architecture_engineering
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'log'
+
+  [  0] Aerospace Engineering and Operations Technologists and Technicians
+       Type: task | Domain: work_architecture_engineering
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'log'
+
+  [  0] Adjust, repair, or replace faulty components of test setups and equipment.
+       Type: atomic | Domain: work_architecture_engineering
+       Market:0 Impress:0 Utility:0 Difficulty:0 General:0
+       Reasoning: Trash: matches pattern 'test'
+
+================================================================================
+SUMMARY
+================================================================================
+PREMIUM   :    201 tasks (  0.9%)
+HIGH      :    130 tasks (  0.6%)
+MEDIUM    :  22322 tasks ( 95.8%)
+LOW       :      0 tasks (  0.0%)
+TRASH     :    653 tasks (  2.8%)
